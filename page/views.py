@@ -69,9 +69,12 @@ def download_zip(myresult):
         if not myresult[i][4] == 'None':
             if not str(myresult[i][0])[:6] in var:
                 var.append(str(myresult[i][0])[:6])
-                with open(f'media/image_admin/{sec}/{myresult[i][0]}.png', 'wb') as f:
-                    f.write(convert_url_to_bytes(myresult[i][4]))
-
+                try:
+                    with open(f'media/image_admin/{sec}/{myresult[i][0]}.png', 'wb') as f:
+                        f.write(convert_url_to_bytes(myresult[i][4]))
+                except:
+                    pass
+                
     with ZipFile(f'media/image_admin/{sec}/{sec}.zip', 'w') as zipObj:
         # Iterate over all the files in directory
         for folderName, subfolders, filenames in os.walk(f'media/image_admin/{sec}'):
