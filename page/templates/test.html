@@ -4,21 +4,20 @@
 
 <body>
     <script>
-        var source = new EventSource('https://streaming-graph.facebook.com/470412077578266/live_comments?access_token=EAACNi6PriH4BAKTI8cdjoVTfzMQ6YCsil4ZAyFyDNrcUgGUnpeBXkfWaulqzJUIQcd8NN2iQprguH8HxZBirgQJMGP1Frny916WaATmlnMqdbSt7Q3uINIZC1R0k3DbjeewCj1T81tzF7JEvinAKMTAdEPwpmHAuZBL1atmkCO7ZCQBWYwyQkimbg7EyhwM3LrZA0wOnlWvnqXnACJAwNn&comment_rate=one_per_two_seconds&fields=from{name,id},message');
-        source.onmessage = function(event) {
-            console.log(event.data);
-            var name = JSON.parse(unicodeToChar(event.data))['from'].name;
-            var message = JSON.parse(unicodeToChar(event.data))['message'];
-            var id = JSON.parse(unicodeToChar(event.data))['id'];
-            console.log(name +
-                '/' + message + '/' + id);
-        };
-
-        function unicodeToChar(text) {
-            return text.replace(/\\u[\dA-F]{4}/gi, function(match) {
-                return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
-            });
-        }
+        // var source = new EventSource('https://streaming-graph.facebook.com/470412077578266/live_comments?access_token=EAACNi6PriH4BAKTI8cdjoVTfzMQ6YCsil4ZAyFyDNrcUgGUnpeBXkfWaulqzJUIQcd8NN2iQprguH8HxZBirgQJMGP1Frny916WaATmlnMqdbSt7Q3uINIZC1R0k3DbjeewCj1T81tzF7JEvinAKMTAdEPwpmHAuZBL1atmkCO7ZCQBWYwyQkimbg7EyhwM3LrZA0wOnlWvnqXnACJAwNn&comment_rate=one_per_two_seconds&fields=from{name,id},message');
+        // source.onmessage = function(event) {
+        //     console.log(event.data);
+        //     var name = JSON.parse(unicodeToChar(event.data))['from'].name;
+        //     var message = JSON.parse(unicodeToChar(event.data))['message'];
+        //     var id = JSON.parse(unicodeToChar(event.data))['id'];
+        //     console.log(name +
+        //         '/' + message + '/' + id);
+        // };
+        // function unicodeToChar(text) {
+        //     return text.replace(/\\u[\dA-F]{4}/gi, function(match) {
+        //         return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+        //     });
+        // }
 
         function init() {
             FB.api(
