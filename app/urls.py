@@ -23,6 +23,10 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('live/', include('live.urls')),
+    path('', include('stock.urls')),
+    path("register/",include('register.urls'), name='register'),
+    path('', include("django.contrib.auth.urls")),
+    path('page/',include('page.urls')),
     url(r'^media/(?P<path>.*)$', serve,
         {'document_root': settings.MEDIA_ROOT}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

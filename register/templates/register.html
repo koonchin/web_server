@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+<head>
+    <title>CREATE ACCOUNT</title>
+    <style>
+        .textinput {
+            width: 5vmax;
+        }
+    </style>
+</head>
+{% load crispy_forms_tags %} {% block content %}
+
+<body style="width: 75vmax;">
+    <form method="POST" class="form-group">
+        {% csrf_token %}{{ form|crispy }}{{ emp|crispy }} {% if form.errors or emp.errors %}
+        <p>Something is wrong</p>
+        {% endif %}
+        <button type="submit" class="btn btn-success">Register</button>
+
+    </form>
+</body>
+{% endblock content %}

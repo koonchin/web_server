@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% block content %}
+    <title>CHECKSTOCK</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="/media/style.css?{% now " U " %}">
+
+    <script type="text/javascript">
+        function insert_row() {
+            var table = document.getElementById("table");
+            var row = table.insertRow(1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            cell1.innerHTML = "NEW CELL1";
+            cell2.innerHTML = "NEW CELL2";
+            document.getElementById('SKU_input').scrollIntoView();
+        }
+    </script>
+
+    <style>
+        table {
+            counter-reset: tableCount;
+        }
+        
+        tr {
+            padding: 120px;
+        }
+        
+        .counterCell:before {
+            content: counter(tableCount);
+            counter-increment: tableCount;
+        }
+        
+        .box {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            opacity: .7;
+        }
+        
+        .table-striped>tbody>tr:nth-child(odd)>td,
+        .table-striped>tbody>tr:nth-child(odd)>th {
+            background-color: gainsboro;
+        }
+        
+        .table-striped>tbody>tr:nth-child(even)>td,
+        .table-striped>tbody>tr:nth-child(even)>th {
+            background-color: white;
+        }
+        
+        .table-hover>tbody>tr:hover>td {
+            background-color: lightgreen;
+        }
+        
+        .export {
+            top: 4vmax;
+            left: 45vmax;
+            position: fixed;
+            width: 15vmax;
+            height: 4vmax;
+            background-color: mediumaquamarine;
+        }
+        
+        .btn-primary :hover {
+            top: 4vmax;
+            left: 45vmax;
+            position: fixed;
+            width: 15vmax;
+            height: 4vmax;
+            background-color: lightgreen;
+        }
+        
+        .btn:hover {
+            top: 4vmax;
+            left: 45vmax;
+            position: fixed;
+            width: 15vmax;
+            height: 4vmax;
+            background-color: lightgreen;
+        }
+    </style>
+</head>
+
+<body class="tran" style="margin-top: 8vmax;">
+    <form method="post" action="/checkstock/">{% csrf_token %}
+        <button type="submit" class="btn btn-primary export" id="export" name="export" value="export">export</button></form>
+    <h1 class="stroke2">เช็คสต็อค</h1>
+    <form method="post" action="/checkstock/">{% csrf_token %}
+        <input id="type" name='type' style="display: none;" value="">
+        <input id="type2" name='type2' style="display: none;" value="">
+        <table name="table" class="table table-striped box table-hover" style="width: 80vmax;font-size: 1.5vmax; margin-left: -10%;height:1vh;" id="table">
+            <thead>
+                <tr style="letter-spacing: 0.3rem;">
+                    <th scope="col">#</th>
+                    <th scope="col">รหัสสินค้า</th>
+                    <th scope="col">ชื่อสินค้า</th>
+                    <th scope="col">AMOUNT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="counterCell"></td>
+                    <td>
+                        <div id="SKU_input">
+                            <input id="input" name="input" type="text" onkeydown="if (event.keyCode == 13) { this.form.submit(); return false; }" placeholder="SKU..." class="form-control" style="width: 15vmax;" autofocus>
+                        </div>
+                    </td>
+                    <td style="width: 40vmax;">
+                    </td>
+                    <td>
+                        <div>
+                            <input type="number" class="form-control" id="amount" name="amount" style="width: 5vmax;text-align: center;" value="1">
+                        </div>
+                    </td>
+                    <td>
+                        <button type="button" class="btn-close" aria-label="Close" onclick="del_row()"></button>
+                    </td>
+                </tr>
+                {% for sku,name,amt in data %}
+                <tr id="{{ sku }}">
+                    <td class="counterCell"></td>
+                    <td>
+                        {{ sku }}
+                    </td>
+                    <td style="width: 40vmax;">
+                        {{ name }}
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" id="amt{{ sku }}" name="amt{{ sku }}" style="width: 5vmax;text-align: center;" value="{{ amt }}" oninput="proc_del('{{ sku }}')">
+                    </td>
+                    <td>
+                        <button type="button" class="btn-close" aria-label="Close" onclick="del_row('{{ sku }}')"></button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+
+
+    <script>
+        function del_row(rowid) {
+            var row = document.getElementById(rowid);
+            row.parentNode.removeChild(row);
+            proc_del2(rowid);
+        }
+
+        function proc_del(sku) {
+            var temp = document.getElementById('amt' + sku).value;
+            document.getElementById("type").value += sku + "*" + String(temp) + "/";
+            // fetch("http://{{ host }}/live/add/", )
+        }
+
+        function proc_del2(sku) {
+            var temp2 = String(sku) + "/"
+            document.getElementById("type2").value += temp2;
+            // fetch("http://{{ host }}/live/add/", )
+        }
+    </script>
+
+    {% endblock %}
+</body>

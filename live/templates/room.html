@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% block content %}
+    <meta name="viewport" content="width=device-width, initial-scale=1"> {% if role == 'admin' or role == 'super' %}
+    <button type="button" style="float: right;" class="button button2" onclick="test()">เอาออกจากห้องไลฟ์</button> {% endif %}
+
+    <style>
+        .button {
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        
+        .button1 {
+            background-color: #4CAF50;
+        }
+        
+        .button2 {
+            background-color: red;
+        }
+        /* Green */
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        #myInput {
+            background-position: 10px 12px;
+            background-repeat: no-repeat;
+            background-color: #FEF4EB;
+            width: 100%;
+            font-size: 16px;
+            padding: 12px 20px 12px 40px;
+            border: 1px solid #ddd;
+            margin-bottom: 12px;
+        }
+        
+        #myUL {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        #myUL li a {
+            border: 1px solid #ddd;
+            margin-top: -1px;
+            /* Prevent double borders */
+            background-color: #FEF4EB;
+            padding: 12px;
+            text-decoration: none;
+            font-size: 1.2vmax;
+            color: black;
+            display: block;
+            text-align: top;
+        }
+        
+        #myUL li a:hover:not(.header) {
+            background-color: #FEF4EB;
+        }
+        
+        .messageCheckbox {
+            background-color: blanchedalmond;
+            width: 3vmax;
+            height: 3vmin;
+        }
+    </style>
+</head>
+
+<body style="margin-left:-10vmax;margin-top: -5vmin;">
+
+    <h2>*STOCK LIVE*</h2>
+
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for sku..." title="Type in a name">
+
+    <ul id="myUL">
+        {% for i in res %}
+        <li>
+            <a href="#"><input type="checkbox" class="messageCheckbox" id="{{ i }}" value="{{ i }}">{{ i }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        function test() {
+            var selected = new Array();
+            var chkbox = document.getElementById('myUL');
+            var selchk = chkbox.getElementsByTagName("input");
+            for (var i = 0; i < selchk.length; i++) {
+                if (selchk[i].checked) {
+                    selected.push(selchk[i].value);
+                    console.log(selchk[i].value);
+                }
+            }
+            if (selected.length > 0) {
+                location.replace("http://{{ host }}/live/del/" + selected)
+            }
+
+
+        }
+
+        function myFunction() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("myUL");
+            li = ul.getElementsByTagName("li");
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("a")[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+</body>
+{% endblock content %}
+
+</html>
