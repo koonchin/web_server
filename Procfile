@@ -1,1 +1,1 @@
-web: gunicorn app.wsgi --timeout 600
+web: gunicorn app.wsgi --max-requests 1200
