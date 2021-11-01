@@ -19,5 +19,15 @@
                 return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
             });
         }
+
+        FB.api(
+            '/100233271608219',
+            'GET', {
+                "fields": "picture"
+            },
+            function(response) {
+                alert(response);
+            }
+        );
     </script>
 </body>

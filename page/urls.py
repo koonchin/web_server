@@ -5,6 +5,6 @@ from . import views
 # URLConf
 urlpatterns = [
     path('',views.image_admin),
-    path('test/',views.main),
+    path('test/',views.test),
     path('blog/',views.movies),
 ]
