@@ -86,7 +86,7 @@
                 if (test) {
                     var len = document.getElementById('Not_Packed').children.length;
                     if (len == 1) {
-                        location.replace("http://{{ host }}/check/")
+                        location.replace("/check/")
                     }
 
                     document.getElementById(input_value).outerHTML = "";
@@ -96,7 +96,7 @@
                 }
                 if (!test) {
                     document.getElementById("SKU").value = "";
-                    var audio = new Audio('http://{{ host }}/media/wrong.wav');
+                    var audio = new Audio('/media/wrong.wav');
                     audio.play();
                 }
             }
