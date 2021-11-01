@@ -20,14 +20,26 @@
             });
         }
 
-        FB.api(
-            '/100233271608219',
-            'GET', {
-                "fields": "picture"
-            },
-            function(response) {
-                alert(response);
-            }
-        );
+        function init() {
+            FB.api(
+                '/100233271608219',
+                'GET', {
+                    "fields": "picture"
+                },
+                function(response) {
+                    alert(response);
+                }
+            );
+        }
+
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '155630890092670',
+                xfbml: true,
+                version: 'v12.0'
+            });
+
+            init();
+        };
     </script>
 </body>
