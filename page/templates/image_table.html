@@ -18,7 +18,7 @@
             width: 100%;
             height: 100%;
             background-color: #ffffff;
-            opacity: .7;
+            opacity: .9;
         }
         
         .margin {
@@ -27,84 +27,57 @@
             margin-right: 0px;
             margin-left: 20px;
         }
-        
-        .table-striped>tbody>tr:nth-child(odd)>td,
-        .table-striped>tbody>tr:nth-child(odd)>th {
-            background-color: gainsboro;
+        .form-check{
+            display:inline-block; 
         }
-        
-        .table-striped>tbody>tr:nth-child(even)>td,
-        .table-striped>tbody>tr:nth-child(even)>th {
-            background-color: white;
-        }
-        ​.copy{
-            width:1vmax;
-            height:1vmax;
-            }
-        .copy :click{
-            background-image:url('/media/copy2.png')
-        }
-        .popup {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            width:4vmax;
-            }
-
-            /* The actual popup */
-        .popup .popuptext {
-            visibility: hidden;
-            width: 15vmax;
-            background-color: #555;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 8px 0;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -80px;
-            }
-
-            /* Popup arrow */
-        .popup .popuptext::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #555 transparent transparent transparent;
-            }
-
-            /* Toggle this class - hide and show the popup */
-        .popup .show {
-            visibility: visible;
-            -webkit-animation: fadeIn .5s;
-            animation: fadeIn .5s;
-            }
-
-            /* Add animation (fade in the popup) */
-        @-webkit-keyframes fadeIn {
-            from {opacity: 0;} 
-            to {opacity: 1;}
-            }
-
-        @keyframes fadeIn {
-            from {opacity: 0;}
-            to {opacity:1 ;}
-            }
     </style>
 </head>
 
-<body class="tran">
-    <table class="table table-striped box" style="width: 100%;font-size: 1.5vmax; margin-left: -10%;height:1vh;">
+<body>
+
+    <form method="post" action="/page/">
+        {% csrf_token %}
+<div class="input-group mb-3" style="margin-left:-5vmax;width:75vmax;height:3vmax;">
+            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vw;text-align: center;">รหัส SKU</span>
+            <input style="font-size: 2vmax;" type="text" class="form-control" aria-label="Sizing example input" id="sku" name="sku">
+            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vw;">รายละเอียด</span>
+            <input style="font-size: 2vmax;" type="text" class="form-control" aria-label="Sizing example input" id="name" name="name">
+</div>
+
+        <div class="form-inline dropdown" style="margin-top: 2vh;margin-left:-5vmax;">
+            <div class="input-group mb-3" style="width:75vmax;margin-top:3vmax;">
+                <span class="input-group-text">อก</span>
+                <input type="text" class="form-control" placeholder="น้อยสุด" aria-label="Username" id="breastmin" name="breastmin" value = {{ breastmin }}>
+                <input type="text" class="form-control" placeholder="มากสุด" aria-label="Username" id="breastmax" name="breastmax" value = {{ breastmax }}>
+                <span class="input-group-text">เอว</span>
+                <input type="text" class="form-control" placeholder="น้อยสุด" aria-label="Server" id="wrestmin" name="wrestmin" value = {{ wrestmin }}>
+                <input type="text" class="form-control" placeholder="มากสุด" aria-label="Server" id="wrestmax" name="wrestmax" value = {{ wrestmax }}>
+                <span class="input-group-text">สะโพก</span>
+                <input type="text" class="form-control" placeholder="น้อยสุด" aria-label="Server" id="hipmin" name="hipmin" value= {{ hipmin }}>
+                <input type="text" class="form-control" placeholder="มากสุด" aria-label="Server" id="hipmax" name="hipmax" value = {{ hipmax }}>
+            </div>
+        </div>
+        <div class="form-check">
+            <select id="size" name="size" class="form-control" style="margin-left:-7vmax;height: 7vh;font-size: 2vmax;width: 8vw;text-align: center;margin-right:3vmax;display:inline-block;">
+                <span style="font-size: 2vmax;">
+                <option value="1">SIZE ▼</option>
+                <option value="2">S</option>
+                <option value="3">M</option>
+                <option value="4">L</option>
+                <option value="5">XL</option>
+                <option value="6">2XL</option>
+                <option value="7">3XL</option>
+            </span>
+                </select>
+
+                <div class="form-check form-switch">
+                    <input class="form-check-input" style="width:8vmax;height:4vmax;" type="checkbox" id="flexSwitchCheckChecked" name="checkSKU">
+                    <label class="form-check-label" style="font-size:2.4vmax;margin-left:3vmax;" value="checkSKU">ดาวน์โหลดรูป</label>
+                </div>
+        <button id="downloads" name="downloads" type="button " class="btn btn-primary " style="width: 20vw;font-size: 2.5vmax;height: 8vh;margin-left:17vmax;">ยืนยัน</button>
+        </div>
+    </form>
+    <table class="table table-striped box table-sortable" style="width: 100%;font-size: 1.5vmax; margin-left: -10%;height:1vh;" >
         <thead>
             <tr style="padding-left: 150%;letter-spacing: 0.3rem;text-align:center;">
                 <th scope="col ">#</th>
@@ -112,24 +85,25 @@
                 <th scope="col ">NAME</th>
                 <th scope="col ">AMOUNT</th>
                 <th scope="col ">SIZE</th>
-                <th scope="col">DESCRIPTS</th>
+                <th scope="col ">DESCRIPTS</th>
+                <th scope="col ">IMAGE</th>
             </tr>
         </thead>
         <tbody>
             {% for d1,d2,d3,d4,d5,d6,index in data %}
             <tr style="text-align:center;">
-                <th scope="row ">{{ index }}</th>
+                <td scope="row ">{{ index }}</td>
                 <td>
-                    {{ d1 }}
+                    {{d1}}
                 </td>
                 <td>
-                    {{ d2 }}
+                    {{d2}}
                 </td>
                 <td>
-                    {{ d3 }}
+                    {{d3}}
                 </td>
                 <td>
-                    {{ d4 }}
+                    {{d4}}
                 </td>
                 <td>
                     <div id='{{ d1 }}' style="display: none;height:10vmax;">{{ d6 }}</div>
@@ -145,10 +119,44 @@
                     {% comment %} <button onclick="CopyToClipboard('{{ d6 }}');return false;" id="{{ d6 }}" class="copy"></button> {% endcomment %}
                         {% endif %}
                 </td>
+                <td>
+                {% if  d5 != 'None' %}
+                <img class="myImg" id="img{{ d1 }}" src="{{ d5 }}" alt="{{ d1 }}" style="width:5vmax;height:5vmax;" onclick="show_image('img{{ d1 }}')">
+
+                    <!-- The Modal -->
+                    <div id="myModal" class="modal">
+                    <span class="close">&times;</span>
+                    <img class="modal-content" id="img01">
+                    <div id="caption"></div>
+                    </div>
+                {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    
+<script>
+// Get the modal
+function show_image(id){
+var modal = document.getElementById("myModal");
+
+// Get the image and insert it inside the modal - use its "alt" text as a caption
+var img = document.getElementById(id);
+var modalImg = document.getElementById("img01");
+var captionText = document.getElementById("caption");
+modal.style.display = "block";
+modalImg.src = img.src;
+captionText.innerHTML = img.alt;
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() { 
+  modal.style.display = "none";
+}
+}
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js " integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 " crossorigin="anonymous "></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js " integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p " crossorigin="anonymous "></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js " integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB " crossorigin="anonymous "></script>
@@ -173,5 +181,6 @@
             
         }
     </script>
+    <script src="/media/sort.js"></script>
     {% endblock content %}
 </body>

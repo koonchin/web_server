@@ -61,27 +61,18 @@
         }
         
         .export {
-            top: 4vmax;
-            left: 45vmax;
-            position: fixed;
             width: 15vmax;
             height: 4vmax;
             background-color: mediumaquamarine;
         }
         
         .btn-primary :hover {
-            top: 4vmax;
-            left: 45vmax;
-            position: fixed;
             width: 15vmax;
             height: 4vmax;
             background-color: lightgreen;
         }
         
         .btn:hover {
-            top: 4vmax;
-            left: 45vmax;
-            position: fixed;
             width: 15vmax;
             height: 4vmax;
             background-color: lightgreen;
@@ -90,10 +81,17 @@
 </head>
 
 <body class="tran" style="margin-top: 8vmax;">
-    <form method="post" action="/checkstock/">{% csrf_token %}
-        <button type="submit" class="btn btn-primary export" id="export" name="export" value="export">export</button></form>
+    <form method="get" action="/checkstock/">{% csrf_token %}
+        <h2>{{ name }}</h2>
+    <div class="input-group mb-3" style="margin-left:-5vmax;">
+        <span class="input-group-text" id="basic-addon1">ตั้งชื่อรายการ</span>
+        <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" name="name">
+        <button type="submit" class="btn btn-primary export" id="export" name="export" value="export">ยืนยัน</button>
+    </div>
+    </form>
     <h1 class="stroke2">เช็คสต็อค</h1>
     <form method="post" action="/checkstock/">{% csrf_token %}
+        <div name="dbname" style="display:none;" value="{{ name }}">{{ name }}</div>
         <input id="type" name='type' style="display: none;" value="">
         <input id="type2" name='type2' style="display: none;" value="">
         <table name="table" class="table table-striped box table-hover" style="width: 80vmax;font-size: 1.5vmax; margin-left: -10%;height:1vh;" id="table">

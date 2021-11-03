@@ -72,46 +72,21 @@ def del_page(request, name):
     return render(request, 'main/room.html', {'res': lst_sku, 'host': host, 'role':role })
 
 
+
 def main_2(request):
     role = get_role(request,'role')
-    if request.method == 'POST':
-        form = AddNewSku(request.POST)
-        res = []
-        if form.is_valid():
-            sku = form.cleaned_data['sku']
-            mycursor = db.query(f"select * from  {get_role(request,'department')}.stock_zort\
-                where sku like '%{sku}%' limit 1;")
-            if mycursor.fetchone():
-                # check METHOD check,add,delete
-                if request.POST.get('check'):
-                    if '-' in sku:
-                        sku = sku.split('-')[0]
-                    if len(sku) > 0:
-                        task_db = f"select * from {get_role(request,'department')}.live_room where sku like '%{sku}%'"
-                    else:
-                        task_db = f"select * from {get_role(request,'department')}.live_room"
-                    mycursor = db.query(task_db)
-                    myresult = mycursor.fetchall()
-                    if len(list(myresult)) == 0:
-                        res = 'ไม่มีบนห้องไลฟ์'
-                    lst = []
-                    for index, row in enumerate(myresult):
-                        lst.append(f"{row[0]} เวลา {row[1]} เพิ่มโดย {row[2]}")
-                    res = lst
-                elif request.POST.get('add'):
-                    if sku == '':
-                        res.append("โปรดใส่ SKU เข้าห้องไลฟ์")
-                    else:
-                        res.append(Add_Process(sku, str(request.user)))
-                else:
-                    sku = delete(sku,str(request.user))
-                    res.append("ลบเรียบร้อย")
-                    if sku:
-                        res.append(
-                            f"ลบเรียบร้อย\n\nข้างล่างมีรหัส Size {sku} อยู่ เอาขึ้นไปรีดด้วย ")
-                    else:
-                        res.append("ในสต็อคไม่มีให้รีดแล้ว")
-        return render(request, 'main/room.html', {'res': res, 'host': host,'role':role})
+    task_db = f"select * from {get_role(request,'department')}.live_room"
+    mycursor = db.query(task_db)
+    myresult = mycursor.fetchall()
+    if len(list(myresult)) == 0:
+        res = 'ไม่มีบนห้องไลฟ์'
+    lst = []
+    for index, row in enumerate(myresult):
+        lst.append(f"{row[0]} เวลา {row[1]} เพิ่มโดย {row[2]}")
+    res = lst
+    return render(request, 'main/room.html', {'res': res, 'host': host,'role':role})
+
+
 def main(request):
     role = get_role(request,'role')
     if request.method == 'POST':

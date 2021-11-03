@@ -1,5 +1,6 @@
 import time
 from django.shortcuts import render, redirect
+from requests.api import get
 from function import *
 # Create your views here.
 
@@ -65,6 +66,8 @@ def barcode_(req):
 def checkstock(req):
     if req.method == 'POST':
         export = req.POST.get('export')
+        dbname = req.POST.get("dbname")
+        print(dbname)
         if export:
             a = datetime.datetime.now().__str__()
             a = a.replace('-', '_')
@@ -91,23 +94,49 @@ def checkstock(req):
             for i in method:
                 amount.append(i.split('*')[-1])
             for i in range(len(method)-1):
-                db.callproc("checkexistdeletezortmain",method[i].split('*')[0],int(amount[i]))
+
+                i = method[i].split('*')[0]
+                data = db.query(f'select descript from {get_role(req,"department")}.stock_zort\
+                    where sku = "{i}"')
+                data = list(data.fetchall())[0][0]
+                
+                db.insert_into_duplicate(get_role(req,'department')+'.'+str(dbname),f"'{i}','{str(data)}'",int(amount[i]) * -1)
+                # db.callproc("checkexistdeletezortmain",method[i].split('*')[0],int(amount[i]))
                 # print("checkexistdeletezortmain",method[i].split('*')[0],int(amount[i]))
         if not method2 == '':
             method = str(method2).split('/')
             for i in method:
-                db.callproc("checkexistdeletezortmain",str(i),0)
+
+                data = db.query(f'select descript from {get_role(req,"department")}.stock_zort\
+                    where sku = "{str(i)}"')
+                data = list(data.fetchall())[0][0]
+                db.insert_into_duplicate(get_role(req,'department')+'.'+str(dbname),f"'{str(i)}','{str(data)}'",0)
+
         sku = req.POST.get('input')
         number = req.POST.get('amount')
         number = int(number)
-        db.callproc("checkexistpluszortmain",str(sku),int(number))
+        
+        data = db.query(f'select descript from {get_role(req,"department")}.stock_zort\
+            where sku = "{str(sku)}"')
+        data = list(data.fetchall())[0][0]
+        db.insert_into_duplicate(get_role(req,'department')+'.'+str(dbname),f"'{str(sku)}','{str(data)}'",int(number))
+
+        # db.callproc("checkexistpluszortmain",str(sku),int(number))
         cursor = db.query(f"select * from {get_role(req,'department')}.stock_zort_extra where amount > 0")
         data = list(cursor.fetchall())
         content = {'data':data}
     else:
+        name = req.GET.get('name')
+        if not name:
+            name=  ''
         cursor = db.query(f"select * from {get_role(req,'department')}.stock_zort_extra where amount > 0")
+
+        db.create_table(f"{get_role(req,'department')}.{name}")
+
         data = list(cursor.fetchall())
-        content = {'data':data}
+        content = {'data':data,
+                    'name':name
+                    }
     return render(req,'checkstock.html',content)
 
 def check_tracking(req,trackno):

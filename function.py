@@ -68,7 +68,22 @@ class DB:
             mycursor = self.mydb.cursor(buffered=True)
             mycursor.callproc(procname, arg)
             self.mydb.commit()
+    
+    def create_table(self,dbname):
+        task = f'''create table if not exists {dbname} (  `sku` longtext NOT NULL,
+                    `descript` longtext,
+                    `amount` int DEFAULT NULL )'''
+        db.query_commit(task)
+        # print(task)
 
+    def insert_into_duplicate(self,dbname,data,amount):
+        task = f"""
+        INSERT INTO {dbname}(sku, descript, amount)
+        VALUES ({data})
+        ON DUPLICATE KEY UPDATE amount = {amount};  
+        """
+        # db.query_commit(task)
+        print(task)
 db = DB()
 
 def add(sku, user):
@@ -302,7 +317,7 @@ class Web():
 
 def update_size(apikey,apisecret,storename):
     web =Web(apikey,apisecret,storename)
-    df = pd.read_excel(r"C:\Users\Chino\Downloads\Muslin Size.xlsxw")
+    df = pd.read_excel(r"C:\Users\Chino\Downloads\Muslin Size.xlsx")
     for i in df.index:
         if  not str(df.loc[i,"SIZE"]) == 'nan':
             web.post_descript("UPDATEPRODUCT",str(df.loc[i,'SKU']),str(df.loc[i,'SIZE']))
@@ -486,9 +501,14 @@ def copy(source,dest):
         table = sqlalchemy.Table(i[0],metadata,autoload=True, autoload_with=db1)
         table.create(db2,checkfirst=True)
 
-# copy('maruay','muslin')
+# copy('muslin','maruay')
 def get_database():
     result = db.query('show databases')
     result = list(result.fetchall())
     return [i[0] for i in result if i[0] not in ['information_schema', 'mysql', 'performance_schema','sys','image'] ]
 
+
+# update_size("7KRzYzjPqknzzSM2nVcooo3sWNF6EK4Oyq9QtGI8uyk=","RA9VD1AjwaHo8UW0uNk924SnxN0xIFIGdlelDEcTEE=","Muslin.info@gmail.com")
+string = '1234'
+print(string[:2])
+print(string[2:])

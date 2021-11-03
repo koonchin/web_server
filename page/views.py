@@ -10,45 +10,79 @@ from datetime import datetime
 # Create your views here.
 
 def image_admin(req):
+    size_dict = {1: None, 2: 'S', 3: 'M', 4: 'L', 5: 'XL', 6: '2XL', 7: '3XL'}
     inches_dict = {'breast': 'รอบอก', 'wrest': 'เอว',
                    'hip': 'สะโพก', 'len': 'กางเกงยาว'}
-
-    size_dict = {1: None, 2: 'S', 3: 'M', 4: 'L', 5: 'XL', 6: '2XL', 7: '3XL'}
+    dep = get_role(req,'department')
+    downloads = None
     if req.method == 'POST':
         sku = req.POST.get("sku")
         name = req.POST.get("name")
         size = req.POST.get("size")
-        download = req.POST.getlist('checkSKU')
-        size = size_dict[int(size)]
-        dep = str(get_role(req,'department'))
+        breastmax = int(req.POST.get("breastmax"))
+        wrestmax =int(req.POST.get("wrestmax"))
+        hipmax = int(req.POST.get("hipmax"))
+        breastmin = int(req.POST.get("breastmin"))
+        wrestmin = int(req.POST.get("wrestmin"))
+        hipmin = int(req.POST.get("hipmin"))
 
+        downloads = req.POST.getlist('checkSKU')
+        size = size_dict[int(size)]
         if size:
-            task = f"""select * from {dep}.stock_zort
-            where sku like '%{sku}%' and amount > 0
-            and size = '{size}'
-            and descript like '%{name}%'
-            order by amount DESC """
+            task = f"""select sku,descript,amount,size,image,data_size from {dep}.stock_zort
+                where sku like '%{sku}%' and amount > 0
+                and size = '{size}'
+                and descript like '%{name}%'
+                and breast >= {breastmin} and breast <= {breastmax}
+                and minwrest >= {wrestmin} and maxwrest <= {wrestmax}
+                and hip >= {hipmin} and hip <= {hipmax}
+                order by amount DESC """
         else:
-            task = f"""select * from {dep}.stock_zort
-            where sku like '%{sku}%' and amount > 0
-            and descript like '%{name}%'
-            order by amount DESC"""
-        mycursor = db.query(task)
-        data = list(mycursor.fetchall())
+            task = f"""select sku,descript,amount,size,image,data_size from {dep}.stock_zort
+                    where sku like '%{sku}%' and amount > 0
+                    and descript like '%{name}%'
+                    and breast >= {breastmin} and breast <= {breastmax}
+                    and minwrest >= {wrestmin} and maxwrest <= {wrestmax}
+                    and hip >= {hipmin} and hip <= {hipmax}
+                    order by amount DESC """
+    else:
+        task = f"""select sku,descript,amount,size,image,data_size from {dep}.stock_zort
+                where amount > 0
+                order by amount DESC"""
+    mycursor = db.query(task)
+    data = list(mycursor.fetchall())
+    if downloads:
+        sec = download_zip(data)
+        return redirect(f'/media/image_admin/{sec}/{sec}.zip')
+    else:
         for i in range(len(data)):
             data[i] += (i,)
             var = list(data[i])
             var[5] = str(var[5]).replace('/', '"')
             var[5] = ' '.join([inches_dict.get(i, i)
-                               for i in var[5].split()])
+                                for i in var[5].split()])
             data[i] = tuple(var)
-        if download:
-            sec = download_zip(data)
-            return redirect(f'/media/image_admin/{sec}/{sec}.zip')
-        else:
-            # print('test')
-            return render(req, 'image_table.html', {'data': data})
-    return render(req, 'image_admin.html')
+        # if not downloads:
+
+        minbreast = db.query(f"select min(breast) from {get_role(req,'department')}.stock_zort where breast != ''").fetchone()[0]
+        maxbreast = db.query(f"select max(breast) from {get_role(req,'department')}.stock_zort where breast != ''").fetchone()[0]
+        minwrest = db.query(f"select min(minwrest) from {get_role(req,'department')}.stock_zort where minwrest != ''").fetchone()[0]
+        maxwrest = db.query(f"select max(maxwrest) from {get_role(req,'department')}.stock_zort where maxwrest != ''").fetchone()[0]
+        minhip = db.query(f"select min(hip) from {get_role(req,'department')}.stock_zort where hip != ''").fetchone()[0]
+        maxhip = db.query(f"select max(hip) from {get_role(req,'department')}.stock_zort where hip != ''").fetchone()[0]
+
+        content = {'data': data,
+                    'breastmin':minbreast,
+                    'breastmax':maxbreast,
+                    'wrestmin':minwrest,
+                    'wrestmax':maxwrest,
+                    'hipmin':minhip,
+                    'hipmax':maxhip,
+                    }
+        return render(req, 'image_table.html', content)
+    # else:
+        # sec = download_zip(data)
+        # return redirect(f'/media/image_admin/{sec}/{sec}.zip')
 # about api
 
 def download_zip(myresult):
@@ -204,7 +238,7 @@ def get_file_or_folder_age(path):
 def test(req):
     return render(req,'test.html')
 
-def movies(request):
+# def movies(request):
     movies = StockZort.objects.all()
     paginator = Paginator(movies, 3)
     page_number = request.GET.get('page')

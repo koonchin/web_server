@@ -6,7 +6,11 @@
     {% block content %}
     <meta name="viewport" content="width=device-width, initial-scale=1"> {% if role == 'admin' or role == 'super' %}
     <button type="button" style="float: right;" class="button button2" onclick="test()">เอาออกจากห้องไลฟ์</button> {% endif %}
-
+    <form method="get" action="/live/room/">
+        {% csrf_token %}
+        
+        <button type="button" style="float: right;margin-right:5vmax;color:black;" class="button" onclick="this.form.submit()">ยังไม่รีด</button>
+    </form>
     <style>
         .button {
             border: none;
@@ -77,7 +81,7 @@
 
 <body style="margin-left:-10vmax;margin-top: -5vmin;">
 
-    <h2>*STOCK LIVE*</h2>
+    <h2>สต็อคห้องไลฟ์</h2>
 
     <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for sku..." title="Type in a name">
 
