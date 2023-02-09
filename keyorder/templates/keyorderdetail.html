@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Order Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="/media/css/bootstrap.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/media/keyorder.css" />
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        div.scrollmenu {
+            background-color: #333;
+            overflow: auto;
+            white-space: nowrap;
+        }
+        
+        div.scrollmenu a {
+            display: inline-block;
+            color: white;
+            text-align: center;
+            padding: 14px;
+            text-decoration: none;
+        }
+        
+        div.scrollmenu a:hover {
+            background-color: #777;
+        }
+    </style>
+</head>
+
+<body> {% comment %}
+    <div class="sidebar" name="sidebar" style="text-align: center;"> {% load tags %} {% role request as role %} {% if user.is_authenticated and role != 'key' %} <a href="/">หน้าหลัก</a> {% if role == 'stock' or role == 'super' %} <a href="/check">แพ็คสินค้า</a><a href="/barcode/">ปริ้นท์บาร์โค้ด</a><a href="/checkstock/">เช็คสต็อค</a>        {% endif %} <a href="/live/main/">สต็อคห้องไลฟ์</a><a href="/page/">แอดมินโหลดรูป</a><a href="/RMA/">บันทึกของ Return</a><a href="/keyorder/">KeyOrder</a><a href="/RMA/stock/">RMA</a> {% endif %} </div> {% endcomment %}
+    <div class="scrollmenu">
+        {% load tags %} {% role request as role %} {% if user.is_authenticated and role != 'key' %} <a href="/">หน้าหลัก</a>{% if role == 'stock' or role == 'super' %} {% comment %} <a href="/check/">แพ็คสินค้า</a> {% endcomment %} <a href="/barcode/">ปริ้นท์บาร์โค้ด</a>
+        <a href="/stock_check/">STOCK</a><a href="/upstock/">ลงของ</a> {% endif %} {% comment %} <a href="/checkstock/">เช็คสต็อค</a> {% endcomment %} <a href="/page">แอดมินโหลดรูป</a><a href="/live/main/">สต็อคห้องไลฟ์</a><a href="/uploadimage/">ลงรหัสรูป</a>
+        <a href="/RMA/">บันทึกของ Return</a>
+        <a href="/keyorder/">KeyOrder</a><a href="/RMA/stock/">RMA</a><a href="/blog/">BLOGS</a><a href="/blog/soldout/">แจ้งของหมด</a><a href="/blog/reserve/">RESERVE</a><a href="/logout/" style="margin-left:48vmax;">Logout</a> {% endif %}         {% if role == 'key' %}
+        <a href="/keyorder/">KeyOrder</a>
+        <a href="/logout/" style="margin-left:48vmax;">Logout</a>
+        {% endif %}</div>
+    <div class="container" style="padding-top:1vmax;">
+        <div class="col">
+            <h1>แก้ไขออเดอร์ </h1>
+        </div>
+        <div class="row">
+            <div class="col-sm-8">
+                <form method="post" action="/keyorder/updateorder/{{id}}/">
+                    {% csrf_token %}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">ชื่อสินค้า</th>
+                                <th scope="col">&nbsp;&nbsp;จำนวน</th>
+                                <th scope="col">ราคาต่อหน่วย</th>
+                                <th scope="col">รวม</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider"> {% for id,productname,amount,price in result %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ productname }} <input type="hidden" name="product{{ forloop.counter }}" value="{{id}}"></td>
+                                <td><span style="cursor:pointer;" onclick="javascript: changeNumber({{forloop.counter}},-1);"><big>&nbsp;-&nbsp;</big></span>&nbsp;&nbsp;<span id="productnumber2_{{forloop.counter}}" class="font-lato">{{amount}}</span> &nbsp;
+                                    <span style="cursor:pointer;" onclick="javascript: changeNumber({{forloop.counter}},1);"><big>&nbsp;+&nbsp;</big></span><input type="hidden" id="productnumber{{forloop.counter}}" name="amount{{forloop.counter}}" value="{{amount}}"></td>
+                                <td>
+                                    <div><input id="price{{forloop.counter}}" type="hidden" name="price{{forloop.counter}}" value="{{ price }}"> {{ price }}</div>
+                                </td>
+                                <td>
+                                    <div id="total{{forloop.counter}}" name="total" value="{% widthratio amount 1 price %}">{% widthratio amount 1 price %}</div>
+                                </td>
+                                <td><button type="button" style="border: none;" onclick="SomeDeleteRowFunction(this)"><i class='bx bx-trash' style="color: red;"></i></button></td>
+                            </tr> {% endfor %} </tbody>
+                    </table>
+                    <hr>
+                    <div class="row">
+                        <div class="mb-7"><a href="/keyorder/editorder/{{id}}/"><button type="button" class="btn btn-outline-secondary"> สั่งสินค้าเพิ่ม </button></a></div>
+                        <hr>
+                        <div class="row">
+                            <div>
+                                <h5>ข้อมูลผู้ติดต่อ </h5>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-6">
+                                    <div class="row"> ชื่อ *
+                                        <div class="col-sm-8"><input required type="text" class="form-control form-text" id="name" name="name" maxlength="32" value="{{name}}"></div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="row"> เบอร์โทร *
+                                        <div class="col-sm-8"><input required type="text" class="form-control form-text" id="tel" name="tel" maxlength="32" value="{{tel}}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-6">
+                                    <div class="row"> ที่อยู่ *
+                                        <div class="col-sm-8"><textarea required class="form-control form-text" id="address" name="address" rows="3" onchange="javascript:finalResult('address')">{{address}}</textarea></div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="row"> เลขแทร็คกิ้ง
+                                        <div class="col-sm-8"><input type="text" class="form-control form-text" id="trackingno" name="trackingno" maxlength="32" value="{{trackingno}}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-6">
+                                    <div class="row"> ส่วนลด
+                                        <div class="col-sm-8"><input placeholder="0" required type="text" class="form-control form-text" id="discount" name="discount" maxlength="32" value="{{discount}}" onchange="javascript:Calculate()"></div>
+                                    </div>
+                                    <div class="row"> ค่าส่ง
+                                        <div class="col-sm-8"><input placeholder="0" required type="text" class="form-control form-text" id="fee" name="fee" maxlength="32" value="{{fee}}" onchange="javascript:Calculate()"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="row"> ช่องทางการชำระเงิน
+                                        <div class="col-sm-8">
+                                            {% if paymentstatus == '1' %}
+                                            <select class="form-select" name="status">
+                                                <option value = "1" selected>โอนผ่านธนาคาร</option>
+                                                <option value="0">เก็บเงินปลายทาง (COD)</option>
+                                              </select> {% else %}
+                                            <select class="form-select" name="status">
+                                                  <option value = "1">โอนผ่านธนาคาร</option>
+                                                  <option value="0" selected>เก็บเงินปลายทาง (COD)</option>
+                                                </select> {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="col-sm-4">
+                <h5>สรุปยอดชำระเงิน </h5>
+                <div class="row">
+                    <div class="col-sm-6"> มูลค่ารวมก่อนภาษี </div>
+                    <div class="col-sm-6 text-right" id="beforetax">0.00 </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6"> ภาษี </div>
+                    <div class="col-sm-6 text-right" id="tax">0.00 </div>
+                    <div class="row" style="font-size: larger;">
+                        <div class="col-sm-6"> มูลค่ารวมสุทธิ </div>
+                        <div class="col-sm-6 text-right" style="font-weight: bold;" id="sum">0.00 </div> <input type="hidden" name="totalprice" id="totalprice">
+                    </div>
+                    <div class="row" style="padding-top: 1vmax ;"><button type="submit" class="btn btn-primary" style="border-radius: 1.5rem;">ยืนยัน</button></div>
+                </div>
+            </div>
+            </form>
+
+            <div class="row">
+                <div class="col-sm-4"></div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            function Calculate() {
+                var Total = document.getElementsByName('total');
+                var TotalAll = document.getElementById('sum');
+                var tax = document.getElementById('tax');
+                var beforetax = document.getElementById('beforetax');
+                var fee = document.getElementById('fee');
+                var discount = document.getElementById('discount');
+                var totalprice = document.getElementById('totalprice');
+                var FEE = fee.value;
+                var DISCOUNT = discount.value;
+                if (!(FEE)) {
+                    FEE = 0;
+                }
+                if (!(DISCOUNT)) {
+                    DISCOUNT = 0;
+                }
+                var SUM = 0;
+                for (let i = 0; i < Total.length; i++) {
+                    SUM += parseFloat(Total[i].innerHTML);
+                }
+                beforetax.innerHTML = SUM * 93 / 100;
+                tax.innerHTML = SUM * 7 / 100;
+                SUM += parseFloat(FEE);
+                SUM -= parseFloat(DISCOUNT);
+                totalprice.value = SUM;
+                TotalAll.innerHTML = SUM;
+            };
+            Calculate();
+
+            function changeNumber(index, direction) {
+                var oldindex = document.getElementById("productnumber" + index);
+                var showamount = document.getElementById("productnumber2_" + index);
+                showamount.innerHTML = parseInt(oldindex.value) + direction;
+                oldindex.value = parseInt(oldindex.value) + parseInt(direction);
+                eachTotal(index);
+            };
+
+            function SomeDeleteRowFunction(o) {
+                //no clue what to put here?
+                var p = o.parentNode.parentNode;
+                p.parentNode.removeChild(p);
+            }
+
+            function eachTotal(index) {
+                var price = document.getElementById("price" + index);
+                var total = document.getElementById("total" + index);
+                var amount = document.getElementById("productnumber" + index);
+                total.innerHTML = parseInt(price.value) * parseInt(amount.value);
+                Calculate()
+            };
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+        <script src="/media/js/bootstrap.bundle.js"></script>
+        <script>
+            const finalResult = (id, mainAddress) => {
+                var addr = document.getElementById(id);
+                var text = addr.value;
+                mainAddress = '';
+                const namePattern = /(เด็กชาย|เด็กหญิง|ด\.ช\.|ด\.ญ\.|นาย|นาง|นางสาว|น\.ส\.|นส\.|ดร\.|คุณ)([ก-๙]+\s[ก-๙]+)/;
+                const phonePattern = /(08\d{1}-\d{3}-\d{4}|08\d{1}-\d{7}|08\d{8})/;
+                const phonePattern2 = /(09\d{1}-\d{3}-\d{4}|09\d{1}-\d{7}|09\d{8})/;
+                const phonePattern3 = /(06\d{1}-\d{3}-\d{4}|06\d{1}-\d{7}|06\d{8})/;
+                let remainingTxt = text;
+                //ตัดชื่อ ตำบล แขวง เขต จังหวัด รหัสไปรษณีย์ ที่เราได้มาแล้วออกไปก่อน
+                const keyPattern = Object.values(mainAddress);
+                keyPattern.forEach(key => {
+                    remainingTxt = remainingTxt.replace(key, '').trim();
+                });
+                //หาชื่อจาก pattern ที่มีคำนำหน้าและภาษาไทย 2 ก้อน แล้วก็เก็บลงไปในตัวแปร 
+                const nameMatched = remainingTxt.match(namePattern);
+                let name = '';
+                if (nameMatched) {
+                    [name] = nameMatched
+                }
+                //เสร็จแล้วก็ลบออกจาก text ด้วย
+                remainingTxt = remainingTxt.replace(name, '').trim();
+                //หาเบอร์โทร อันนี้น่่าจะง่ายกว่าหาชื่อครับตัวเลขล้วนๆขึ้นต้นด้วย 08
+                const phoneMatched = remainingTxt.match(phonePattern);
+                const phoneMatched2 = remainingTxt.match(phonePattern2);
+                const phoneMatched3 = remainingTxt.match(phonePattern3);
+                let phone = '';
+                if (phoneMatched) {
+                    [phone] = phoneMatched
+                }
+                if (phoneMatched2) {
+                    [phone] = phoneMatched2
+                }
+                if (phoneMatched3) {
+                    [phone] = phoneMatched3
+                }
+                //อย่าลืมลบออกเหมือนกันนะ
+                remainingTxt = remainingTxt.replace(phone, '').trim();
+                //เอาพวก "-" ออกไปเพราะบางคนอาจจะใส่หรือไม่ใส่เราก็ไม่รู้ เอาออกเลยดีกว่า
+                phone = phone.replace(/-/g, '');
+                //บางครั้งคนเราจะชอบใส่เบอร์ในวงเล็บ (081-222-3333) มันจะเหลือแต่ () เราก็ลบทิ้งไป
+                remainingTxt = remainingTxt.replace('()', '').trim();
+                //ก้อนสุดท้ายขอทึกทักเอาเองเลยว่ามันคือ ที่อยู่ย่อยๆ ซึ่งผมจะไม่เอาไปแยกนะครับ ผมพอใจแล้ว
+                const address = remainingTxt.replace(/\s+/g, ' ').trim();
+                var addressinput = document.getElementById('address');
+                addressinput.value = address;
+                var telinput = document.getElementById('tel');
+                if (telinput.value == "") {
+                    telinput.value = phone;
+                }
+                var nameinput = document.getElementById('name');
+                if (nameinput.value == "") {
+                    nameinput.value = name;
+                }
+                return {
+                    name,
+                    phone,
+                    address,
+                    ...mainAddress
+                }
+            }
+        </script>
+</body>
+
+</html>

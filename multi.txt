@@ -1,0 +1,7 @@
+update muslin.stock_main set amount = 2 where sku = 'SN0578-S';
+update muslin.stock set amount = 3 where sku = 'SN0578-S';
+update muslin.stock_main set amount = 2 where sku = 'SP0759-F';
+update muslin.stock set amount = 10 where sku = 'SP0759-F';
+insert into muslin.stock values ("SP0785-F",0);
+update muslin.stock_main set amount = 0 where sku = 'SP0785-F';
+update muslin.stock set amount = 10 where sku = 'SP0785-F';

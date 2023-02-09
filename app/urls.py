@@ -27,6 +27,13 @@ urlpatterns = [
     path("register/",include('register.urls'), name='register'),
     path('', include("django.contrib.auth.urls")),
     path('page/',include('page.urls')),
+    path('blog/',include('blog.urls')),
+    path('webhook/',include('webhook.urls')),
+    path('docs/',include('docs.urls')),
+    path('RMA/',include('RMA.urls')),    
+    path('keyorder/',include('keyorder.urls')),
     url(r'^media/(?P<path>.*)$', serve,
         {'document_root': settings.MEDIA_ROOT}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

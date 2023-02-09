@@ -1,0 +1,645 @@
+body {
+    background: #f7f7f7
+}
+
+.page {
+    position: relative;
+    padding: 0;
+    background: #fff;
+    width: 100mm;
+    height: 149mm;
+    margin: auto;
+    padding-top: 10px;
+    color: #000
+}
+
+.page.sticker4x4 {
+    width: 100mm;
+    height: 100mm
+}
+
+.page-wrapper {
+    width: 100%;
+    height: 100%;
+    margin: 2mm auto 0;
+    position: relative;
+    background: #fff;
+    width: 285mm;
+    height: 195mm;
+    font-size: 8px
+}
+
+.A5 {
+    width: 195mm;
+    height: 125mm;
+    font-size: 8px
+}
+
+.page-wrapper.A5 {
+    width: 195mm;
+    height: 125mm;
+    font-size: 8px
+}
+
+.page-wrapper.letter4x6 {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    position: relative;
+    background: #fff;
+    width: 285mm;
+    height: 195mm;
+    font-size: 10px
+}
+
+.page-border {
+    background-size: 60%;
+    height: 100%;
+    position: relative
+}
+
+.letter4x6-marginbottom {
+    margin-bottom: 3mm
+}
+
+.letter4x6-padding-top {
+    padding-top: 5px
+}
+
+.sticker4x6-marginbottom,
+.sticker4x3-marginbottom {
+    margin-bottom: 0
+}
+
+.sticker4x6-padding-top,
+.sticker4x3-padding-top {
+    padding-top: 5px
+}
+
+.marketplace-logo {
+    margin-top: 3%;
+    margin-left: 5%;
+    width: auto;
+    font-size: 18px
+}
+
+._marginLeft {
+    left: 4%
+}
+
+.detail-area-w180 {
+    width: 100px!important
+}
+
+.detail-area-w220 {
+    width: 220px!important
+}
+
+.detail-area {
+    width: 20%;
+    position: absolute;
+    top: 4%;
+    right: 4%
+}
+
+.detail-area2 {
+    width: 30%;
+    position: absolute;
+    top: 4%;
+    right: 15%
+}
+
+._marginTop {
+    top: 4%
+}
+
+._marginRight {
+    right: 4%
+}
+
+.detail-barcode {
+    width: 80%;
+    text-align: center;
+    margin-left: auto;
+    margin-top: 10px;
+    border-bottom: 0
+}
+
+.A4 .detail-barcode li,
+.A5 .detail-barcode li,
+.A6 .detail-barcode li {
+    padding: 4% 0;
+    margin: 0!important
+}
+
+.A4 .detail-barcode,
+.A5 .detail-barcode,
+.A6 .detail-barcode {
+    width: 100%
+}
+
+.detail-barcode li.logo-area {
+    padding-top: 10%
+}
+
+.detail-barcode li.border {
+    border: 1px solid #636363
+}
+
+.detail-barcode li {
+    padding: 6% 0;
+    margin-bottom: 4%;
+    line-height: 1.1em;
+    text-align: center
+}
+
+.address-box {
+    max-width: 100%;
+    min-width: 40mm
+}
+
+.sender-area {
+    position: absolute;
+    top: 22%;
+    left: 5%;
+    width: 90%;
+    font-size: 20px
+}
+
+.A5 ._marginLeft {
+    left: 3%
+}
+
+.A5 .sender-area {
+    font-size: 14px;
+    left: 5%
+}
+
+.customer-area {
+    position: absolute;
+    left: 5%;
+    top: 36%;
+    width: 90%;
+    font-size: 20px
+}
+
+.barcode-area-default {
+    position: absolute;
+    left: 5%;
+    bottom: 24%
+}
+
+.barcode-area {
+    position: absolute;
+    left: 5%;
+    bottom: 2%
+}
+
+.A5 .customer-area {
+    left: 48%;
+    bottom: 12%;
+    font-size: 14px
+}
+
+.A5 .detail-area {
+    right: 1%;
+    width: 20%
+}
+
+.A5 .detail-area2 {
+    right: 20%;
+    width: 30%
+}
+
+.A5 ._marginTop {
+    top: 3%
+}
+
+.A5 ._marginRight {
+    right: 3%
+}
+
+.letter .detail-area,
+.letter4x6 .detail-area,
+.sticker4x6 .detail-area {
+    right: 3%
+}
+
+.sticker4x3 .detail-area {
+    left: 65%;
+    right: 3%;
+    width: 35%;
+    border-left: 1px solid #000
+}
+
+.letter .detail-area2,
+.letter4x6 .detail-area2,
+.sticker4x6 .detail-area2,
+.sticker4x3 .detail-area2 {
+    right: 25%
+}
+
+.letter ._marginTop,
+.letter4x6 ._marginTop,
+.sticker4x6 ._marginTop {
+    top: 34%
+}
+
+.sticker4x3 ._marginTop {
+    top: 38%
+}
+
+.letter ._marginRight,
+.letter4x6 ._marginRight,
+.sticker4x6 ._marginRight,
+.sticker4x3 ._marginRight {
+    right: 3%
+}
+
+.letter .detail-barcode,
+.letter4x6 .detail-barcode,
+.sticker4x6 .detail-barcode,
+.sticker4x3 .detail-barcode {
+    margin-top: 5px;
+    width: 100%
+}
+
+.letter .detail-barcode li.logo-area,
+.letter4x6 .detail-barcode li.logo-area,
+.sticker4x6 .detail-barcode li.logo-area,
+.sticker4x3 .detail-barcode li.logo-area {
+    padding-top: 5px;
+    padding-bottom: 5px
+}
+
+.letter .detail-barcode li.border:last-child,
+.letter .detail-barcode li.border-bottom,
+.letter4x6 .detail-barcode li.border:last-child,
+.letter4x6 .detail-barcode li.border-bottom,
+.sticker4x6 .detail-barcode li.border:last-child,
+.sticker4x6 .detail-barcode li.border-bottom,
+.sticker4x3 .detail-barcode li.border:last-child,
+.sticker4x3 .detail-barcode li.border-bottom {
+    border-bottom: 1px solid #636363
+}
+
+.letter .detail-barcode li,
+.letter4x6 .detail-barcode li,
+.sticker4x6 .detail-barcode li,
+.sticker4x3 .detail-barcode li {
+    margin: 0;
+    border-bottom: 0;
+    padding: 3% 0;
+    padding-top: 3%;
+    padding-bottom: 3%
+}
+
+.font-extra {
+    margin-bottom: .5mm;
+    font-size: 18px
+}
+
+._bold {
+    font-weight: 700
+}
+
+.A5 .font-extra {
+    font-size: 16px
+}
+
+.sender-area .font-extra {
+    font-size: 24px
+}
+
+.A5 .sender-area .font-extra {
+    font-size: 16px
+}
+
+.address-box .address-row {
+    height: 34px;
+    line-height: 34px;
+    vertical-align: bottom;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.sender-area .address-row {
+    line-height: 30px
+}
+
+.A5 .address-box .address-row {
+    height: 30px;
+    line-height: 30px
+}
+
+.zipcode-area {
+    margin-top: 4mm;
+    text-align: center
+}
+
+.A5 .zipcode-area {
+    margin-top: 3mm
+}
+
+.zipcode-area li {
+    float: left;
+    border: 1px solid #666;
+    background: #fff;
+    margin-right: 10px;
+    line-height: 1.4em;
+    padding: 0;
+    margin-right: 10px;
+    width: 40px;
+    height: 40px
+}
+
+.A5 .zipcode-area li {
+    padding: 3px 7px;
+    margin-right: 4px;
+    width: 30px;
+    height: 30px
+}
+
+.A5 .zipcode-area.small-box li {
+    width: 25px;
+    height: 25px;
+    padding: 0
+}
+
+.zipcode-area.small-box li {
+    display: inline-block;
+    text-align: -webkit-match-parent
+}
+
+.page.landscape {
+    width: 297mm;
+    min-height: 200mm
+}
+
+.page-wrapper.letter {
+    width: 162mm;
+    height: 80mm;
+    margin-top: 3mm;
+    font-size: 9px
+}
+
+.letter .font-extra,
+.letter4x6 .font-extra,
+.sticker4x6 .font-extra,
+.sticker4x3 .font-extra {
+    font-size: 11px;
+    margin-bottom: 0
+}
+
+.letter .sender-area,
+.letter4x6 .sender-area,
+.sticker4x6 .sender-area {
+    font-size: 12px;
+    left: 5%;
+    line-height: 1.1
+}
+
+.sticker4x3 .sender-area,
+.sticker4x6 .customer-area {
+    width: 59%;
+    font-size: 12px;
+    left: 5%;
+    line-height: 1.1
+}
+
+.letter .address-box .address-row,
+.letter4x6 .address-box .address-row,
+.sticker4x6 .address-box .address-row,
+.sticker4x3 .address-box .address-row {
+    height: 25px;
+    line-height: 25px
+}
+
+.letter .zipcode-area,
+.letter4x6 .zipcode-area,
+.sticker4x6 .zipcode-area {
+    margin-top: 0
+}
+
+.sticker4x3 .zipcode-area {
+    width: 35%;
+    height: 38%;
+    margin-top: 0;
+    padding-top: 10%;
+    left: 65%;
+    position: absolute;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #000
+}
+
+.letter .zipcode-area.small-box li,
+.letter4x6 .zipcode-area.small-box li,
+.sticker4x6 .zipcode-area.small-box li,
+.sticker4x3 .zipcode-area.small-box li {
+    height: auto;
+    padding: 0;
+    line-height: 1.4em
+}
+
+.letter .customer-area,
+.letter4x6 .customer-area,
+.sticker4x6 .customer-area {
+    left: 5%;
+    top: 36%;
+    font-size: 14px;
+    width: 90%;
+    line-height: 1.1
+}
+
+.sticker4x6 .customer-area {
+    width: 60%;
+    top: 40%
+}
+
+.sticker4x3 .customer-area {
+    left: 5%;
+    top: auto;
+    bottom: 5%;
+    font-size: 12px;
+    width: 60%;
+    line-height: 1.1
+}
+
+.letter .font-extra,
+.letter4x6 .font-extra,
+.sticker4x6 .font-extra,
+.sticker4x3 .font-extra {
+    font-size: 11px;
+    margin-bottom: 0
+}
+
+.page-wrapper.letter4x6 {
+    width: 140mm;
+    height: 89mm;
+    margin-top: 0;
+    font-size: 9px
+}
+
+.page-wrapper.sticker4x6 {
+    width: 100mm;
+    height: 149mm;
+    margin: auto;
+    font-size: 9px;
+    padding: 5px
+}
+
+.page-wrapper.sticker4x4 {
+    width: 100mm;
+    height: 100mm;
+    margin: auto;
+    padding: 5px
+}
+
+.page-wrapper.sticker4x3 {
+    width: 100mm;
+    height: 74mm;
+    margin: auto;
+    font-size: 9px;
+    padding: 5px
+}
+
+p,
+ul {
+    margin-bottom: 0;
+    line-height: 1.6em
+}
+
+.letter .zipcode-area li {
+    padding: 0;
+    margin-right: 2px;
+    width: 22px;
+    height: 22px;
+    line-height: 1.6em
+}
+
+.letter4x6 .zipcode-area li,
+.letter4x3 .zipcode-area li {
+    padding: 0;
+    margin-right: 2px;
+    width: 22px;
+    height: 22px;
+    line-height: 1.6em
+}
+
+.sticker4x6 .zipcode-area li,
+.sticker4x3 .zipcode-area li {
+    padding: 0;
+    margin-right: 2px;
+    width: 22px;
+    height: 22px;
+    line-height: 1.6em
+}
+
+.top-right-mark {
+    padding: 5px;
+    border: 1px solid #636363;
+    text-align: center
+}
+
+.top-right-mark-noborder {
+    padding: 5px;
+    border: 0;
+    text-align: center;
+    padding-top: 7px;
+    padding-left: 0
+}
+
+.top-right-mark .dot-line {
+    display: inline-block;
+    width: 20px;
+    line-height: 1em
+}
+
+.dot-line {
+    border-bottom: 1px dotted #666
+}
+
+.remark {
+    position: absolute;
+    bottom: 12%;
+    left: 3%;
+    right: 3%
+}
+
+.remarklogistic {
+    position: absolute;
+    bottom: 2%;
+    left: 5%;
+    font-size: 14px;
+    border-style: solid;
+    border-width: 1px;
+    width: 90%;
+    height: 21%;
+    font-size: small;
+    overflow: hidden
+}
+
+.remarklogistic>div {
+    width: 100%;
+    padding: 5px;
+    overflow: hidden;
+    position: relative;
+    display: inline-block;
+    word-wrap: break-word;
+    overflow: hidden;
+    line-height: 85%;
+    max-height: 100%;
+    text-align: justify
+}
+
+.zipcode-area {
+    margin-top: 4mm;
+    text-align: center
+}
+
+.A5 .zipcode-area {
+    margin-top: 3mm
+}
+
+.font-size-20px {
+    font-size: 16px!important
+}
+
+.font-size-18px {
+    font-size: 14px!important
+}
+
+.font-size-16px {
+    font-size: 12px!important
+}
+
+.remark-list {
+    padding: 0;
+    list-style: none;
+    line-height: 1;
+    height: 15px;
+    overflow: hidden
+}
+
+@media print {
+    .page-wrapper.sticker4x4 {
+        padding: 0
+    }
+}
+
+.page.sticker4x4 .remarklogistic {
+    height: 17%
+}
+
+.page.sticker4x4 .barcode-area-default {
+    bottom: 21%
+}
+
+.page.sticker4x4 .address-box .address-row {
+    height: 20px;
+    line-height: 20px
+}
+
+.barcode-area-default .logo-marginleft label {
+    margin-bottom: 0
+}

@@ -12,9 +12,8 @@
 
 <body style="width: 75vmax;">
     <form method="POST" class="form-group">
-        {% csrf_token %}{{ form|crispy }}{{ emp|crispy }} {% if form.errors or emp.errors %}
-        <p>Something is wrong</p>
-        {% endif %}
+        {% csrf_token %}{{ form|crispy }}{{ emp|crispy }}
+        
         <button type="submit" class="btn btn-success">Register</button>
 
     </form>

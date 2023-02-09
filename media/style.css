@@ -105,11 +105,6 @@ body {
     width: 100%;
 }
 
-.main {
-    margin-left: 25vw;
-    margin-top: 5%;
-}
-
 .top {
     top: 50%;
 }
@@ -118,6 +113,8 @@ body {
     margin-top: 2%;
 }
 
+
+/* 
 .database {
     position: fixed;
     left: 15vmax;
@@ -126,10 +123,13 @@ body {
 }
 
 .database select {
-    width: 17vmax;
+    position: fixed;
+    right: 50%;
+    top: 1%;
+    width: 10vmax;
     height: 2.5vmax;
     text-align: center;
-}
+} */
 
 .table-striped>tbody>tr:nth-child(odd)>td,
 .table-striped>tbody>tr:nth-child(odd)>th {
@@ -166,7 +166,7 @@ body {
 
 .popup .popuptext {
     visibility: hidden;
-    width: 15vmax;
+    width: 20vmax;
     background-color: #555;
     color: #fff;
     text-align: center;
@@ -255,7 +255,11 @@ body {
 
 /* The Modal (background) */
 
-.modal {
+.modaltext {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modals {
     display: none;
     /* Hidden by default */
     position: fixed;
@@ -282,7 +286,7 @@ body {
 
 /* Modal Content (image) */
 
-.modal-content {
+.modals-content {
     margin: auto;
     display: block;
     width: 80%;
@@ -306,7 +310,7 @@ body {
 
 /* Add Animation */
 
-.modal-content,
+.modals-content,
 #caption {
     -webkit-animation-name: zoom;
     -webkit-animation-duration: 0.6s;
@@ -356,7 +360,89 @@ body {
 /* 100% Image Width on Smaller Screens */
 
 @media only screen and (max-width: 700px) {
-    .modal-content {
+    .modals-content {
         width: 100%;
     }
+}
+
+#progress-wrp {
+    border: 1px solid #0099CC;
+    padding: 1px;
+    position: relative;
+    height: 30px;
+    border-radius: 3px;
+    margin: 10px;
+    text-align: left;
+    background: #fff;
+    box-shadow: inset 1px 3px 6px rgba(0, 0, 0, 0.12);
+}
+
+#progress-wrp .progress-bar {
+    height: 100%;
+    border-radius: 3px;
+    background-color: #f39ac7;
+    width: 0;
+    box-shadow: inset 1px 1px 10px rgba(0, 0, 0, 0.11);
+}
+
+#progress-wrp .status {
+    top: 3px;
+    left: 50%;
+    position: absolute;
+    display: inline-block;
+    color: #000000;
+}
+
+.stock_check_btn {
+    width: 20vmax;
+}
+
+.stock_check_btn:hover {
+    width: 20vmax;
+}
+
+.donate-now {
+    list-style-type: none;
+    margin: 2vmin 0 0 0;
+    padding: 0;
+}
+
+.donate-now li {
+    float: left;
+    margin: 0 .5vmin 0 0;
+    width: 16.6vmax;
+    height: 3vmax;
+    margin-bottom: 1.5vmax;
+    position: relative;
+}
+
+.donate-now label,
+.donate-now input {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.donate-now input[type="radio"] {
+    opacity: 0.01;
+    z-index: 100;
+}
+
+.donate-now input[type="radio"]:checked+label,
+.Checked+label {
+    background: lightblue;
+}
+
+.donate-now label {
+    padding: .5vmin;
+    border: 1px solid #CCC;
+    cursor: pointer;
+    z-index: 90;
+}
+
+.donate-now label:hover {
+    background: #DDD;
 }

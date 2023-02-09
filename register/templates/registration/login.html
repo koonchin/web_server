@@ -2,11 +2,12 @@
 
 <head>
     <title>LOGIN</title>
+            {% include 'messages.html' %}
 </head>
 
 {% load crispy_forms_tags %} {% block content %}
 
-<body style="width: 75vmax;">
+<body style="width: 75vmax;margin-left:10vmax;">
 
     <form method="post" class="form-group">
         {% csrf_token %}

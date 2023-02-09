@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from .forms import EmployeeForm
 from function import get_api_register
+from django.contrib import messages
 # Create your views here.
 
 
@@ -10,6 +11,7 @@ def register(req):
         employee_form = EmployeeForm(req.POST)
         user_form = UserCreationForm(req.POST)
         if user_form.is_valid() and employee_form.is_valid():
+            messages.success(req,'valid')
             user = user_form.save()
             employee = employee_form.save(commit=False)
             employee.user = user
@@ -21,7 +23,8 @@ def register(req):
             employee.databasename =  get_api_register(str(employee.department),'databasename')
             user.save()
             employee.save()
-            
+        else:
+            messages.error(req,"Unsuccessfull registration. Invalid information!.")
         return redirect('/login/')
     else:
         user_form = UserCreationForm()

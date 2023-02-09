@@ -3,7 +3,6 @@
 <html lang="en">
 
 <!-- Required meta tags -->
- {% block content %}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -12,6 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/jsbarcode/3.6.0/JsBarcode.all.min.js"></script>
     <link rel="stylesheet" href="/media/style.css?{% now " U " %}">
+ {% block content %}
     <style>
         .box {
             width: 50vmax;
@@ -42,22 +42,23 @@
 </head>
 
 
-<body style="margin-left:7vmax">
+<body>
     <h2 class="stroke2" style="position: fixed;right: 2vmax;top: 2vmax;">ปริ้นท์บาร์โค้ด</h2>
 
-    <form method="get" action="/barcode/" class="row row-cols-lg-auto g-3 align-items-center" style="margin-left: -13vmax;">
+    <form method="get" action="/barcode/" class="row row-cols-lg-auto g-3 align-items-center" style="margin-left: 10vmax;margin-top:3vmax;">
         {% csrf_token %}
         <div class="col-12">
             <label class="visually-hidden" for="inlineFormSelectPref">Preference</label>
             <select name="inlineFormSelectPref" class="form-select" id="inlineFormSelectPref" style="margin-left: 10vmax;width: 10vmax;height: 4.7vmax;font-size: 2vmax;margin-right: -.5vmax;">
-                <option selected>ZORT</option>
+                <option value="ZORT" selected>ZORT</option>
                 <option value="VRICH">VRICH</option>
+                <option value="QC">Custom</option>
             </select>
         </div>
         <div class="col-12">
             <div class="mb-3 justify">
                 <label for="exampleInputEmail1" class="form-label justify">
-                <h1 class="stroke" style="font-size: 5vmax;">ใส่รหัส SKU</h1>
+                <h1 class="stroke" style="font-size: 5vmax;">ใส่ SKU</h1>
             </label>
                 <input style="margin-left: -.5vmax;" type="text" class="form-control input" id="Barcode" name="Barcode" aria-describedby="emailHelp">
                 <button type="submit" class="btn btn-primary" style="font-size: 2.5vmax;width: 25vmax;margin-left: 6.5vmax;">ยืนยัน</button>
@@ -65,7 +66,7 @@
         </div>
 
     </form>
-    <form method="get" action="/barcode_/">
+    <form method="get" action="/barcode_/"  style="margin-left: 22vmax;">
         {% csrf_token %} {% for i,i2 in data %}
         <div class="form-check" style="font-size: 2.5vmax;font-weight: bold;letter-spacing: 0.1vw;">
             <input class="form-check-input" type="checkbox" value="{{ i }}" id="{{ i }}" name="checkSKU" checked>
@@ -77,10 +78,9 @@
         </div>
         {% endfor %}
 
-        </div>
-        <div class="mb-3 justify" style="margin-left:25vmax;">
+        <div class="mb-3 justify">
             <label class="form-label justify">
-                <h1 class="stroke" style="font-size: 5vmax;margin-top: 5vh;margin-left: 8vmax;">ใส่รหัส จำนวน</h1>
+                <h1 class="stroke" style="font-size: 5vmax;margin-top: 5vh;margin-left: 8vmax;">ใส่ จำนวน</h1>
             </label>
             <input type="number" class="form-control input" id="Amount" name="Amount" aria-describedby="emailHelp " value="5">
             <button type="submit" class="btn btn-primary" style="font-size: 2.5vmax;width: 25vmax;margin-left: 16vmax;">ยืนยัน</button>

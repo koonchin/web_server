@@ -1,0 +1,1582 @@
+.table-view {
+    margin-bottom: 1.25rem;
+    background-color: #fff;
+    box-shadow: 0 3px 6px 0 rgba(65, 101, 237, .1)
+}
+
+.zort-table {
+    margin-bottom: 0;
+    background-color: #fff
+}
+
+.zort-table>thead {
+    background-color: #e8ecef
+}
+
+.zort-table>thead>tr>th {
+    padding: .75rem .5rem;
+    font-family: kanit;
+    font-weight: 400;
+    font-size: .875rem;
+    border-bottom: none
+}
+
+.zort-table>tbody>tr>td {
+    padding: .5rem;
+    font-size: .875rem;
+    border-top: none;
+    word-break: break-all
+}
+
+.zort-table>tbody>tr:nth-child(even) {
+    background: #f8f9fa
+}
+
+.zort-table tbody tr:hover {
+    background-color: #eff2f9
+}
+
+.zort-table .index,
+.zort-table .chk {
+    font-size: .75rem;
+    text-align: center;
+    overflow: hidden;
+    font-family: lato
+}
+
+.zort-table .chk {
+    width: 22px;
+    max-width: 22px;
+    padding-left: 0;
+    padding-right: 0
+}
+
+.zort-table .index {
+    padding-left: 5px;
+    padding-right: 5px;
+    max-width: 50px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #868e96
+}
+
+.zort-table--tiny>thead>tr>th,
+.zort-table--tiny>tbody>tr>td {
+    padding: .5rem .25rem
+}
+
+.product-grid__body {
+    border-bottom: 1px solid #e8ecef
+}
+
+.table-package {
+    background-color: #fff
+}
+
+.table-package thead tr th {
+    padding: .75rem;
+    border-top: none;
+    border-bottom: none;
+    border-left: 1px solid #e8ecef
+}
+
+.table-package thead tr th:first-child {
+    border-left: none
+}
+
+.table-package tbody tr td {
+    padding: .25rem .75rem;
+    border-top: none;
+    border-left: 1px solid #e8ecef
+}
+
+.table-package tbody tr td:first-child {
+    border-left: none
+}
+
+.table-package .feature-header {
+    background-color: #f1f3f5;
+    color: #4165ed
+}
+
+@media screen and (max-width:767px) {
+    .t-responsive {
+        width: 100%;
+        margin-bottom: 15px;
+        overflow-y: hidden;
+        -ms-overflow-style: -ms-autohiding-scrollbar
+    }
+    .t-responsive>.table>thead>tr>th,
+    .t-responsive>.table>tbody>tr>th,
+    .t-responsive>.table>tfoot>tr>th,
+    .t-responsive>.table>thead>tr>td,
+    .t-responsive>.table>tbody>tr>td,
+    .t-responsive>.table>tfoot>tr>td {
+        white-space: nowrap
+    }
+}
+
+.zort-table--contact tbody .id {
+    min-width: 12%;
+    width: 12%;
+    max-width: 12%;
+    overflow: hidden
+}
+
+.zort-table--contact tbody .name {
+    min-width: 57%;
+    width: 57%;
+    max-width: 57%
+}
+
+.zort-table--contact tbody .taxid {
+    min-width: 27%;
+    width: 27%;
+    max-width: 27%;
+    font-family: lato
+}
+
+.zort-table--contact tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--contact-list tbody .id {
+    min-width: 12%;
+    width: 12%;
+    max-width: 12%;
+    overflow: hidden
+}
+
+.zort-table--contact-list tbody .name {
+    min-width: 30%;
+    width: 30%;
+    max-width: 30%
+}
+
+.zort-table--contact-list tbody .taxid {
+    min-width: 17%;
+    width: 17%;
+    max-width: 17%;
+    font-family: lato
+}
+
+.zort-table--contact-list tbody .tel {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%;
+    font-family: lato
+}
+
+.zort-table--contact-list tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--tier tbody .name {
+    min-width: 72%;
+    width: 72%;
+    max-width: 72%
+}
+
+.zort-table--tier tbody .discount {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--tier tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--agent tbody .name {
+    min-width: 30%;
+    width: 30%;
+    max-width: 30%
+}
+
+.zort-table--agent tbody .tel {
+    min-width: 30%;
+    width: 30%;
+    max-width: 30%
+}
+
+.zort-table--agent tbody .email {
+    min-width: 30%;
+    width: 30%;
+    max-width: 30%
+}
+
+.zort-table--agent tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--agent.zort-table--agent-sm tbody .name {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--agent.zort-table--agent-sm tbody .tel {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--agent.zort-table--agent-sm tbody .email {
+    min-width: 30%;
+    width: 30%;
+    max-width: 30%
+}
+
+.zort-table--agent.zort-table--agent-sm tbody .action {
+    min-width: 14%;
+    width: 14%;
+    max-width: 14%
+}
+
+.zort-table--dropship tbody .name {
+    min-width: 76%;
+    width: 76%;
+    max-width: 76%
+}
+
+.zort-table--dropship tbody .discount {
+    min-width: 16%;
+    width: 16%;
+    max-width: 16%
+}
+
+.zort-table--dropship tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%;
+    text-align: right
+}
+
+.zort-table--commission tbody .name {
+    min-width: 36%;
+    width: 36%;
+    max-width: 36%
+}
+
+.zort-table--commission tbody .cal {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--commission tbody .method {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--commission tbody .shipping {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--commission tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--commission-template tbody .name {
+    min-width: 76%;
+    width: 76%;
+    max-width: 76%
+}
+
+.zort-table--commission-template tbody .com {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--commission-template tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--fin tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--fin_etc tbody .date {
+    min-width: 14%;
+    width: 14%;
+    max-width: 14%
+}
+
+.zort-table--fin_etc tbody .name {
+    min-width: 17%;
+    width: 17%;
+    max-width: 17%
+}
+
+.zort-table--fin_etc tbody .payment {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--fin_etc tbody .value {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--fin_etc tbody .action {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--transfer tbody .date {
+    min-width: 12%;
+    width: 12%;
+    max-width: 12%
+}
+
+.zort-table--transfer tbody .status {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--transfer tbody .amount {
+    min-width: 32%;
+    width: 32%;
+    max-width: 32%
+}
+
+.zort-table--transfer tbody .start {
+    min-width: 32%;
+    width: 32%;
+    max-width: 32%
+}
+
+.zort-table--warehouse tbody .id {
+    min-width: 10%;
+    width: 10%;
+    max-width: 10%
+}
+
+.zort-table--warehouse tbody .name {
+    min-width: 32%;
+    width: 32%;
+    max-width: 32%
+}
+
+.zort-table--warehouse tbody .type {
+    min-width: 10%;
+    width: 10%;
+    max-width: 10%
+}
+
+.zort-table--warehouse tbody .amount {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--warehouse tbody .upadte {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--warehouse tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--warehousemovements tbody .date {
+    min-width: 12%;
+    width: 12%;
+    max-width: 12%
+}
+
+.zort-table--warehousemovements tbody .type {
+    min-width: 10%;
+    width: 10%;
+    max-width: 10%
+}
+
+.zort-table--warehousemovements tbody .id {
+    min-width: 10%;
+    width: 10%;
+    max-width: 10%
+}
+
+.zort-table--warehousemovements tbody .name {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--warehousemovements tbody .value {
+    min-width: 10%;
+    width: 10%;
+    max-width: 10%
+}
+
+.zort-table--warehousemovements tbody .order {
+    min-width: 18%;
+    width: 18%;
+    max-width: 18%
+}
+
+.zort-table--warehousemovements tbody .status {
+    min-width: 10%;
+    width: 10%;
+    max-width: 10%
+}
+
+.zort-table--warehousemovements tbody .from {
+    min-width: 10%;
+    width: 10%;
+    max-width: 10%
+}
+
+.zort-table--variant tbody .id {
+    min-width: 10%;
+    width: 10%;
+    max-width: 10%
+}
+
+.zort-table--variant tbody .name {
+    min-width: 24%;
+    width: 24%;
+    max-width: 24%
+}
+
+.zort-table--variant tbody .var {
+    min-width: 14%;
+    width: 14%;
+    max-width: 14%
+}
+
+.zort-table--variant tbody .product {
+    min-width: 14%;
+    width: 14%;
+    max-width: 14%
+}
+
+.zort-table--variant tbody .total {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--variant tbody .sale {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--variant tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--category tbody .name {
+    min-width: 56%;
+    width: 56%;
+    max-width: 56%
+}
+
+.zort-table--category tbody .total {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--category tbody .subtotal {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--category tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--pv tbody .id {
+    min-width: 10%;
+    width: 10%;
+    max-width: 10%
+}
+
+.zort-table--pv tbody .name {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--pv tbody .buy {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--pv tbody .sell {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--pv tbody .totla {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--pv tbody .subtotal {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--pv tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--wtransfer tbody .name {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--wtransfer tbody .type {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--wtransfer tbody .date {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--wtransfer tbody .from {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--wtransfer tbody .to {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--wtransfer tbody .status {
+    min-width: 10%;
+    width: 10%;
+    max-width: 10%
+}
+
+.zort-table--wtransfer tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--user tbody .name {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--user tbody .registerdate {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--user tbody .logindate {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--user tbody .permission {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--user tbody .status {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--userrole tbody .name {
+    min-width: 80%;
+    width: 80%;
+    max-width: 80%
+}
+
+.zort-table--userrole tbody .action {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--shippingchannel tbody .channel {
+    min-width: 66%;
+    width: 66%;
+    max-width: 66%
+}
+
+.zort-table--shippingchannel tbody .rate {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--shippingchannel tbody .unit {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--shippingchannel tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--product tbody .id {
+    min-width: 100px;
+    width: 100px;
+    max-width: 100px;
+    white-space: inherit!important
+}
+
+.zort-table--product tbody .name {
+    min-width: 35%;
+    width: 35%;
+    max-width: 35%
+}
+
+.zort-table--product tbody .integration {
+    min-width: 13%;
+    width: 13%;
+    max-width: 13%
+}
+
+.zort-table--product-w tbody .id {
+    min-width: 100px;
+    width: 100px;
+    max-width: 100px
+}
+
+.zort-table--product-w tbody .name {
+    min-width: 35%;
+    width: 35%;
+    max-width: 35%
+}
+
+.zort-table--product-w tbody .sell {
+    min-width: 11%;
+    width: 11%;
+    max-width: 11%
+}
+
+.zort-table--product-w tbody .remain {
+    min-width: 12%;
+    width: 12%;
+    max-width: 12%
+}
+
+.zort-table--product-w tbody .ready {
+    min-width: 12%;
+    width: 12%;
+    max-width: 12%
+}
+
+.zort-table--product-w tbody .integration {
+    min-width: 13%;
+    width: 13%;
+    max-width: 13%
+}
+
+.zort-table--product-w tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--product-lot-serial tbody .name {
+    min-width: 30%;
+    width: 30%;
+    max-width: 30%
+}
+
+.zort-table--product-lot-serial tbody .lot {
+    min-width: 11%;
+    width: 11%;
+    max-width: 11%
+}
+
+.zort-table--product-lot-serial tbody .serial {
+    min-width: 11%;
+    width: 11%;
+    max-width: 11%
+}
+
+.zort-table--barcode tbody .name {
+    min-width: 40%;
+    width: 40%;
+    max-width: 40%
+}
+
+.zort-table--barcode tbody .code {
+    min-width: 30%;
+    width: 30%;
+    max-width: 30%
+}
+
+.zort-table--barcode tbody .amount {
+    min-width: 30%;
+    width: 30%;
+    max-width: 30%
+}
+
+.zort-table--variant-popup tbody .name {
+    min-width: 40%;
+    width: 40%;
+    max-width: 40%
+}
+
+.zort-table--variant-popup tbody .detail {
+    min-width: 56%;
+    width: 56%;
+    max-width: 56%
+}
+
+.zort-table--variant-popup tbody .action {
+    min-width: 6%;
+    width: 6%;
+    max-width: 6%
+}
+
+.zort-table--product-serial tbody .id {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--product-serial tbody .sell {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--product-serial tbody .buy {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--product-serial tbody .warehouse {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--p-lot tbody .number {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--p-lot tbody .value {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--p-lot tbody .expried {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--p-lot tbody .sell {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--p-lot tbody .buy {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--p-lot tbody .warehouse {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--serialnumber tbody .id {
+    min-width: 26%;
+    width: 26%;
+    max-width: 26%
+}
+
+.zort-table--serialnumber tbody .sell {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--serialnumber tbody .buy {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--serialnumber tbody .warehouse {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--serialnumber tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--exlot tbody .name {
+    min-width: 16%;
+    width: 16%;
+    max-width: 16%
+}
+
+.zort-table--exlot tbody .value {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--exlot tbody .expried {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--exlot tbody .sell {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--exlot tbody .buy {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--exlot tbody .warehouse {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--exlot tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--insert-product tbody .select {
+    min-width: 7%;
+    width: 7%;
+    max-width: 7%;
+    word-break: keep-all
+}
+
+.zort-table--insert-product tbody .id {
+    min-width: 20.3333333333%;
+    width: 20.3333333333%;
+    max-width: 20.3333333333%
+}
+
+.zort-table--insert-product tbody .name {
+    min-width: 27.3333333333%;
+    width: 27.3333333333%;
+    max-width: 27.3333333333%
+}
+
+.zort-table--insert-product tbody .amount {
+    min-width: 14.3333333333%;
+    width: 14.3333333333%;
+    max-width: 14.3333333333%
+}
+
+.zort-table--insert-product tbody .value {
+    min-width: 12%;
+    width: 12%;
+    max-width: 12%
+}
+
+.zort-table--insert-product tbody .total {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--insert-product tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--insert-product.zort-table--full tbody .id {
+    min-width: 16%;
+    width: 16%;
+    max-width: 16%
+}
+
+.zort-table--insert-product.zort-table--full tbody .name {
+    min-width: 23%;
+    width: 23%;
+    max-width: 23%
+}
+
+.zort-table--insert-product.zort-table--full tbody .amount {
+    min-width: 10%;
+    width: 10%;
+    max-width: 10%
+}
+
+.zort-table--insert-product.zort-table--full tbody .discount {
+    min-width: 13%;
+    width: 13%;
+    max-width: 13%
+}
+
+.zort-table--doc tbody .type {
+    min-width: 18%;
+    width: 18%;
+    max-width: 18%
+}
+
+.zort-table--doc tbody .name {
+    min-width: 14%;
+    width: 14%;
+    max-width: 14%
+}
+
+.zort-table--doc tbody .ref {
+    min-width: 19%;
+    width: 19%;
+    max-width: 19%
+}
+
+.zort-table--doc tbody .by {
+    min-width: 19%;
+    width: 19%;
+    max-width: 19%
+}
+
+.zort-table--doc tbody .date {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--doc tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--file tbody .name {
+    min-width: 30%;
+    width: 30%;
+    max-width: 30%
+}
+
+.zort-table--file tbody .order {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--file tbody .by {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--file tbody .date {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--file tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--d-move tbody .id {
+    min-width: 10%;
+    width: 10%;
+    max-width: 10%
+}
+
+.zort-table--d-move tbody .name {
+    min-width: 30%;
+    width: 30%;
+    max-width: 30%
+}
+
+.zort-table--d-move tbody .in {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--d-move tbody .out {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--d-move tbody .ex {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--d-move tbody .total {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--d-sale tbody .id {
+    min-width: 10%;
+    width: 10%;
+    max-width: 10%
+}
+
+.zort-table--d-sale tbody .name {
+    min-width: 30%;
+    width: 30%;
+    max-width: 30%
+}
+
+.zort-table--d-sale tbody .value {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--d-sale tbody .total-unit {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--d-sale tbody .total-percent {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--packagecart tbody .name {
+    min-width: 36%;
+    width: 36%;
+    max-width: 36%
+}
+
+.zort-table--packagecart tbody .type {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--packagecart tbody .period {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--packagecart tbody .price {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--packagecart tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--insert-prod tbody .id {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--insert-prod tbody .name {
+    min-width: 30%;
+    width: 30%;
+    max-width: 30%
+}
+
+.zort-table--insert-prod tbody .remain {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--insert-prod tbody .price {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--insert-prod tbody .action {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--insert-prodsell tbody .id {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--insert-prodsell tbody .name {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--insert-prodsell tbody .remain {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--insert-prodsell tbody .ready {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--insert-prodsell tbody .price {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--insert-prodsell tbody .action {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--fin_history tbody .date {
+    min-width: 13%;
+    width: 13%;
+    max-width: 13%;
+    font-size: .75rem
+}
+
+.zort-table--fin_history tbody .order {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--fin_history tbody .change {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--fin_history tbody .total {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--fin_history tbody .remain {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--bundle-list tbody .id {
+    min-width: 13%;
+    width: 13%;
+    max-width: 13%
+}
+
+.zort-table--bundle-list tbody .name {
+    min-width: 13%;
+    width: 13%;
+    max-width: 13%
+}
+
+.zort-table--bundle-list tbody .price {
+    min-width: 12%;
+    width: 12%;
+    max-width: 12%
+}
+
+.zort-table--bundle-list tbody .price-b {
+    min-width: 12%;
+    width: 12%;
+    max-width: 12%
+}
+
+.zort-table--bundle-list tbody .exprice {
+    min-width: 12%;
+    width: 12%;
+    max-width: 12%
+}
+
+.zort-table--bundle-list tbody .remian {
+    min-width: 11%;
+    width: 11%;
+    max-width: 11%
+}
+
+.zort-table--bundle-list tbody .sale {
+    min-width: 11%;
+    width: 11%;
+    max-width: 11%
+}
+
+.zort-table--bundle-list tbody .status {
+    min-width: 12%;
+    width: 12%;
+    max-width: 12%
+}
+
+.zort-table--bundle-list tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--bundle-list.noStock tbody .price {
+    min-width: 23%;
+    width: 23%;
+    max-width: 23%
+}
+
+.zort-table--bundle-list.noStock tbody .exprice {
+    min-width: 23%;
+    width: 23%;
+    max-width: 23%
+}
+
+.zort-table--bundle tbody .select {
+    min-width: 16%;
+    width: 16%;
+    max-width: 16%
+}
+
+.zort-table--bundle tbody .name {
+    min-width: 40%;
+    width: 40%;
+    max-width: 40%
+}
+
+.zort-table--bundle tbody .cat {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--bundle tbody .price {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--bundle tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.zort-table--tierprice-popup tbody .name {
+    min-width: 40%;
+    width: 40%;
+    max-width: 40%
+}
+
+.zort-table-leadtime-group tbody .code {
+    min-width: 16%;
+    width: 16%;
+    max-width: 16%
+}
+
+.zort-table-leadtime-group tbody .name {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table-leadtime-group tbody .remain {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table-leadtime-group tbody .readytosale {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table-leadtime-group tbody .purchaseprice {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table-leadtime-group tbody .saleprice {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--salepage tbody .name {
+    min-width: 36%;
+    width: 36%;
+    max-width: 36%
+}
+
+.zort-table--salepage tbody .product {
+    min-width: 25%;
+    width: 25%;
+    max-width: 25%
+}
+
+.zort-table--salepage tbody .warehouse {
+    min-width: 20%;
+    width: 20%;
+    max-width: 20%
+}
+
+.zort-table--salepage tbody .status {
+    min-width: 15%;
+    width: 15%;
+    max-width: 15%
+}
+
+.zort-table--salepage tbody .action {
+    min-width: 4%;
+    width: 4%;
+    max-width: 4%
+}
+
+.aspect-ratio {
+    height: 0;
+    position: relative
+}
+
+.aspect-ratio--1x1 {
+    padding-bottom: 100%
+}
+
+.aspect-ratio--8x5 {
+    padding-bottom: 62.5%
+}
+
+.aspect-ratio--16x9 {
+    padding-bottom: 56.25%
+}
+
+.aspect-ratio--facebook-image {
+    padding-bottom: 52.25%
+}
+
+.aspect-ratio--object {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100
+}
+
+.cover {
+    background-size: cover!important
+}
+
+.product-img--50 {
+    width: 50px
+}
+
+.modal .modal-content {
+    box-shadow: 0 3px 6px 0 #868e96;
+    border: none
+}
+
+.modal .modal-header,
+.modal .modal-body,
+.modal .modal-footer {
+    border: none;
+    padding-left: .75rem;
+    padding-right: .75rem
+}
+
+.fa,
+.fas,
+.far,
+.fal,
+.fad,
+.fab {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1
+}
+
+.modal .modal-header {
+    border-bottom: 0
+}
+
+.modal .modal-header .close {
+    margin: .5rem 0 0 .5rem
+}
+
+.modal .modal-title {
+    font-family: kanit;
+    font-size: 1.5rem
+}
+
+.modal .msg-area {
+    max-width: 400px;
+    margin: 0 auto;
+    border-radius: 6px;
+    padding: 1.25rem
+}
+
+@media(min-width:577px) {
+    .modal .modal-header,
+    .modal .modal-body,
+    .modal .modal-footer {
+        padding: .75rem 1.875rem
+    }
+    .modal .modal-header {
+        padding-top: 1.25rem
+    }
+    .modal .modal-footer {
+        padding-bottom: 1.25rem
+    }
+}
+
+.modal.modal--alert .modal-header {
+    border-radius: 6px 6px 0 0;
+    padding-top: .25rem;
+    padding-bottom: .25rem
+}
+
+.modal.modal--alert .modal-header .close {
+    margin: 0 0 0 .5rem;
+    opacity: .7
+}
+
+.modal.modal--alert .modal-header .close:hover,
+.modal.modal--alert .modal-header .close:focus {
+    opacity: 1
+}
+
+.modal.modal--alert .modal-header .close i {
+    color: #fff
+}
+
+.modal.modal--error .modal-header {
+    background-color: #f25757
+}
+
+.modal.modal--error .msg-area {
+    color: #3e3e3e;
+    background-color: #ffebeb
+}
+
+.modal.modal--error .fa-icon {
+    color: #faa
+}
+
+.modal.modal--warning .modal-header {
+    background-color: #4165ed
+}
+
+.modal.modal--warning .msg-area {
+    color: #3e3e3e;
+    background-color: #eff2f9
+}
+
+.modal.modal--warning .fa-icon {
+    color: #d0daff
+}
+
+.modal-backdrop {
+    background-color: #22252b
+}
+
+button.close {
+    /* padding: 0; */
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    -webkit-appearance: none;
+}
+
+.close {
+    float: right;
+    font-size: 21px;
+    font-weight: bold;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .2;
+    filter: alpha(opacity=20);
+}

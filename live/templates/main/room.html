@@ -1,135 +1,134 @@
 {% extends 'base.html' %}
 <!DOCTYPE html>
 <html>
+    <head>
+        {% block content %}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <button type="button" style="float: right;" class="button button2" onclick="this.disabled=true,test();">เอาออกจากห้องไลฟ์</button>
+        <form method="get" action="/live/room/">
+            {% csrf_token %}
 
-<head>
-    {% block content %}
-    <meta name="viewport" content="width=device-width, initial-scale=1"> {% if role == 'admin' or role == 'super' %}
-    <button type="button" style="float: right;" class="button button2" onclick="test()">เอาออกจากห้องไลฟ์</button> {% endif %}
-    <form method="get" action="/live/room/">
-        {% csrf_token %}
-        
-        <button type="button" style="float: right;margin-right:5vmax;color:black;" class="button" onclick="this.form.submit()">ยังไม่รีด</button>
-    </form>
-    <style>
-        .button {
-            border: none;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-        }
-        
-        .button1 {
-            background-color: #4CAF50;
-        }
-        
-        .button2 {
-            background-color: red;
-        }
-        /* Green */
-        
-        * {
-            box-sizing: border-box;
-        }
-        
-        #myInput {
-            background-position: 10px 12px;
-            background-repeat: no-repeat;
-            background-color: #FEF4EB;
-            width: 100%;
-            font-size: 16px;
-            padding: 12px 20px 12px 40px;
-            border: 1px solid #ddd;
-            margin-bottom: 12px;
-        }
-        
-        #myUL {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-        
-        #myUL li a {
-            border: 1px solid #ddd;
-            margin-top: -1px;
-            /* Prevent double borders */
-            background-color: #FEF4EB;
-            padding: 12px;
-            text-decoration: none;
-            font-size: 1.2vmax;
-            color: black;
-            display: block;
-            text-align: top;
-        }
-        
-        #myUL li a:hover:not(.header) {
-            background-color: #FEF4EB;
-        }
-        
-        .messageCheckbox {
-            background-color: blanchedalmond;
-            width: 3vmax;
-            height: 3vmin;
-        }
-    </style>
-</head>
+            <button type="button" style="float: right; margin-right: 5vmax; color: black;" class="button" onclick="this.form.submit()">ยังไม่รีด</button>
+        </form>
+        <style>
+            .button {
+                border: none;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+            }
 
-<body style="margin-left:-10vmax;margin-top: -5vmin;">
+            .button1 {
+                background-color: #4caf50;
+            }
 
-    <h2>สต็อคห้องไลฟ์</h2>
+            .button2 {
+                background-color: red;
+            }
+            /* Green */
 
-    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for sku..." title="Type in a name">
+            * {
+                box-sizing: border-box;
+            }
 
-    <ul id="myUL">
-        {% for i in res %}
-        <li>
-            <a href="#"><input type="checkbox" class="messageCheckbox" id="{{ i }}" value="{{ i }}">{{ i }}</a>
-        </li>
-        {% endfor %}
-    </ul>
+            #myInput {
+                background-position: 10px 12px;
+                background-repeat: no-repeat;
+                background-color: #fef4eb;
+                width: 100%;
+                font-size: 16px;
+                padding: 12px 20px 12px 40px;
+                border: 1px solid #ddd;
+                margin-bottom: 12px;
+            }
 
-    <script>
-        function test() {
-            var selected = new Array();
-            var chkbox = document.getElementById('myUL');
-            var selchk = chkbox.getElementsByTagName("input");
-            for (var i = 0; i < selchk.length; i++) {
-                if (selchk[i].checked) {
-                    selected.push(selchk[i].value);
-                    console.log(selchk[i].value);
+            #myUL {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            #myUL li a {
+                border: 1px solid #ddd;
+                margin-top: -1px;
+                /* Prevent double borders */
+                background-color: #fef4eb;
+                padding: 12px;
+                text-decoration: none;
+                font-size: 1.2vmax;
+                color: black;
+                display: block;
+                text-align: top;
+            }
+
+            #myUL li a:hover:not(.header) {
+                background-color: #fef4eb;
+            }
+
+            .messageCheckbox {
+                background-color: blanchedalmond;
+                width: 3vmax;
+                height: 3vmin;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h2>สต็อคห้องไลฟ์</h2>
+
+        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for sku..." title="Type in a name" />
+
+        <ul id="myUL">
+            {% for i in res %}
+            <li>
+                <a href="#"><input type="checkbox" class="messageCheckbox" id="{{ i }}" value="{{ i }}"/>{{ i }}</a>
+            </li>
+            {% endfor %}
+            {% for i in notQc %}
+            <li>
+                <a href="#"><input type="checkbox" class="messageCheckbox" id="{{ i }}" value="{{ i }}" disabled/>{{ i }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <script>
+            function test() {
+                var selected = new Array();
+                var chkbox = document.getElementById("myUL");
+                var selchk = chkbox.getElementsByTagName("input");
+                for (var i = 0; i < selchk.length; i++) {
+                    if (selchk[i].checked) {
+                        selected.push(selchk[i].value);
+                        console.log(selchk[i].value);
+                    }
+                }
+                if (selected.length > 0) {
+                    location.replace("/live/del/" + selected);
                 }
             }
-            if (selected.length > 0) {
-                location.replace("/live/del/" + selected)
-            }
 
-
-        }
-
-        function myFunction() {
-            var input, filter, ul, li, a, i, txtValue;
-            input = document.getElementById("myInput");
-            filter = input.value.toUpperCase();
-            ul = document.getElementById("myUL");
-            li = ul.getElementsByTagName("li");
-            for (i = 0; i < li.length; i++) {
-                a = li[i].getElementsByTagName("a")[0];
-                txtValue = a.textContent || a.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    li[i].style.display = "";
-                } else {
-                    li[i].style.display = "none";
+            function myFunction() {
+                var input, filter, ul, li, a, i, txtValue;
+                input = document.getElementById("myInput");
+                filter = input.value.toUpperCase();
+                ul = document.getElementById("myUL");
+                li = ul.getElementsByTagName("li");
+                for (i = 0; i < li.length; i++) {
+                    a = li[i].getElementsByTagName("a")[0];
+                    txtValue = a.textContent || a.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        li[i].style.display = "";
+                    } else {
+                        li[i].style.display = "none";
+                    }
                 }
             }
-        }
-    </script>
-
-</body>
-{% endblock content %}
-
+        </script>
+    </body>
+    {% endblock content %}
 </html>

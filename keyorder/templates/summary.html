@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Summary</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="/media/css/bootstrap.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="/media/keyorder.css" />
+    <link href="/media/css/mobiscroll.javascript.min.css" rel="stylesheet" />
+    <script src="/media/js/mobiscroll.javascript.min.js"></script>
+
+    <style>
+        div.scrollmenu {
+            background-color: #333;
+            overflow: auto;
+            white-space: nowrap;
+        }
+        
+        div.scrollmenu a {
+            display: inline-block;
+            color: white;
+            text-align: center;
+            padding: 14px;
+            text-decoration: none;
+        }
+        
+        div.scrollmenu a:hover {
+            background-color: #777;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    {% comment %}
+    <div class="sidebar" name="sidebar" style="text-align: center;">
+        {% load tags %} {% role request as role %} {% if user.is_authenticated and role != 'key' %}
+        <a href="/">หน้าหลัก</a> {% if role == 'stock' or role == 'super' %}
+        <a href="/check">แพ็คสินค้า</a>
+        <a href="/barcode/">ปริ้นท์บาร์โค้ด</a>
+        <a href="/checkstock/">เช็คสต็อค</a> {% endif %}
+        <a href="/live/main/">สต็อคห้องไลฟ์</a>
+        <a href="/page/">แอดมินโหลดรูป</a>
+        <a href="/RMA/">บันทึกของ Return</a>
+        <a href="/keyorder/">KeyOrder</a>
+        <a href="/RMA/stock/">RMA</a> {% endif %}
+    </div> {% endcomment %}
+
+    <div class="scrollmenu">
+        {% load tags %} {% role request as role %} {% if user.is_authenticated and role != 'key' %}
+        <a href="/">หน้าหลัก</a>{% if role == 'stock' or role == 'super' %} {% comment %} <a href="/check/">แพ็คสินค้า</a> {% endcomment %}
+        <a href="/barcode/">ปริ้นท์บาร์โค้ด</a>
+        <a href="/stock_check/">STOCK</a>
+        <a href="/upstock/">ลงของ</a> {% endif %} {% comment %} <a href="/checkstock/">เช็คสต็อค</a> {% endcomment %}
+        <a href="/page">แอดมินโหลดรูป</a>
+        <a href="/live/main/">สต็อคห้องไลฟ์</a>
+        <a href="/uploadimage/">ลงรหัสรูป</a>
+        <a href="/RMA/">บันทึกของ Return</a>
+        <a href="/keyorder/">KeyOrder</a>
+        <a href="/RMA/stock/">RMA</a>
+        <a href="/blog/">BLOGS</a>
+        <a href="/blog/soldout/">แจ้งของหมด</a>
+        <a href="/blog/reserve/">RESERVE</a>
+        <a href="/logout/" style="margin-left:48vmax;">Logout</a> {% endif %} {% if role == 'key' %}
+        <a href="/keyorder/">KeyOrder</a>
+        <a href="/logout/" style="margin-left:48vmax;">Logout</a> {% endif %}
+    </div>
+
+    <form method="POST" action="/keyorder/print/">
+        {% csrf_token %}
+        <div class="container" style="padding-top:1vmax;">
+            <div class="row">
+                <div class="col">
+                    <span>
+                    <a href="/keyorder/" class="">
+                        <i class='bx bx-chevrons-left'></i>
+                        กลับ
+                    </a>
+                </span>
+                </div>
+            </div>
+            <div class="row justify-content-between">
+                <div class="col">
+                    <h1>รายการขาย
+                    </h1>
+                </div>
+                <div class="col-4">
+                    <div class="text-center">
+                        <button value="1" name="print" type="submit" class="btn btn-secondary">พิมพ์ใบปะหน้า</button>
+                        <button value="1" id="search" name="search" type="submit" class="btn btn-primary">ค้นหา</button>
+                        <button value="1" name="delete" type="submit" class="btn btn-danger">ลบ</button>
+                        <button type="button" class="btn btn-success" onclick="document.getElementById('modal').style.display='block'">
+                            Export Excel
+                          </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="padding-top:1vmin;">
+                    <div class="input-group mb-3">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i class="fa fa-search" aria-hidden="true"></i>
+                        </span>
+                            <input id="idorder" name="idorder" autofocus onkeydown="if (event.keyCode == 13) { document.querySelector('#search').click(); return false; }" type="text" class="form-control" placeholder="เลขออเดอร์ ชื่อลูกค้า เบอร์โทร และอื่นๆ" aria-label="Username"
+                                aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <input id="demo-mobile-picker-input" name='Date_Time' class="md-mobile-picker-input" placeholder="เลือก วันที่ / เวลา" />
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <table class="table caption-top">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">
+                                        <div class="">
+                                            <label>
+                          <input type="checkbox" aria-label="..." class="checkboxrow mt-0" onClick="toggle(this);">
+                          </label>
+                                        </div>
+                                    </th>
+                                    <th scope="col">วันที่</th>
+                                    <th scope="col">รายการ</th>
+                                    <th scope="col">ลูกค้า</th>
+                                    <th scope="col">มูลค่า</th>
+                                    <th scope="col">สถานะการชำระ</th>
+                                    <th scope="col">เวลาที่ปรินท์</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for id,name,keytime,totalprice,paymentstatus,printedtime,number in result %}
+                                <tr>
+                                    <th scope="row" class="chk">{{ forloop.counter }}</th>
+                                    <td class="chk">
+                                        <div class="">
+                                            <label>
+                              <input type="checkbox" aria-label="..." class="checkboxrow mt-0" id="foo" name="foo" value="{{id}}">
+                              </label>
+                                        </div>
+                                    </td>
+                                    <td>{{ keytime }}</td>
+                                    <td><a href="/keyorder/orderdetail/{{id}}/">{{ number }}</a></td>
+                                    <td>{{ name }}</td>
+                                    <td>{{ totalprice }}</td>
+                                    <td>{{ paymentstatus }}</td>
+                                    {% if not printedtime %}
+                                    <td></td>
+                                    {% else %}
+                                    <td>{{printedtime}}</td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    </form>
+    <form method="post" action="/keyorder/ExportOrder/">
+        {% csrf_token %}
+        <div class="modal" tabindex="-1" id="modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="color: green;">Export</h5>
+                        <button type="button" class="btn-close" onclick="document.getElementById('modal').style.display='none'" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col">
+                            <p>เลือกวันที่ต้องการ Export Order</p>
+                            <input id="demo-mobile-picker-input" name='Date_Time' class="md-mobile-picker-input" placeholder="เลือก วันที่ / เวลา" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id='closeModal' type="button" class="btn btn-danger" onclick="document.getElementById('modal').style.display='none'">Close</button>
+                        <button type="submit" class="btn btn-primary">ยืนยัน</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    <script src="/media/js/bootstrap.bundle.js"></script>
+    <script src="/media/js/bootstrap.min.js"></script>
+    <script src="/media/js/bootstrap.js"></script>
+    <script>
+        var myModal = document.getElementById('myModal')
+        var myInput = document.getElementById('myInput')
+        if (myModal) {
+            myModal.addEventListener('shown.bs.modal', function() {
+                myInput.focus()
+            })
+        }
+
+        function toggle(source) {
+            checkboxes = document.getElementsByName('foo');
+            for (var i = 0, n = checkboxes.length; i < n; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+        mobiscroll.setOptions({
+            locale: mobiscroll.localeTh,
+            theme: 'ios',
+            themeVariant: 'light'
+        });
+
+        var now = new Date(),
+            week = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 6);
+
+        mobiscroll.datepicker('#demo-mobile-picker-input', {
+            controls: ['calendar'],
+            select: 'range',
+            showRangeLabels: true
+        });
+
+        var instance = mobiscroll.datepicker('#demo-mobile-picker-button', {
+            controls: ['calendar'],
+            select: 'range',
+            showRangeLabels: true,
+            showOnClick: false,
+            showOnFocus: false,
+        });
+
+        instance.setVal([now, week]);
+
+        mobiscroll.datepicker('#demo-mobile-picker-mobiscroll', {
+            controls: ['calendar'],
+            select: 'range',
+            showRangeLabels: true
+        });
+
+        var inlineInst = mobiscroll.datepicker('#demo-mobile-picker-inline', {
+            controls: ['calendar'],
+            select: 'range',
+            showRangeLabels: true,
+            display: 'inline',
+        });
+
+        inlineInst.setVal([now, week]);
+
+        document
+            .getElementById('show-mobile-date-picker')
+            .addEventListener('click', function() {
+                instance.open();
+                return false;
+            });
+    </script>
+</body>
+
+</html>

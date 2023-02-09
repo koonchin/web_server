@@ -6,7 +6,10 @@ register = template.Library()
 
 @register.simple_tag
 def role(request):
-    return get_role(request,'role')
+    try:
+        return get_role(request,'role')
+    except:
+        return 'muslin'
 
 @register.simple_tag
 def department(request):

@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% include 'messages.html' %}
+    {% block content %}
+    <title>TABLE</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+    <link rel="stylesheet" href="/media/style.css?{% now " U " %}">
+    <style>
+        .box {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            opacity: .9;
+        }
+        
+        .margin {
+            margin-top: 0px;
+            margin-bottom: 0px;
+            margin-right: 0px;
+            margin-left: 20px;
+        }
+        .form-check{
+            display:inline-block; 
+        }
+        
+      .image-parent {
+        max-width: 40px;
+      }
+      .hover:hover {
+        background-color:#ECF0E9;
+      }
+      .link{
+        color:black;
+        font-size:1.5vmax;
+      }
+      .float{
+        position:fixed;
+        width:60px;
+        height:60px;
+        bottom:40px;
+        right:40px;
+        background-color:#0C9;
+        color:#FFF;
+        border-radius:50px;
+        text-align:center;
+        box-shadow: 2px 2px 3px #999;
+      }
+      .floatright{
+        position:fixed;
+        width:60px;
+        height:60px;
+        bottom:40px;
+        right:40px;
+        background-color:#3478F3;
+        color:#FFF;
+        border-radius:50px;
+        text-align:center;
+        box-shadow: 2px 2px 3px #999;
+      }
+      
+      .my-float{
+        margin-top:.8vmax;
+        font-size:3rem;
+    }
+    </style>
+</head>
+
+<body>
+    
+  <a href="#" class="floatright" onclick="document.getElementById('modalreserve').style.display='block'">
+    <i class="fa fa-facebook my-float"></i>
+  </a>
+    <form method="post" action="/blog/reserve/">
+        {% csrf_token %}
+<div class="input-group mb-3" style="width:75vmax;height:3vmax;margin-left:10vmax;margin-top:1vmax;">
+            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vw;text-align: center;">ชื่อ Facebook</span>
+            <input style="font-size: 2vmax;" type="text" class="form-control" aria-label="Sizing example input" id="fname" name="fname">
+            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vw;">ชื่อสินค้า</span>
+            <input style="font-size: 2vmax;" type="text" class="form-control" aria-label="Sizing example input" id="sku" name="sku">
+</div>
+    </form>
+    <table class="table table-striped box table-sortable" style="width: 100%;font-size: 1.3vmax;height:1vh;" >
+        <thead>
+            <tr style="padding-left: 150%;letter-spacing: 0.3rem;text-align:center;margin:auto;">
+                <th scope="col ">ID</th>
+                <th scope="col ">ชื่อเฟสบุ๊ค</th>
+                <th scope="col ">ชื่อสินค้า</th>
+                <th scope="col ">comment</th>
+                <th scope="col "></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for id,fname, sku,comment in data %}
+            <tr style="text-align:center;">
+                <td>
+                    {{id}}
+                </td>
+                <td>
+                    {{fname}}
+                </td>
+                <td>
+                    {{sku}}
+                </td>
+                <td>
+                    {{comment}}
+                </td>
+                <td>
+                <a href="#"  onclick="document.getElementById('modalDelete{{id}}').style.display='block'">
+                    <i class="fa fa-check"></i>
+                </a>
+                </td>
+            </tr>
+
+            <div id="modalDelete{{id}}" class="w3-modal">
+                <div class="w3-modal-content w3-animate-zoom w3-card-4">
+                <header class="w3-container w3-teal"> 
+                    <span onclick="document.getElementById('modalDelete{{id}}').style.display='none'" 
+                    class="w3-button w3-display-topright">&times;</span>
+                    <h2>จองสินค้า</h2>
+                </header>
+            <form  method="post"  enctype="multipart/form-data"  action="/blog/delete/{{id}}/">
+                {% csrf_token %}
+                <div class="w3-container" style="margin:2vmax;">
+                    <div class="input-group mb-3" style="margin-left:5vmax;width:40vmax;height:3vmax;">
+                        <h1>ต้องการยืนยันรายการนี้ใช่หรือไม่ ?</h1>
+                    </div>
+                </div>
+                <footer class="w3-container w3-teal"style="height:5.5vmax;margin-top:5vmax;">
+                    <button id="confirm" name="confirm" type="submit " class="btn btn-primary " style="margin-left:20vmax;width: 20vw;font-size: 2.5vmax;height: 8vh;margin-top:1vmax;">ยืนยัน</button>
+                </footer>
+                </form>
+            </div>
+            </div>
+
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div id="modalreserve" class="w3-modal">
+        <div class="w3-modal-content w3-animate-zoom w3-card-4">
+        <header class="w3-container w3-teal"> 
+            <span onclick="document.getElementById('modalreserve').style.display='none'" 
+            class="w3-button w3-display-topright">&times;</span>
+            <h2>จองสินค้า</h2>
+        </header>
+    <form  method="post"  enctype="multipart/form-data"  action="/blog/addreserve/">
+        {% csrf_token %}
+        <div class="w3-container" style="margin:2vmax;">
+            <div class="input-group mb-3" style="margin-left:5vmax;width:40vmax;height:3vmax;">
+                <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">ชื่อเฟสบุ๊ค</span>
+                <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="fname" name="fname" value="">
+            </div>
+            <div class="input-group mb-3" style="margin-left:5vmax;width:40vmax;height:3vmax;">
+              <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">ชื่อสินค้า</span>
+              <input style="font-size: 1.4vmax;text-align: center;" list="sku_list" type="text" class="form-control" id="sku" name="sku" value="">            <datalist id="sku_list">
+              <datalist id="sku_list">
+                  {% for sku in skus %}
+                  <option>{{sku}}</option>
+                  {% endfor %}
+              </datalist>
+          </div>
+            <div class="input-group mb-3" style="margin-left:5vmax;width:40vmax;height:3vmax;">
+                <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">คอมเมนท์</span>
+                <textarea style="width:30vmax;height:10vmax;"  id="comment" name="comment" class="form-control" aria-label="With textarea" ></textarea>
+            </div>
+        </div>
+        <footer class="w3-container w3-teal"style="height:5.5vmax;margin-top:10vmax;">
+            <button id="confirm" name="confirm" type="submit " class="btn btn-primary " style="margin-left:20vmax;width: 20vw;font-size: 2.5vmax;height: 8vh;margin-top:1vmax;">ยืนยัน</button>
+        </footer>
+        </form>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js " integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 " crossorigin="anonymous "></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js " integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p " crossorigin="anonymous "></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js " integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB " crossorigin="anonymous "></script>
+
+    <script src="/media/sort.js"></script>
+    {% endblock content %}
+</body>
