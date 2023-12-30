@@ -3,6 +3,8 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponseRedirect
 from .form import AddNewSku
 from function import *
+from django.contrib import messages
+from django.core.files.storage import FileSystemStorage
 # Create your views here.
 
 # FUNCTION
@@ -38,7 +40,7 @@ def room(request):
     select {dep}.stock_main.sku, {dep}.stock_main.descript from {dep}.stock_main
     inner join {dep}.stock on {dep}.stock_main.sku = {dep}.stock.sku
     where {dep}.stock.amount + {dep}.stock_main.amount > 0 and left({dep}.stock_main.sku,6) not in (select left(sku,6) from {dep}.live_room)
-    ORDER BY FIELD(stock_main.size, 'XXS', 'XS', 'S', 'M', 'L', 'F', 'XL', '2XL','3XL'), {dep}.stock_main.size
+    ORDER BY FIELD(stock_main.size, 'XXS', 'XS', 'S', 'M', 'L', 'F', 'XL', '2XL','3XL','4XL','5XL','6XL'), {dep}.stock_main.size
     """
     
     result = db.query(task)
@@ -87,6 +89,20 @@ def main_2(request):
         lst.append(f"{row[0]} เวลา {row[1]} เพิ่มโดย {row[2]}")
     res = lst
     return render(request, 'main/room.html', {'res': res,'role':role})
+
+def prism(req,idsell):
+    dep = 'maruay'
+    task = f"""
+            SELECT GROUP_CONCAT(data_size ORDER BY FIELD(size, 'XXS', 'XS', 'S', 'M', 'L', 'F', 'XL','XXL', '2XL','3XL','4XL','5XL','6XL'),size separator '\n') AS Result from {dep}.data_size
+        where idsell = '{idsell}' group by idsell;
+    """
+    result = db.query(task)
+    size = list(result.fetchone())
+    size = ''.join(size)
+    
+    context = {}
+    context['size'] = size
+    return render(req,'main/prism.html',context=context)
 
 def main(request):
     role = get_role(request,'role')
@@ -161,3 +177,20 @@ def addnote(req):
         
     return redirect("/live/main")
     
+def export_live_excel(req):
+    dep = get_role(req,'department')
+    task = f'select sku,comment from live_room'
+    path = export_excel(task,'live_room_data',dep)
+    
+    return redirect(f"/{path}")
+
+def import_excel(request):
+    dep = get_role(request,'department')
+    if request.method == 'POST' and request.FILES['myfile']:
+        db.query_commit(f'truncate {dep}.live_room')
+        myfile = request.FILES['myfile']
+        fs = FileSystemStorage()
+        filename = fs.save(myfile.name, myfile)
+        path = insert_live_room(f"{settings.MEDIA_ROOT}/{myfile.name}")
+        messages.success(request,'อัพสต็อกเรียบร้อย ... ')
+    return redirect('/')

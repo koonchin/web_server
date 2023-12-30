@@ -1,7 +1,6 @@
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render,redirect
 from function import *
-from stock.views import result
 # Create your views here.
 
 def blog(req):
@@ -79,11 +78,18 @@ def insertBlog(request):
     if request.method == 'POST':
         header = request.POST.get('header')
         detail = request.POST.get('detail')
-        db.query_commit(f"insert into {dep}.blog values (0,'{request.user}','{header}','{detail}','ยังไม่เคลียร์',now(),'',NULL,'{role}','')")
+        dbb = request.POST.get('Dobybot')
+
+        if dbb:
+            db.query_commit(f"insert into {dep}.blog values (0,'{request.user}','{header}','{detail}','ยังไม่เคลียร์',now(),'',NULL,'{role}','Dbb')")
+        else:
+            db.query_commit(f"insert into {dep}.blog values (0,'{request.user}','{header}','{detail}','ยังไม่เคลียร์',now(),'',NULL,'{role}','')")
+
         if role != 'stock':
             send_line_blog(f"มี blog ใหม่ หัวข้อ {header} ร้าน {dep}")
         else:
             send_line_blog_admin(f"มี blog ใหม่ หัวข้อ {header} ร้าน {dep}")
+
         if request.FILES['myfile']:
             myfile = request.FILES.getlist('myfile')
             for i in myfile:
@@ -99,10 +105,7 @@ def insertBlog(request):
 def detail(req,id):
     dep = get_role(req,'department')
     role = get_role(req,'role')
-    if role == 'admin':
-        task = f"select header,detail,imagepath from blog inner join blogimage on blog.id = blogimage.id where blog.id = {id}"
-    else:
-        task = f"select header,if(answer = '',detail,answer),imagepath from blog inner join blogimage on blog.id = blogimage.id where blog.id = {id}"
+    task = f"select header,detail,imagepath from blog inner join blogimage on blog.id = blogimage.id where blog.id = {id}"
     result = db.query_custom(task,dep)
     result = list(result.fetchall())
     details = result[0][0]
@@ -170,26 +173,61 @@ def reserve(req):
     if req.method == "POST":
         fname = req.POST.get('fname')
         sku = req.POST.get('sku')
-        task = f"""
-        select id,fname,sku,comment from reserve where fname like '%{fname}%' and sku like '%{sku}%'
+        # Base query
+        task = "SELECT id, fname, stock_main.sku, comment, date FROM reserve INNER JOIN stock_main ON reserve.sku = stock_main.sku"
+
+        # Check if fname or sku is provided and add conditions accordingly
+        if fname or sku:
+            task += " WHERE"
+            if fname:
+                task += f" fname LIKE '%{fname}%'"
+            if fname and sku:
+                task += " OR"
+            if sku:
+                task += f" stock_main.sku LIKE '%{sku}%'"
+
+        # Add the remaining part of the query
+        task_detail = f"""
+        SELECT data_size.idsell, COUNT(*) 
+        FROM data_size 
+        INNER JOIN stock_main ON data_size.sku = stock_main.sku 
+        INNER JOIN reserve ON reserve.sku = stock_main.sku
+        """
+
+        # Check if fname or sku is provided and add conditions accordingly
+        if fname or sku:
+            task_detail += " WHERE"
+            if fname:
+                task_detail += f" fname LIKE '%{fname}%'"
+            if fname and sku:
+                task_detail += " OR"
+            if sku:
+                task_detail += f" stock_main.sku LIKE '%{sku}%'"
+
+        task_detail += """
+        GROUP BY data_size.idsell 
+        ORDER BY COUNT(*) DESC;
         """
     else:
-        task = """
-        select id,fname,sku,comment from reserve
+        task = 'select id,fname,stock_main.sku,comment,date from reserve inner join stock_main on reserve.sku = stock_main.sku'
+        task_detail = """
+        SELECT data_size.idsell, COUNT(*) 
+        FROM data_size 
+        INNER JOIN stock_main ON data_size.sku = stock_main.sku 
+        INNER JOIN reserve ON reserve.sku = stock_main.sku 
+        GROUP BY data_size.idsell 
+        ORDER BY count(*) desc;
         """
-    result = db.query_custom(task,dep)
-    result = list(result.fetchall())
-    result = db.query_custom(task,dep)
+    detail = list(db.query_custom(task,dep).fetchall())
+    result = db.query_custom(task_detail,dep)
     data = list(result.fetchall())
-    task = """
-    select descript from stock_main
-    """
+    task = "select sku,descript from stock_main"
     skus = db.query_custom(task,dep)
     skus = list(skus.fetchall())
-    skus = [i[0] for i in skus]
-    context=  {'data':data,
-                "skus":skus}
 
+    context=  {'data':data,
+                "skus":skus,
+                'result':detail}
 
     return render(req,"reserve.html",context)
 
@@ -206,3 +244,31 @@ def deleteReserve(req,id):
     dep = get_role(req,'department')
     db.query_commit(f'delete from {dep}.reserve where id = {id}')
     return redirect('/blog/reserve/')
+
+def delete_blog(req,id):
+    dep = get_role(req,'department')
+    task = f'delete from {dep}.blog where id = {id}'
+    db.query_commit(task)
+    return redirect('/blog/')
+
+def export_reserve(req):
+    dep = get_role(req,"department")
+    task = f"""select fname,stock_main.sku,comment,DATE_ADD(date, INTERVAL 7 HOUR) from reserve inner join stock_main on stock_main.sku = reserve.sku"""
+    result = db.query_custom(task,dep)
+    result = list(result.fetchall())
+    columns = ['Facebook name', 'Sku', 'Detail', 'Date']
+
+    # Create a DataFrame using the result and columns
+    df = pd.DataFrame(result, columns=columns)
+
+    # Assuming 'df' is your DataFrame, you can now export it to an Excel file
+    with pd.ExcelWriter(f'{settings.MEDIA_ROOT}/output.xlsx', engine='xlsxwriter') as writer:
+        # Write the original data to the first sheet
+        df.to_excel(writer, sheet_name='Sheet1', index=False)
+
+        # Group by 'sku' and count the occurrences, create a new DataFrame
+        sku_counts = df.groupby('Sku').size().reset_index(name='amount')
+
+        # Write the grouped data to the second sheet
+        sku_counts.to_excel(writer, sheet_name='Sheet2', index=False)
+    return redirect('/media/output.xlsx')

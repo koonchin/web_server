@@ -1,7 +1,13 @@
-@font-face {
-    font-family: 'JuneBug';
-    src: url('/media/font.ttf');
-}
+/* @font-face { */
+
+
+/* font-family: 'JuneBug'; */
+
+
+/* src: url('/media/font.ttf'); */
+
+
+/* } */
 
 @font-face {
     font-family: 'stroke2';
@@ -9,10 +15,8 @@
 }
 
 body {
-    font-family: 'JuneBug';
-    background-image: url('/media/brown.jpg');
-    background-repeat: repeat-y;
-    background-size: auto;
+    /* font-family: 'JuneBug'; */
+    font-family: 'Montserrat', "IBM Plex Sans Thai";
 }
 
 .center-forms {
@@ -23,24 +27,6 @@ body {
     top: 50%;
     margin-left: -390px;
     margin-top: -325px;
-    font-size: 150%;
-}
-
-.btn-primary {
-    color: #212529;
-    background-color: #caf0f8;
-    border-color: #caf0f8;
-    width: 50%;
-    height: 10%;
-    font-size: 150%;
-}
-
-.btn-primary:hover {
-    color: #212529;
-    background-color: #90e0ef;
-    border-color: #0096c7;
-    width: 50%;
-    height: 10%;
     font-size: 150%;
 }
 

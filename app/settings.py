@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-%5&ixu=q!md6(e0!x!b2!5@jyoay4!vx9a66j&x-ilo=oi2vpb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','deployedgirst.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
+    'background_task',
+    'crispy_bootstrap4',
     'mathfilters',
     'app',
     'live',
@@ -142,7 +144,7 @@ STATIC_URL = '/static/'
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
-print(MEDIA_ROOT)
+
 MEDIA_URL = '/media/'
 
 # Default primary key field type

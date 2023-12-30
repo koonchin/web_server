@@ -298,7 +298,7 @@ def add(req,number):
     '{total}',{total - total_price - deli_fee},'{deli_fee}','{total_price}','{Payment}')
     """)
 
-    result = db.query(f"select max(id) from {dep}.RMA where number = '{name}'")
+    result = db.query(f"select id from {dep}.RMA where number = '{name}'")
     result = list(result.fetchall())[0][0]
     if status == 'รอคีย์':
         reserveForReturn(result,product,amount,dep)
@@ -363,8 +363,6 @@ def confirm(req,id):
     y = Counter(before_products)
     if x == y:
 
-        db.query_commit(f"update {dep}.RMA set recieve_time = now(),status = 'คีย์แล้ว',order_status = 'ยืนยันพัสดุเรียบร้อย' where id = {id}")
-        db.query_commit(f"update {dep}.RMA_before set status = 'คีย์ออเดอร์แล้ว' where id = {id}")
         task = f"""
         select descript,stock_main.amount from stock_main
         """
@@ -382,8 +380,11 @@ def confirm(req,id):
             descript_dict[i[0]] = int(i[1])
 
         for i in y:
-            web.post("UPDATEPRODUCTAVAILABLESTOCKLIST",sku_data_dict[i],descript_dict[i] + int(y[i]))
-            db.query_commit(f"update {dep}.stock_main set amount = {descript_dict[i] + int(y[i])} where sku = '{sku_data_dict[i]}'")
+            payload_list = []
+            payload_list.append({"sku":sku_data_dict[i],"stock":1,"cost":0})
+            payload = {}
+            payload['stocks'] = payload_list
+            web.increase_stock(payload,'W0005')
             db.query_commit(f"insert into {dep}.log values ('RMA','เพิ่มสต็อกเพราะรีเทิร์น รหัส {sku_data_dict[i]} จำนวนที่เพิ่ม {y[i]} id {id}' ,now())")
 
         task = f"select * from RMA where id = '{id}'"
@@ -431,6 +432,9 @@ def confirm(req,id):
             messages.success(req,"คีย์ออเดอร์ และ เพิ่มสต็อกเรียบร้อย ... ")
         else:
             messages.success(req,"เพิ่มสต็อกเรียบร้อย ... ")
+        db.query_commit(f"update {dep}.RMA set recieve_time = now(),status = 'คีย์แล้ว',order_status = 'ยืนยันพัสดุเรียบร้อย' where id = {id}")
+        db.query_commit(f"update {dep}.RMA_before set status = 'คีย์ออเดอร์แล้ว' where id = {id}")
+
     else:
         db.query_commit(f"update {dep}.RMA set addr = '{address}' where id = {id}")
         task = f"""

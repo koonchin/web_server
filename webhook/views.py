@@ -1,3 +1,5 @@
+
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.conf import settings
 # Create your views here.
@@ -13,7 +15,6 @@ from linebot.exceptions import (
 from linebot.models import (
      TextSendMessage,TemplateSendMessage, ButtonsTemplate, URIAction
 )
-import xlsxwriter
 
 # webhook line bot QC PART ----------------------------
 
@@ -21,7 +22,7 @@ def template():
     # Create a URIAction for the file
     uri_action = URIAction(
         label='Open File',
-        uri='https://139-162-28-194.ip.linodeusercontent.com/media/export_data.xlsx'
+        uri='https://139-177-190-161.ip.linodeusercontent.com/media/export_data.xlsx'
     )
 
     # Create a ButtonsTemplate with the URIAction
@@ -39,35 +40,176 @@ def template():
     )
     return template_message
 
-def export():
-    task = 'select DATE_ADD(date, INTERVAL 7 HOUR),id,image,name from muslin.qc_data'
+# def export(firstdate,lastdate):
+#     task = f'select DATE_ADD(date, INTERVAL 7 HOUR),id,image,name from muslin.qc_data where date > "{firstdate}" and date < "{lastdate}"'
+#     result = db.query(task)
+#     result = list(result.fetchall())
+#     for i in result:
+#         with open(f"{settings.MEDIA_ROOT}/{i[1]}.jpg",'wb') as f:
+#             f.write(i[2])
+
+#     workbook = xlsxwriter.Workbook(f'{settings.MEDIA_ROOT}/export_data.xlsx')
+#     # Create an new Excel file and add a worksheet.
+#     worksheet = workbook.add_worksheet()
+#     # Widen the first column to make the text clearer.
+#     worksheet.set_column('A:A', 30)
+#     for i in range(len(result)):
+#         row_index = i + 1
+        
+#         row = (row_index - 1) * 20
+#         if i == 0:
+#             row = row_index
+
+#         # Insert an image.
+#         worksheet.write(f'A{row}', str(result[i][0]))
+#         worksheet.write(f'B{row}', result[i][3])
+#         worksheet.insert_image(f'C{row}', f'{settings.MEDIA_ROOT}/{result[i][1]}.jpg', {'x_scale': 0.2, 'y_scale': 0.2})
+
+#     workbook.close()
+
+#     for i in result:
+#         os.remove(f"{settings.MEDIA_ROOT}/{i[1]}.jpg")
+def extract_digits(input_string):
+    # Use regular expression to find all digits in the input string
+    digits = re.findall(r'\d+', input_string)
+    
+    # Combine the digits into a single string
+    result = ''.join(digits)
+    
+    try:
+        return int(result)
+    except:
+        return 0
+
+def export(firstdate, lastdate):
+    data_dict = {
+    4000: 'D',
+    80: 'D',
+    81: 'D',
+    82: 'D',
+    83: 'D',
+    347: 'M',
+    360: 'M',
+    526: 'M',
+    527: 'M',
+    792: 'M',
+    797: 'M',
+    798: 'M',
+    938: 'M',
+    941: 'M',
+    989: 'M',
+    1017: 'M',
+    1081: 'M',
+    1083: 'M',
+    1084: 'M',
+    1092: 'M',
+    1093: 'M',
+    1098: 'M',
+    1126: 'M',
+    1127: 'M',
+    1137: 'M',
+    1138: 'M',
+    1148: 'M',
+    1149: 'M',
+    1201: 'M',
+    1202: 'M',
+    1203: 'M',
+    1206: 'M',
+    1215: 'M',
+    1216: 'M',
+    3000: 'M',
+    330: 'O',
+    482: 'O',
+    1099: 'O',
+    1158: 'O',
+    1175: 'O',
+    1179: 'O',
+    1183: 'O',
+    1186: 'O',
+    1188: 'O',
+    1198: 'O',
+    1207: 'O',
+    1208: 'O',
+    1209: 'O',
+    1213: 'O',
+    2000: 'O'
+    }
+
+    task = f'select DATE_ADD(date, INTERVAL 7 HOUR),id,image,name from muslin.qc_data where date > "{firstdate}" and date < "{lastdate}"'
     result = db.query(task)
     result = list(result.fetchall())
-    for i in result:
-        with open(f"{settings.MEDIA_ROOT}/{i[1]}.jpg",'wb') as f:
-            f.write(i[2])
 
     workbook = xlsxwriter.Workbook(f'{settings.MEDIA_ROOT}/export_data.xlsx')
-    # Create an new Excel file and add a worksheet.
-    worksheet = workbook.add_worksheet()
-    # Widen the first column to make the text clearer.
-    worksheet.set_column('A:A', 30)
-    for i in range(len(result)):
-        row_index = i + 1
-        
-        row = (row_index - 1) * 20
-        if i == 0:
-            row = row_index
+    # Create a dictionary to map the sheet names with the respective data
+    sheet_data = {}
+    sheet_name_list = []
+    # Initialize the row index within each sheet
+    sheet_row_index = {}
 
-        # Insert an image.
-        worksheet.write(f'A{row}', str(result[i][0]))
-        worksheet.write(f'B{row}', result[i][3])
-        worksheet.insert_image(f'C{row}', f'{settings.MEDIA_ROOT}/{result[i][1]}.jpg', {'x_scale': 0.2, 'y_scale': 0.2})
+    # Iterate over the results
+    for i in range(len(result)):
+        # Get the current sheet name
+        temp = get_text_after_alphabet(result[i][3].strip())
+        first_letter = temp[0]
+        if first_letter == 'M' and not str(temp[1]).isdigit():
+            sheet_name = "Maruay"
+        else:
+            second_letter = temp[1]
+            if str(second_letter).isdigit():
+                second_letter = temp[0]
+            sheet_name = f"{second_letter.upper()}"
+            if second_letter.upper() in ['B','C','D']:
+                sheet_name = 'B,C,D'
+            elif second_letter.upper() not in ['A','B','C','D','G']:
+                digit = extract_digits(temp.split('-')[0])
+                if int(digit) in data_dict:
+                    sheet_name = data_dict[int(digit)]
+                elif digit > 1999 and digit < 3000:
+                    sheet_name = 'O'
+                elif digit > 2999 and digit < 4000:
+                    sheet_name = 'M'
+                elif digit > 3999 and digit < 5000:
+                    sheet_name = 'D'
+                else:
+                    if second_letter.upper() in ['Y']:
+                        sheet_name = "Y"
+                    else:
+                        sheet_name = "Satin"
+
+        # Check if the sheet_name already exists in the dictionary
+        if sheet_name not in sheet_data:
+            sheet_data[sheet_name] = []
+
+        # Check if the sheet_row_index exists for the current sheet, initialize if not
+        if sheet_name not in sheet_row_index:
+            sheet_row_index[sheet_name] = 1
+
+        # Get the current row index and increment it for the next iteration
+        row_index = sheet_row_index[sheet_name]
+        sheet_row_index[sheet_name] += 20
+
+        # Save the image
+        with open(f"{settings.MEDIA_ROOT}/{result[i][1]}.jpg", 'wb') as f:
+            f.write(result[i][2])
+
+        # Insert data and images into the worksheet
+        if sheet_name not in sheet_name_list:
+            worksheet = workbook.add_worksheet(sheet_name)
+            worksheet.set_column('A:A', 30)
+            sheet_name_list.append(sheet_name)
+        else:
+            worksheet = workbook.get_worksheet_by_name(sheet_name)
+
+        worksheet.write(f'A{row_index}', str(result[i][0]))
+        worksheet.write(f'B{row_index}', result[i][3])
+        worksheet.insert_image(f'C{row_index}', f'{settings.MEDIA_ROOT}/{result[i][1]}.jpg', {'x_scale': 0.2, 'y_scale': 0.2})
+    # Sort the sheet_name_list alphabetically
+    sheet_name_list = sorted(sheet_name_list)
+
+    # Reorder the worksheets based on the sorted sheet_name_list
+    workbook.worksheets_objs.sort(key=lambda x: sheet_name_list.index(x.get_name()))
 
     workbook.close()
-
-    for i in result:
-        os.remove(f"{settings.MEDIA_ROOT}/{i[1]}.jpg")
 
 class QC:
     def __init__(self) -> None:
@@ -100,7 +242,6 @@ def callback(request):
 @handler.default()
 def message_text(event):
     if event.message.type == 'text':
-
         text = event.message.text
         print(text)
         if text == 'clear':
@@ -111,13 +252,21 @@ def message_text(event):
             TextSendMessage(text=f"เคลียร์เรียบร้อย !!")
             )
             qc.check = False
-        elif text == 'export excel':
-            export()
-            template_message = template()
-            # Send the message
-            line_bot_api.reply_message(
+        elif 'export excel' in text:
+            _, firstdate, lastdate = text.split(',')
+            try:
+                export(firstdate,lastdate)
+                print('exported')
+                # template_message = template()
+                # Send the message
+                line_bot_api.reply_message(
                 event.reply_token,
-                template_message)
+                TextSendMessage(text="https://139-177-190-161.ip.linodeusercontent.com/media/export_data.xlsx"))
+            except Exception as E:
+                line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=f"{E} error 130")
+                )
 
         else:
             if qc.check:
@@ -340,7 +489,7 @@ def message_text(event):
                     id = insert_soldout(data)
                     line_bot_api_sold_out.reply_message(
                         event.reply_token,
-                        TextSendMessage(text=f"บันทึกเร็จ : https://139-162-28-194.ip.linodeusercontent.com/blog/soldout/detail/{id}/")
+                        TextSendMessage(text=f"บันทึกเร็จ : htthttps://139-177-190-161.ip.linodeusercontent.com/blog/soldout/detail/{id}/")
                     )
                     soldout.check = False
                 elif not(soldout.check):
@@ -356,12 +505,97 @@ def message_text(event):
     except Exception as E:
         soldout.check = False
         soldout.image = ''
-        line_bot_api_sold_out.reply_message(
-            event.reply_token,
-            TextSendMessage(text=f'บันทึกไม่สำเร็จ :{E}')
-        )
+        #line_bot_api_sold_out.reply_message(
+        #    event.reply_token,
+        #    TextSendMessage(text=f'บันทึกไม่สำเร็จ :{E}')
+        #)
 
 # webhook line bot SOLD_OUT PART ----------------------------
+
+# webhook line bot DAILY REPORT PART ----------------------------
+class DailyReport:
+    def __init__(self) -> None:
+        self.name = ''
+        self.check = False
+dailyreport = DailyReport()
+
+channel_secret_daily_report = 'fbb1d0a129910dfb8bb7b2d43c910318'
+channel_access_token_daily_report = 'w6F1ffyyanDJ+PMtmekbkLiKyNqQID1cWIM1u9oKwdRymskGI9BMCEplfSDsueuv/zOwv401JLWIAYNXucK6E3CuGnZWwTJxMgi91cIaY9L0tVYMPcdW3VuYDr3eEgJ+p6/bzcIeNf+21naBySayUwdB04t89/1O/w1cDnyilFU='
+
+line_bot_api_daily_report = LineBotApi(channel_access_token_daily_report)
+handler_daily_report = WebhookHandler(channel_secret_daily_report)
+
+@csrf_exempt
+def callback_daily_report(request):
+    # get X-Line-Signature header value
+    signature = request.META['HTTP_X_LINE_SIGNATURE']
+
+    # get request body as text
+    body = request.body.decode('utf-8')
+    # handle webhook body
+    handler_daily_report.handle(body, signature)
+    return render(request,'webhook.html')
+
+
+@handler_daily_report.default()
+def message_text(event):
+    try:
+        if event.message.type == 'text':
+            text = event.message.text
+            print(text)
+            if text == 'ยอดขายรายเดือน':
+                dep = 'muslin'
+                web = Web(get_api_register(dep,'apikey'),get_api_register(dep,'apisecret'),get_api_register(dep,'storename'))
+                result = web.send_sales_report_monthly(dep)
+                dep = 'maruay'
+                web = Web(get_api_register(dep,'apikey'),get_api_register(dep,'apisecret'),get_api_register(dep,'storename'))
+                result_jj = web.send_sales_report_monthly(dep)
+                line_bot_api_daily_report.reply_message(
+                event.reply_token,
+                TextSendMessage(text=f"{text}\nmuslin\n{result}\n\n{text}\nmaruay\n{result_jj}")
+                )
+            elif text == 'ยอดขายวันนี้':
+                dep = 'muslin'
+                web = Web(get_api_register(dep,'apikey'),get_api_register(dep,'apisecret'),get_api_register(dep,'storename'))
+                yesterday_date = datetime.datetime.now().strftime('%Y-%m-%d')
+                result = web.send_sales_report(dep,yesterday_date)
+                dep = 'maruay'
+                web = Web(get_api_register(dep,'apikey'),get_api_register(dep,'apisecret'),get_api_register(dep,'storename'))
+                result_jj = web.send_sales_report(dep,yesterday_date)
+                line_bot_api_daily_report.reply_message(
+                event.reply_token,
+                TextSendMessage(text=f"{text}\nmuslin\n{result}\n\n{text}\nmaruay\n{result_jj}")
+                )
+
+            elif text == 'ยอดขายเมื่อวาน':
+                dep = 'muslin'
+                web = Web(get_api_register(dep,'apikey'),get_api_register(dep,'apisecret'),get_api_register(dep,'storename'))
+                yesterday_date = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+                result = web.send_sales_report(dep,yesterday_date)
+                dep = 'maruay'
+                web = Web(get_api_register(dep,'apikey'),get_api_register(dep,'apisecret'),get_api_register(dep,'storename'))
+                result_jj = web.send_sales_report(dep,yesterday_date)
+                line_bot_api_daily_report.reply_message(
+                event.reply_token,
+                TextSendMessage(text=f"{text}\nmuslin\n{result}\n\n{text}\nmaruay\n{result_jj}")
+                )
+            if text == 'ยอดแอด':
+                spend_list = [get_ads_spend(access_tok, acc_id,'today') for acc_id in ad_acc_list]
+                amount = sum(spend_list)
+                
+                spend_list_jj = [get_ads_spend(access_tok, acc_id,'today') for acc_id in ad_acc_list_maruay]
+                amount_jj = sum(spend_list_jj)
+                line_bot_api_daily_report.reply_message(
+                event.reply_token,
+                TextSendMessage(text=f"{text} muslin วันนี้ : {format(int(amount),',')}\n{text}maruay วันนี้ : {format(int(amount_jj),',')}")
+                )
+    except Exception as E:
+        line_bot_api_daily_report.reply_message(
+           event.reply_token,
+           TextSendMessage(text=f'บันทึกไม่สำเร็จ :{E}')
+        )
+
+# webhook line bot DAILY REPORT PART ----------------------------
 
 @csrf_exempt
 def editorder(req):
@@ -559,3 +793,36 @@ def editproduct_maruay(req):
             print(e)
         db.query_commit(f'update {dep}.stock_main set descript = "{res["name"]}" where sku = "{res["sku"]}"')
     return render(req,'webhook.html')
+
+@csrf_exempt
+def EMS_webhok(request):
+    web = Web("7KRzYzjPqknzzSM2nVcooo3sWNF6EK4Oyq9QtGI8uyk=","RA9VD1AjwaHo8UW0uNk924SnxN0xIFIGdlelDEcTEE=","Muslin.info@gmail.com")
+    web1 = Web("pteRXLvqBNcUXlgIB3RDHxBn3vXoi9cwRp6u/v9M=","GbJK2j7YS5dJtVaBomSsdyenjYuEwdI2A4gLPbKrRAI=","Maruay18.co.th@gmail.com")
+
+    if request.method == 'POST':
+        try:
+            # Parse the incoming JSON data from the webhook
+            data = json.loads(request.body)
+
+            # Perform actions based on the webhook data
+            # You can process the data and take appropriate actions here
+            status = str(data['items'][0]['status'])
+            barcode = data['items'][0]['barcode']
+            if status == '103':
+                a = f"muslin : {str(web.update_order_by_track(barcode))}"
+                b = f"maruay : {str(web1.update_order_by_track(barcode))}"
+            send_line_webhook(a)
+            send_line_webhook(b)
+            # Send a response to acknowledge the webhook
+            response_data = {'message': 'Webhook received successfully'}
+            return JsonResponse(response_data, status=200)
+
+        except json.JSONDecodeError as e:
+            # Handle JSON decoding errors
+            response_data = {'error': 'Invalid JSON data'}
+            send_line_webhook(e)
+            return JsonResponse(response_data, status=400)
+
+    else:
+        # Return a 405 Method Not Allowed response for non-POST requests
+        return JsonResponse({'error': 'Method not allowed'}, status=405)

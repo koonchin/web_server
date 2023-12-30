@@ -5,10 +5,37 @@ from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 from zipfile import ZipFile
 from os.path import basename
-from django.http import HttpResponseRedirect
-from django.conf import settings
+from django.http import FileResponse, HttpResponse, HttpResponseRedirect
+from app import settings
+from .thread import AddLocationThread
+
+def addtracking(req):
+    dep = get_role(req, 'department')
+    web = Web(get_api_register(dep, 'apikey'), get_api_register(dep, 'apisecret'), get_api_register(dep, 'storename'))
+
+    ordernumber = req.POST.get('ordernumber')
+    trackingno = req.POST.get('trackingno')
+    tracking_old = web.get_tracking_no_by_order_number(ordernumber)
+    confirm_replace = req.POST.get('confirm_replace')
+    if tracking_old and confirm_replace != 'True':
+        print('old track without confirm')
+        return render(req, "stock.html", context={'tracking_old': tracking_old,'ordernumber':ordernumber})
+
+    res = web.add_tracking(ordernumber, trackingno)
+    if res:
+        print('success')
+        messages.success(req, "Update success .... ")
+        barcode = [trackingno]
+        ems.SubscribeByReceipt(barcode)
+        return render(req,'stock.html',context = {'play_success_sound':'success.mp3'})
+    else:
+        print('error')
+        messages.error(req, "Error !!!!!!!!! ")
+        return render(req, 'stock.html',context={'play_success_sound':'wrong.mp3'})
+
 
 def hello(req):
+    print('here')
     remove_file()
     if req.method == 'POST':
         dbname = req.POST.get('dbname')
@@ -34,10 +61,10 @@ def simple_upload(request):
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
-        filename = fs.save(os.path.join(settings.MEDIA_ROOT,myfile.name), myfile)
-        path = upstock(os.path.join(settings.MEDIA_ROOT,myfile.name),dep)
+        filename = fs.save(myfile.name, myfile)
+        path = upstock(f"{settings.MEDIA_ROOT}/{myfile.name}",dep)
         messages.success(request,'อัพสต็อกเรียบร้อย ... ')
-    return render(request, 'index.html')
+    return render(request, 'index.html',context={"play_success_sound":"upstock.mp3"})
 
 def secretUpstock(req):
     dep = get_role(req,'department')
@@ -49,18 +76,23 @@ def upload_checkstock(request):
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
         filename = fs.save(myfile.name, myfile)
-        path = check_stock(os.path.join(settings.MEDIA_ROOT,myfile.name),dep)
-        return redirect(f'/{path}')
+        path = check_stock(f"{settings.MEDIA_ROOT}/{myfile.name}",dep)
+        messages.success(request,'upstock success ... ')
+        return render(request,'upstock.html',context={"play_success_sound":"checkstock.mp3"})
     return render(request, 'upstock.html')
 
 def upload_checkdiff(request):
-    dep = get_role(request,'department')
+    dep = get_role(request, 'department')
+
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
         filename = fs.save(myfile.name, myfile)
-        path = get_diff_stock(os.path.join(settings.MEDIA_ROOT,myfile.name),dep)
-        return redirect(f'/{path}')
+        get_diff_stock(f"{settings.MEDIA_ROOT}/{myfile.name}", dep)
+
+        # Add a script to play the sound before redirecting
+        return render(request, 'upstock.html', context = {'redirect_url': '/media/stock/diff.xlsx','diff_sound':'diff.mp3'})
+
     return render(request, 'upstock.html')
 
 def UpdateExcel(request):
@@ -79,8 +111,19 @@ def UpdateExcelAndBringBack(request):
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
         filename = fs.save(myfile.name, myfile)
-        Start(f"{settings.MEDIA_ROOT}/{myfile.name}",dep)
-        update_vrich()
+        bringback_from_vrich_increase_stock_live(dep,f"{settings.MEDIA_ROOT}/{myfile.name}")
+        # pull_order_vrich_to_zort(dep,f"{settings.MEDIA_ROOT}/{myfile.name}",True)
+        messages.success(request,"update เรียบร้อย ... ")
+    return render(request, 'index.html')
+
+def bring_order_vrich_to_zort(request):
+    dep = get_role(request,'department')
+    if request.method == 'POST' and request.FILES['myfile']:
+        myfile = request.FILES['myfile']
+        fs = FileSystemStorage()
+        filename = fs.save(myfile.name, myfile)
+        bringback_from_vrich_increase_stock_live(dep,f"{settings.MEDIA_ROOT}/{myfile.name}")
+        # pull_order_vrich_to_zort(dep,f"{settings.MEDIA_ROOT}/{myfile.name}",False)
         messages.success(request,"update เรียบร้อย ... ")
     return render(request, 'index.html')
 
@@ -104,28 +147,44 @@ def KorkaiUpload(request):
         return redirect(f'/{path}')
     return render(request, 'index.html')
 
+def Vlookup(request):
+    dep = get_role(request,'department')
+    if request.method == 'POST' and request.FILES['platformfile'] and request.FILES['zortfile']:
+        platformfile = request.FILES['platformfile']
+        zortfile = request.FILES['zortfile']
+        fs = FileSystemStorage()
+        platformfilename = fs.save(platformfile.name, platformfile)
+        zortfilefilename = fs.save(zortfile.name, zortfile)
+        path = update_qty_from_first_file(f"{settings.MEDIA_ROOT}/{zortfile.name}",f"{settings.MEDIA_ROOT}/{platformfile.name}")
+        return redirect(f'/{path}')
+    return render(request, 'index.html')
+
 def transferVrich(req):
+    dep  = get_role(req,'department')
+    web = Web(get_api_register(dep,'apikey'),get_api_register(dep,'apisecret'),get_api_register(dep,'storename'))
     dep = get_role(req,'department')
     sec = datetime.datetime.now().timestamp()
     sec = str(sec).split('.')[0]
     if req.method == 'POST':
         if req.POST.get('ZortToVrich'):
-            db.query_commit("update muslin.stock set amount = 0")
+            web.transfer_all_amount_with_condition(4,'W0001','W0003','โยกสต็อกไปไลฟ์')
+            # db.query_commit(f"update {dep}.stock set amount = 0")
             messages.success(req,'update เรียบร้อย ...')
             return redirect('/secretUpstock/')
         elif req.POST.get('VrichToZort'):
-            print(settings.MEDIA_ROOT,BASE_DIR)
-            export_to_vrich(dep,f'{settings.MEDIA_ROOT}/stock/{sec}')
+            export_to_vrich(dep,f'{MEDIA_ROOT}/stock/{sec}')
             time.sleep(3)
             return redirect(f'/media/stock/{sec}.xlsx')
-        
+
 def postZeroFunction(req):
     dep = get_role(req,'department')
     if req.method == 'POST':
         post_zero_zort(dep)
+        if dep == 'muslin':
+            setZeroReturnWarehouse(dep)
         time.sleep(3)
         messages.success(req,'ลง 0 ทุกรายการเรียบร้อย ... ')
-        return render(req,'upstock.html')
+        return render(req,'upstock.html',context={"play_success_sound":'zero.mp3'})
 
 def check(req):
     return render(req, 'main.html')
@@ -194,7 +253,8 @@ def barcode_(req):
     for i in sku:
         for row in range(int(amt)):
             data.append(i)
-    return render(req, 'barcode.html', {'print': data, 'host': host})
+    print(data)
+    return render(req, 'barcode.html', {'print': data, 'host': host,'backpage':'barcode'})
 
 def checkstock(req):
     if req.method == 'POST':
@@ -206,12 +266,12 @@ def checkstock(req):
             a = a.replace(':', '_')
             a = a.replace('.', '')
             a = a.replace(' ', '')
-            path = f'media/{a}.xlsx'
+            path = f'{settings.MEDIA_ROOT}/{a}.xlsx'
             # path = export_checkstock(f'{get_role(req,"department")}.`stock_zort_extra`', path)
             check = True
             while check:
                 for i in os.listdir('media/'):
-                    if f'media/{i}' == path:
+                    if f'{settings.MEDIA_ROOT}/{i}' == path:
                         check = False
                 time.sleep(3)
             return redirect(f'/'+path)
@@ -363,9 +423,9 @@ def countprint(req):
             result = db.query(task)
             result = list(result.fetchall())
         else:
-            for i in os.listdir(f'media/stock/'):
+            for i in os.listdir(f'{settings.MEDIA_ROOT}/stock/'):
                 if i.endswith('.xlsx'):
-                    os.remove(f'media/stock/{i}')
+                    os.remove(f'{settings.MEDIA_ROOT}/stock/{i}')
 
             task = f"select * from {dep}.deli_zort where orderdate = '{date_filter}'"
             today_name = datetime.datetime.today().strftime('%Y_%m_%d')
@@ -401,19 +461,19 @@ def upstock_page(request):
     return render(request,"upstock.html")
 
 def download_zip(sec):
-    main('{settings.MEDIA_ROOT}/write_image')
-    # for i in os.listdir(f'media/write_image/'):
-    #     if not os.path.isfile(f'media/write_image/{i}'):
-    #         for i2 in os.listdir(f'media/write_image/{i}'):
-    #             if os.path.isfile(f'media/write_image/{i}/{i2}'):
-    #                 if f'media/write_image/{i}/{i2}'.endswith('.png') or f'media/write_image/{i}/{i2}'.endswith('.jpg'):
-    #                     os.remove(f'media/write_image/{i}/{i2}')
+    main(f'{settings.MEDIA_ROOT}/write_image')
+    # for i in os.listdir(f'{settings.MEDIA_ROOT}/write_image/'):
+    #     if not os.path.isfile(f'{settings.MEDIA_ROOT}/write_image/{i}'):
+    #         for i2 in os.listdir(f'{settings.MEDIA_ROOT}/write_image/{i}'):
+    #             if os.path.isfile(f'{settings.MEDIA_ROOT}/write_image/{i}/{i2}'):
+    #                 if f'{settings.MEDIA_ROOT}/write_image/{i}/{i2}'.endswith('.png') or f'{settings.MEDIA_ROOT}/write_image/{i}/{i2}'.endswith('.jpg'):
+    #                     os.remove(f'{settings.MEDIA_ROOT}/write_image/{i}/{i2}')
                 
     with ZipFile(f'{settings.MEDIA_ROOT}/write_image/{sec}/{sec}.zip', 'w') as zipObj:
         # Iterate over all the files in directory
         for folderName, subfolders, filenames in os.walk(f'{settings.MEDIA_ROOT}/write_image/{sec}'):
             for filename in filenames:
-                if filename.endswith('.png') or filename.endswith('.jpg'):
+                if filename.lower().endswith('.png') or filename.lower().endswith('.jpg'):
                     # create complete filepath of file in directory
                     filePath = os.path.join(folderName, filename)
                     # Add file to zip
@@ -425,7 +485,7 @@ def download_zip(sec):
     return sec
 
 def upload_image(request):
-    main(f'{settings.MEDIA_ROOT}/write_image')
+    main('media/write_image')
     if request.method == 'POST' and request.FILES['myfile']:
         sec = datetime.datetime.now().timestamp()
         sec = str(sec).split('.')[0]
@@ -452,9 +512,32 @@ def upload_image(request):
         
         else:
             return redirect(f"/media/write_image/{sec}/{i.name}")
-        # path = upstock(f"media/{myfile.name}",request)
+        # path = upstock(f"{settings.MEDIA_ROOT}/{myfile.name}",request)
         # return redirect(f'/{path}')
 
+    return render(request, 'uploadimage.html')
+
+def AddimageZort(request):
+    dep = get_role(request,'department')
+    web = Web(get_api_register(dep,'apikey'),get_api_register(dep,'apisecret'),get_api_register(dep,'storename'))
+    main(f'{settings.MEDIA_ROOT}/zort')
+    if request.method == 'POST' and request.FILES['myfilezort']:
+        sec = datetime.datetime.now().timestamp()
+        sec = str(sec).split('.')[0]
+        os.makedirs(f'{settings.MEDIA_ROOT}/zort/{sec}', exist_ok=True)
+        myfile = request.FILES.getlist('myfilezort')
+        for i in myfile:
+            fs = FileSystemStorage()
+            filename = fs.save(f"zort/{sec}/{i.name}", i)
+            task = f'select sku from data_size where idsell = "{str(i.name).split(".")[0]}"'
+            result = db.query_custom(task,dep)
+            result = list(result.fetchall())
+            for row in result:
+                print(row[0])
+                try:
+                    web.addImage(row[0],f"{settings.MEDIA_ROOT}/zort/{sec}/{i.name}")
+                except:
+                    pass
     return render(request, 'uploadimage.html')
 
 # main function
@@ -547,11 +630,17 @@ def get_file_or_folder_age(path):
     return ctime
 
 def exportCheckin(req):
-    dep = get_role(req,'department')
-    sec = datetime.datetime.now().timestamp()
-    sec = str(sec).split('.')[0]
-    table_break('2022-03-01',sec)
-    return redirect(f'/media/stock/{sec}.xlsx')
+    dep = get_role(req, 'department')
+    a = filter_telephone_numbers(dep)
+
+    # Get the absolute file path
+    file_path = os.path.join(settings.MEDIA_ROOT, 'stock', a)
+
+    # Create a FileResponse directly from the file path
+    response = FileResponse(open(file_path, 'rb'))
+    response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
+    
+    return response
 
 def exportrma(req):
     dep = get_role(req,'department')
@@ -567,3 +656,103 @@ def managelive(req):
     manageStockLive(sec)
     return redirect(f'/media/stock/{sec}.xlsx')
 
+def share_barcode(req):
+    if req.method == 'POST':
+        data,SKU = [],[]
+        s_ref_code = req.POST.get('s_ref_code')
+        b_ref_code = req.POST.get('b_ref_code')
+        for key, value in req.POST.items():
+            if key.endswith('_amount'):  # Identify input fields by '_amount' suffix
+                # Parse the key to extract pattern, dataMessage, size, and amount
+                sku = key.split('_amount')[0]
+                print(sku,req.POST[f"{sku}_amount"])
+                SKU.append(sku)
+
+        for i in SKU:
+            for row in range(int(req.POST[f"{i}_amount"])):
+                data.append(i)
+                
+        return render(req, 'barcode.html', {'print': data, 'host': host,'backpage':'share-barcode'})
+    return render(req,'share_barcode.html')
+
+def print_barcode(request):
+    dep = get_role(request,'department')
+    if request.method == 'POST' and request.FILES['myfile']:
+        myfile = request.FILES['myfile']
+        fs = FileSystemStorage()
+        filename = fs.save(myfile.name, myfile)
+        barcode = print_barcode_from_excel(f"{settings.MEDIA_ROOT}/{myfile.name}")
+    return render(request, 'barcode.html', {'print': barcode, 'host': host,'backpage':'barcode'})
+
+
+def pull_order(req):
+    if req.method == 'POST':
+        dep = get_role(req,'department')
+        web = Web(get_api_register(dep,'apikey'),get_api_register(dep,'apisecret'),get_api_register(dep,'storename'))
+        web.get_track_2(dep)
+        messages.success(req,'ดึงออเดอร์ zort สำเร็จ .... ')
+        return redirect('/')
+
+def barcode_scanner_view(req):
+    dep = get_role(req, 'department')
+
+    if req.method == 'POST':
+        sku = req.POST.get('skuInput')
+        location = req.POST.get('locationInput')
+        sku = str(sku).upper()
+        location = str(location).upper()
+
+        AddLocationThread(dep, sku, location).start()
+        print(dep,sku,location)
+        messages.success(req, "Task has been started in the background.")
+        return redirect('/barcode-scanner/')
+    
+    return render(req, 'scan.html')
+
+from django.http import JsonResponse
+
+def api_data(req):
+    dep = get_role(req, 'department')
+    patterns = list(req.GET.get('patterns'))
+    sizes = list(req.GET.get('sizes'))
+
+    if patterns and sizes:
+        ref_code = req.GET.get('ref_code')
+        satin_code = {'N', 'T', 'L', 'P', 'W', 'V', 'U', 'M', 'K', 'R'}
+
+        is_a_pattern = any(pattern in satin_code for pattern in patterns)
+        b = 'satin_sku' if is_a_pattern else 'bamboo_sku'
+
+        # task = f'''
+        # SELECT SUBSTRING(idsell, 2) AS extracted_text
+        # FROM data_size
+        # WHERE sku LIKE '{b}%'
+        # ORDER BY CAST(SUBSTRING(idsell, 2) AS SIGNED) DESC;'''
+        task = f'''
+        select {b} from reserve_sku  where status = 2
+        order by cast({b} as SIGNED) DESC'''
+        result = db.query_custom(task, 'muslin')
+        result = result.fetchall()
+        if not result:
+            task = f'''
+            select {b} from reserve_sku  where status = 0 and {b} is not NULL
+            order by cast({b} as SIGNED) DESC'''
+            result = db.query_custom(task, 'muslin')
+            result = result.fetchall()[0][0]
+            result = str(int(result) + 1).zfill(4)
+            task_dict = {'satin_sku':f'"{result}",NULL','bamboo_sku':f'NULL,"{result}"'}
+            task_commit = f'insert into muslin.reserve_sku value (0,"factory_name",{task_dict[b]},now(),1,"{ref_code}")'
+            db.query_commit(task_commit)
+        else:
+            result = int(result[0][0])
+            result = str(result).zfill(4)
+            task_commit = f"update muslin.reserve_sku set user = 'factory_name',date=now(),status = 1,ref_code = '{ref_code}' where {b} = {result}"
+            db.query_commit(task_commit)
+        data = {'message': result}
+        return JsonResponse(data)
+    return JsonResponse({})
+
+def cancel_reserve(req):
+    ref_code = req.GET.get('ref_code')
+    db.query_commit(f'update muslin.reserve_sku set ref_code = NULL,date = NULL,user = NULL , status = 2 where ref_code = "{ref_code}"')
+    return JsonResponse({})

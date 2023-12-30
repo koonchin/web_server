@@ -1,0 +1,415 @@
+{% extends 'base.html' %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% include 'messages.html' %} {% block content %}
+    <title>二维码生成工具</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer"
+    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="/media/style.css?{% now " U " %}">
+    <style>
+        .box {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            opacity: .9;
+        }
+        
+        .margin {
+            margin-top: 0px;
+            margin-bottom: 0px;
+            margin-right: 0px;
+        }
+        
+        .form-check {
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <div class="h1 fw-bold">Barcode Detail</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cancel-button-2"></button>
+                    </div>
+                    <div class="modal-body" data-bs-theme="blue">
+                        <div id="result"></div>
+                        <div id="s_pattern_result"></div>
+                        <div id="s_size_result"></div>
+                        <div id="b_pattern_result"></div>
+                        <div id="b_size_result"></div>
+                        <input type="hidden" id="s_ref_code_input" name="s_ref_code" value="">
+                        <input type="hidden" id="b_ref_code_input" name="b_ref_code" value="">
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <div class="row">
+                            <div class="col-auto">
+                                <button class="btn btn-danger" data-bs-dismiss="modal" type="button" id="cancel-button">Cancel Reserve</button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-primary" type="submit">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="container mt-5">
+        <div class="row  text-center rounded-3 border border-3 border-dark mt-3 p-5 " style="background-color: rgba(255,255,255,.8);">
+            <div class="col-4 d-flex align-items-center h4">
+                第一步：输入SKU编号(纯数字)，比如1，或者100, 或者330, 或者1005等
+            </div>
+            <div class="col-4">
+            </div>
+            <div class="col-4">
+                <div class="input-group">
+                    <input class="form-control form-control-lg mt-2" type="text" placeholder="输入SKU编号(纯数字)" id="s_id_input" name="satin_id_input" aria-label=".form-control-lg example" required>
+                    <span class="input-group-text mt-2" id="basic-addon1"><i class="fa fa-solid fa-magnifying-glass"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="row  text-center rounded-3 border border-3 border-dark mt-3 p-5" style="background-color: rgba(255,255,255,.8);">
+            <div class="col-4 d-flex align-items-center h4">
+                第二步：选择打印的码数，单选或者多选
+            </div>
+            <div class="col-4"></div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col y-2 m-2">
+                        <input name="s_size" value="S" type="checkbox" class="btn-check" id="S_S" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_S">S</label>
+                        <input name="s_size" value="M" type="checkbox" class="btn-check" id="S_M" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_M">M</label>
+                        <input name="s_size" value="L" type="checkbox" class="btn-check" id="S_L" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_L">L</label>
+                        <input name="s_size" value="XL" type="checkbox" class="btn-check" id="S_XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_XL">XL</label>
+                        <input name="s_size" value="2XL" type="checkbox" class="btn-check" id="S_2XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_2XL">2XL</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col y-2 m-2">
+                        <input name="s_size" value="3XL" type="checkbox" class="btn-check" id="S_3XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_3XL">3XL</label>
+                        <input name="s_size" value="4XL" type="checkbox" class="btn-check" id="S_4XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_4XL">4XL</label>
+                        <input name="s_size" value="5XL" type="checkbox" class="btn-check" id="S_5XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_5XL">5XL</label>
+                        <input name="s_size" value="6XL" type="checkbox" class="btn-check" id="S_6XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_6XL">6XL</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row  text-center rounded-3 border border-3 border-dark mt-3 p-5" style="background-color: rgba(255,255,255,.8);">
+            <div class="row border-bottom border-3 border-black">
+                <div class="col-4 d-flex align-items-center h4">
+                    第三步：选择款式，单选或者多选
+                </div>
+            </div>
+            <div class="row">
+                <div class="col my-4">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="N" value="N" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="N">短袖短裤 (N)</label><br>
+                </div>
+                <div class="col my-4">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="T" value="T" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="T">短袖长裤 (T)</label><br>
+                </div>
+                <div class="col my-4">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="L" value="L" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="L">短袖七分裤 (L)</label><br>
+                </div>
+                <div class="col my-4">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="P" value="P" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="P">长袖长裤/中袖长裤 (P)</label><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col my-4">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="W" value="W" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="W">宽松款短袖短裤 (W)</label><br>
+                </div>
+                <div class="col my-4">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="V" value="V" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="V">宽松款短袖长裤 (V)</label><br>
+                </div>
+                <div class="col my-4">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="U" value="U" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="U">长袖短裤 (U)</label><br>
+                </div>
+                <div class="col my-4">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="M" value="M" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="M">儿童 (M)</label><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col my-4">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="K" value="K" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="K">裙子 (K)</label><br>
+                </div>
+                <div class="col my-4">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="R" value="R" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="R">吊带 (R)</label><br>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="row mt-3  h1 text-bg-dark p-2 align-middle">
+            <div class="col-4 d-flex align-items-center">
+                Bamboo
+            </div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col y-2 m-2">
+                        <input name="b_size" value="S" type="checkbox" class="btn-check" id="B_S" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="B_S">S</label>
+                        <input name="b_size" value="M" type="checkbox" class="btn-check" id="B_M" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="B_M">M</label>
+                        <input name="b_size" value="L" type="checkbox" class="btn-check" id="B_L" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="B_L">L</label>
+                        <input name="b_size" value="XL" type="checkbox" class="btn-check" id="B_XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="B_XL">XL</label>
+                        <input name="b_size" value="2XL" type="checkbox" class="btn-check" id="B_2XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="B_2XL">2XL</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col y-2 m-2">
+                        <input name="b_size" value="3XL" type="checkbox" class="btn-check" id="B_3XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="B_3XL">3XL</label>
+                        <input name="b_size" value="4XL" type="checkbox" class="btn-check" id="B_4XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="B_4XL">4XL</label>
+                        <input name="b_size" value="5XL" type="checkbox" class="btn-check" id="B_5XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="B_5XL">5XL</label>
+                        <input name="b_size" value="6XL" type="checkbox" class="btn-check" id="B_6XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="B_6XL">6XL</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 d-flex align-items-center justify-content-center text-center">
+                <div class="input-group">
+                    <input class="form-control form-control-lg mt-2" type="text" placeholder="Existing Code" id="b_id_input" name="b_id_input" aria-label=".form-control-lg example">
+                    <span class="input-group-text mt-2" id="basic-addon1"><i class="fa fa-solid fa-magnifying-glass"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="row  text-center rounded-3 border border-3 border-dark mt-3" style="background-color: rgba(255,255,255,.8);">
+            <div class="row">
+                <div class="col my-4">
+                    <input name="b_pattern" type="checkbox" class="btn-check" id="A" value="A" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="A">Short-Short (A)</label><br>
+                </div>
+                <div class="col my-4">
+                    <input name="b_pattern" type="checkbox" class="btn-check" id="B" value="B" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="B">Short Long (B)</label><br>
+                </div>
+                <div class="col my-4">
+                    <input name="b_pattern" type="checkbox" class="btn-check" id="G" value="G" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="G">Five-Leg Long Sleeve (G)</label><br>
+                </div>
+                <div class="col my-4">
+                    <input name="b_pattern" type="checkbox" class="btn-check" id="C" value="C" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="C">Long Long (C)</label><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col my-4">
+                    <input name="b_pattern" type="checkbox" class="btn-check" id="D" value="D" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="D">Dress (D)</label><br>
+                </div>
+            </div>
+        </div> -->
+        <div class="row">
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn btn-primary btn-lg m-5" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" id="generate">下一步</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function generateRandomString(length) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                result += characters.charAt(randomIndex);
+            }
+            return result;
+        }
+        document.getElementById('generate').addEventListener('click', async function() {
+            // Selected values for specific checkboxes
+            const s_patternCheckboxes = document.querySelectorAll('input[name="s_pattern"]:checked');
+            const s_patternSelectedValues = Array.from(s_patternCheckboxes).map(checkbox => checkbox.value);
+            const s_sizeCheckboxes = document.querySelectorAll('input[name="s_size"]:checked');
+            const s_sizeSelectedValues = Array.from(s_sizeCheckboxes).map(checkbox => checkbox.value);
+            // const b_patternCheckboxes = document.querySelectorAll('input[name="b_pattern"]:checked');
+            // const b_patternSelectedValues = Array.from(b_patternCheckboxes).map(checkbox => checkbox.value);
+            // const b_sizeCheckboxes = document.querySelectorAll('input[name="b_size"]:checked');
+            // const b_sizeSelectedValues = Array.from(b_sizeCheckboxes).map(checkbox => checkbox.value);
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = ''; // Clear previous results
+
+            // Fetch data based on selected values
+            // const b_id_input = document.getElementById('b_id_input').value;
+            const s_id_input = document.getElementById('s_id_input').value;
+
+            // Set b_data.message based on conditions
+            // let b_message = '';
+            // if (b_id_input) {
+            //     b_message = b_id_input.padStart(4, '0');
+            // }
+            let s_message = '';
+            if (s_id_input) {
+                s_message = s_id_input.padStart(4, '0');
+            }
+
+            // Fetch data once for each set of patterns and sizes
+            let s_data = {
+                message: s_message,
+                ref_code: ''
+            };
+
+            // if (s_patternSelectedValues.length > 0 && s_sizeSelectedValues.length > 0 && !s_id_input) {
+            // s_data = await fetchData(s_patternSelectedValues, s_sizeSelectedValues);
+            // }
+
+            // let b_data = {
+            //     message: b_message,
+            //     ref_code: ''
+            // };
+
+            // if (b_patternSelectedValues.length > 0 && b_sizeSelectedValues.length > 0 && !b_id_input) {
+            //     b_data = await fetchData(b_patternSelectedValues, b_sizeSelectedValues);
+            // }
+
+            // Generate and display combinations for s_pattern_checked and s_size_checked
+            // if (s_data.ref_code) {
+            //     document.getElementById('cancel-button').addEventListener('click', () => cancelReserve(s_data.ref_code));
+            //     document.getElementById('cancel-button-2').addEventListener('click', () => cancelReserve(s_data.ref_code));
+            //     document.getElementById('s_ref_code_input').value = s_data.ref_code;
+
+            // }
+            for (const s_pattern of s_patternSelectedValues) {
+                for (const s_size of s_sizeSelectedValues) {
+                    const combination = `S${s_pattern}${s_data.message}-${s_size}`;
+                    const row = document.createElement('div');
+                    row.className = 'row mb-2 border-bottom align-items-center'; // Add custom class and Bootstrap align-items-center class
+                    const textCol = document.createElement('div');
+                    textCol.className = 'col';
+                    textCol.textContent = combination;
+                    const inputCol = document.createElement('div');
+                    inputCol.className = 'col input-stick-bottom'; // Add custom class
+                    const inputElement = document.createElement('input');
+                    inputElement.type = 'number';
+                    inputElement.className = 'mb-2 form-control';
+                    inputElement.placeholder = 'Enter amount';
+                    inputElement.name = `S${s_pattern}${s_data.message}-${s_size}_amount`;
+                    inputCol.appendChild(inputElement);
+                    row.appendChild(textCol);
+                    row.appendChild(inputCol);
+                    resultDiv.appendChild(row);
+                }
+            }
+
+            // Generate and display combinations for b_pattern_checked and b_size_checked
+            // if (b_data.ref_code) {
+            //     document.getElementById('cancel-button').addEventListener('click', () => cancelReserve(b_data.ref_code));
+            //     document.getElementById('cancel-button-2').addEventListener('click', () => cancelReserve(b_data.ref_code));
+            //     document.getElementById('b_ref_code_input').value = b_data.ref_code;
+
+            // }
+            // for (const b_pattern of b_patternSelectedValues) {
+            //     for (const b_size of b_sizeSelectedValues) {
+            //         const combination = `B${b_pattern}${b_data.message}-${b_size}`;
+            //         const row = document.createElement('div');
+            //         row.className = 'row mb-2 border-bottom align-items-center'; // Add custom class and Bootstrap align-items-center class
+            //         const textCol = document.createElement('div');
+            //         textCol.className = 'col';
+            //         textCol.textContent = combination;
+            //         const inputCol = document.createElement('div');
+            //         inputCol.className = 'col input-stick-bottom'; // Add custom class
+            //         const inputElement = document.createElement('input');
+            //         inputElement.type = 'number';
+            //         inputElement.className = 'form-control mb-2';
+            //         inputElement.placeholder = 'Enter amount';
+            //         inputElement.name = `B${b_pattern}${b_data.message}-${b_size}_amount`;
+            //         inputCol.appendChild(inputElement);
+            //         row.appendChild(textCol);
+            //         row.appendChild(inputCol);
+            //         resultDiv.appendChild(row);
+            //     }
+            // }
+        });
+        // async function cancelReserve(ref_code) {
+        //     console.log('cancel api its push');
+        //     if (ref_code) {
+        //         const apiUrl = `/api/cancel-reserve/?ref_code=${ref_code}`;
+
+        //         try {
+        //             const response = await fetch(apiUrl, {
+        //                 method: 'GET',
+        //                 headers: {
+        //                     'Content-Type': 'application/json' // Set appropriate headers
+        //                 }
+        //             });
+
+        //             if (response.ok) {
+        //                 console.log('Reserve successfully canceled.');
+        //                 // You can update the UI or perform other actions here
+        //             } else {
+        //                 console.error('Failed to cancel reserve.');
+        //                 // Handle error cases
+        //             }
+        //         } catch (error) {
+        //             console.error('Error:', error);
+        //             // Handle fetch error
+        //         }
+        //     }
+        // }
+        // async function fetchData(patterns, sizes) {
+        //     const ref_code = generateRandomString(15);
+        //     const url = `/api/data/?patterns=${patterns.join(',')}&sizes=${sizes.join(',')}&ref_code=${ref_code}`;
+        //     try {
+        //         const response = await fetch(url);
+
+        //         if (!response.ok) {
+        //             throw new Error(`Fetch error: ${response.statusText}`);
+        //         }
+
+        //         const data = await response.json();
+        //         return {
+        //             message: data.message,
+        //             ref_code: ref_code
+        //         };
+        //     } catch (error) {
+        //         console.error('Error:', error);
+        //         return {
+        //             message: '',
+        //             ref_code: ''
+        //         };
+        //     }
+        // }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js " integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 " crossorigin="anonymous "></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js " integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p " crossorigin="anonymous "></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js " integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB " crossorigin="anonymous "></script>
+
+    <script src="/media/sort.js"></script>
+    {% endblock content %}
+</body>

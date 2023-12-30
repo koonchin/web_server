@@ -35,7 +35,7 @@
     <div class="sidebar" name="sidebar" style="text-align: center;"> {% load tags %} {% role request as role %} {% if user.is_authenticated and role != 'key' %} <a href="/">หน้าหลัก</a> {% if role == 'stock' or role == 'super' %} <a href="/check">แพ็คสินค้า</a><a href="/barcode/">ปริ้นท์บาร์โค้ด</a><a href="/checkstock/">เช็คสต็อค</a>        {% endif %} <a href="/live/main/">สต็อคห้องไลฟ์</a><a href="/page/">แอดมินโหลดรูป</a><a href="/RMA/">บันทึกของ Return</a><a href="/keyorder/">KeyOrder</a><a href="/RMA/stock/">RMA</a> {% endif %} </div> {% endcomment %}
     <div class="scrollmenu">
         {% load tags %} {% role request as role %} {% if user.is_authenticated and role != 'key' %} <a href="/">หน้าหลัก</a>{% if role == 'stock' or role == 'super' %} {% comment %} <a href="/check/">แพ็คสินค้า</a> {% endcomment %} <a href="/barcode/">ปริ้นท์บาร์โค้ด</a>
-        <a href="/stock_check/">STOCK</a><a href="/upstock/">ลงของ</a> {% endif %} {% comment %} <a href="/checkstock/">เช็คสต็อค</a> {% endcomment %} <a href="/page">แอดมินโหลดรูป</a><a href="/live/main/">สต็อคห้องไลฟ์</a><a href="/uploadimage/">ลงรหัสรูป</a>
+        <a href="/stock_check/">เพิ่มเลขแทรคกิ้ง</a><a href="/upstock/">ลงของ</a> {% endif %} {% comment %} <a href="/checkstock/">เช็คสต็อค</a> {% endcomment %} <a href="/page">แอดมินโหลดรูป</a><a href="/live/main/">สต็อคห้องไลฟ์</a><a href="/uploadimage/">ลงรหัสรูป</a>
         <a href="/RMA/">บันทึกของ Return</a>
         <a href="/keyorder/">KeyOrder</a><a href="/RMA/stock/">RMA</a><a href="/blog/">BLOGS</a><a href="/blog/soldout/">แจ้งของหมด</a><a href="/blog/reserve/">RESERVE</a><a href="/logout/" style="margin-left:48vmax;">Logout</a> {% endif %}         {% if role == 'key' %}
         <a href="/keyorder/">KeyOrder</a>

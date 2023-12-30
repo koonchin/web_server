@@ -6,69 +6,11 @@ from zipfile import ZipFile
 from os.path import basename
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
+
 # Create your views here.
-
-@csrf_exempt
-def minus_page(req):
-    dep = get_role(req,'department')
-    downloads = None
-    result = db.query(f"select distinct(size) from {dep}.stock_main where size != '' ORDER BY FIELD(size, 'XXS', 'XS', 'S', 'M', 'L', 'F', 'XL', '2XL','3XL', '4XL','5XL','6XL')")
-    result = list(result.fetchall())
-    sizes = [i[0] for i in result]
-    task = f"""select stock_main.*,shirts, pants, crotch, leg,stock.amount from {dep}.stock_main
-    inner join {dep}.stock on stock_main.sku = stock.sku
-    inner join {dep}.stock_detailsize on stock_main.sku = stock_detailsize.sku
-            where stock_main.amount < 0
-            order by stock_main.amount + stock.amount DESC """
-    
-    task2 = f"""
-            SELECT idsell,GROUP_CONCAT(data_size ORDER BY FIELD(size, 'XXS', 'XS', 'S', 'M', 'L', 'F', 'XL','XXL', '2XL','3XL','4XL','5XL','6XL'),size separator '\n') AS Result from {dep}.data_size
-        group by idsell;
-    """
-    
-    mycursor = db.query_custom(task2,dep)
-    data_size = list(mycursor.fetchall())
-    size_dict = {}
-    for i in data_size:
-        size_dict[i[0]] = i[1]
-    mycursor = db.query_custom(task,dep)
-    data = list(mycursor.fetchall())
-
-    minbreast = db.query(f"select min(breast) from {get_role(req,'department')}.stock_main where breast != ''").fetchone()[0]
-    maxbreast = db.query(f"select max(breast) from {get_role(req,'department')}.stock_main where breast != ''").fetchone()[0]
-    minwrest = db.query(f"select min(minwrest) from {get_role(req,'department')}.stock_main where minwrest != ''").fetchone()[0]
-    maxwrest = db.query(f"select max(maxwrest) from {get_role(req,'department')}.stock_main where maxwrest != ''").fetchone()[0]
-    minhip = db.query(f"select min(hip) from {get_role(req,'department')}.stock_main where hip != ''").fetchone()[0]
-    maxhip = db.query(f"select max(hip) from {get_role(req,'department')}.stock_main where hip != ''").fetchone()[0]
-    task = f'select count(*) from {get_role(req,"department")}.stock_main where amount < 0'
-    minus = db.query(task)
-    minus = minus.fetchone()[0]
-    content = {'data': data,
-                'breastmin':minbreast,
-                'breastmax':maxbreast,
-                'wrestmin':minwrest,
-                'wrestmax':maxwrest,
-                'hipmin':minhip,
-                'hipmax':maxhip,
-                'sizes':sizes,
-                'minus':minus
-                }
-    for i in range(len(data)):
-        data[i] += (i+1,)
-        var = list(data[i])
-        try:
-            var[9] = size_dict[get_idsell(var[0])]
-        except:
-            pass
-        if len(var[9]) < 10:
-            var[9] = ''
-        data[i] = tuple(var)
-    return render(req, 'image_table2.html', content)
-
-
 @csrf_exempt
 def image_admin(req):
+    user = req.user
     dep = get_role(req,'department')
     downloads = None
     result = db.query(f"select distinct(size) from {dep}.stock_main where size != '' ORDER BY FIELD(size, 'XXS', 'XS', 'S', 'M', 'L', 'F', 'XL', '2XL','3XL', '4XL','5XL','6XL')")
@@ -175,6 +117,7 @@ def image_admin(req):
         data = list(mycursor.fetchall())
         
     if downloads:
+        print(task)
         sum_amount = 0
         for i in range(len(data)):
             try:
@@ -183,8 +126,8 @@ def image_admin(req):
                 amount = 0
             sum_amount += amount
         if sum_amount > 0:
-            sec = download_zip(data)
-            return redirect(f'/media/image_admin/{sec}/{sec}.zip')
+            sec = download_zip(user,data)
+            return redirect(f'/media/image_admin/{user}/{sec}.zip')
         else:
             messages.error(req," Zip ไม่มีรูป ... ")
         
@@ -207,9 +150,26 @@ def image_admin(req):
     maxwrest = db.query(f"select max(maxwrest) from {get_role(req,'department')}.stock_main where maxwrest != ''").fetchone()[0]
     minhip = db.query(f"select min(hip) from {get_role(req,'department')}.stock_main where hip != ''").fetchone()[0]
     maxhip = db.query(f"select max(hip) from {get_role(req,'department')}.stock_main where hip != ''").fetchone()[0]
-    task = f'select count(*) from {get_role(req,"department")}.stock_main where amount < 0'
-    minus = db.query(task)
-    minus = minus.fetchone()[0]
+
+    task = f'''SELECT data_size.idsell,GROUP_CONCAT(data_size ORDER BY FIELD(data_size.size, 'XXS', 'XS', 'S', 'M', 'L', 'F', 'XL','XXL', '2XL','3XL','4XL','5XL','6XL'),data_size.size separator '\n')
+                AS Result from data_size
+                inner join stock_vrich on stock_vrich.sku = data_size.sku where stock_vrich.amount > 0
+                group by data_size.idsell;'''
+                
+    mycursor = db.query_custom(task,dep)
+    data_size = list(mycursor.fetchall())
+    live_dict = {}
+
+    for i in data_size:
+        live_dict[i[0]] = replace_and_split(i[1])
+
+    for i in range(len(data)):
+        var = list(data[i])
+        try:
+            data[i] = data[i] + (live_dict[get_idsell(var[0])],)
+        except:
+            data[i] = data[i] + ('',)
+
     content = {'data': data,
                 'breastmin':minbreast,
                 'breastmax':maxbreast,
@@ -217,10 +177,9 @@ def image_admin(req):
                 'wrestmax':maxwrest,
                 'hipmin':minhip,
                 'hipmax':maxhip,
-                'sizes':sizes,
-                'minus':minus
+                'sizes':sizes
                 }
-
+                
     return render(req, 'image_table2.html', content)
 
 def image_admin_with_slug(req,slug):
@@ -248,6 +207,9 @@ def image_admin_with_slug(req,slug):
     for i in data_size:
         size_dict[i[0]] = i[1]
     mycursor = db.query(task)
+    # items_per_page = 10
+
+    # paginator = Paginator(mycursor.fetchall(), items_per_page)
     data = list(mycursor.fetchall())
         
     for i in range(len(data)):
@@ -270,9 +232,24 @@ def image_admin_with_slug(req,slug):
     minhip = db.query(f"select min(hip) from {get_role(req,'department')}.stock_main where hip != ''").fetchone()[0]
     maxhip = db.query(f"select max(hip) from {get_role(req,'department')}.stock_main where hip != ''").fetchone()[0]
 
-    task = f'select count(*) from {get_role(req,"department")}.stock_main where amount < 0'
-    minus = db.query(task)
-    minus = minus.fetchone()[0]
+    task = f'''SELECT data_size.idsell,GROUP_CONCAT(data_size ORDER BY FIELD(data_size.size, 'XXS', 'XS', 'S', 'M', 'L', 'F', 'XL','XXL', '2XL','3XL','4XL','5XL','6XL'),data_size.size separator '\n')
+                AS Result from data_size
+                inner join stock_vrich on stock_vrich.sku = data_size.sku where stock_vrich.amount > 0
+                group by data_size.idsell;'''
+                
+    mycursor = db.query_custom(task,dep)
+    data_size = list(mycursor.fetchall())
+    live_dict = {}
+
+    for i in data_size:
+        live_dict[i[0]] = replace_and_split(i[1])
+
+    for i in range(len(data)):
+        var = list(data[i])
+        try:
+            data[i] = data[i] + (live_dict[get_idsell(var[0])],)
+        except:
+            data[i] = data[i] + ('',)
     content = {'data': data,
                 'breastmin':minbreast,
                 'breastmax':maxbreast,
@@ -280,29 +257,42 @@ def image_admin_with_slug(req,slug):
                 'wrestmax':maxwrest,
                 'hipmin':minhip,
                 'hipmax':maxhip,
-                'sizes':sizes,
-                'minus':minus
+                'sizes':sizes
                 }
+
+    # Create a Paginator object
+
+    # Get the requested page number from the URL parameters
+    # page_number = req.GET.get('page')
+
+    # Get the requested page of data
+    # page_obj = paginator.get_page(page_number)
+    # content['page_obj'] = page_obj
+
     return render(req, 'image_table2.html', content)
    
     # else:
         # sec = download_zip(data)
-        # return redirect(f'/media/image_admin/{sec}/{sec}.zip')
+        # return redirect(f'/{settings.MEDIA_ROOT}/image_admin/{sec}/{sec}.zip')
 # about api
 @csrf_exempt
-def download_zip(myresult):
-    var = []
+def download_zip(user,myresult):
     main(f'{settings.MEDIA_ROOT}/image_admin')
     sec = datetime.datetime.now().timestamp()
     sec = str(sec).split('.')[0]
-    os.makedirs(f'{settings.MEDIA_ROOT}/image_admin/{sec}', exist_ok=True)
-    for i in os.listdir(f'{settings.MEDIA_ROOT}/image_admin/'):
-        if not os.path.isfile(f'{settings.MEDIA_ROOT}/image_admin/{i}'):
-            for i2 in os.listdir(f'{settings.MEDIA_ROOT}/image_admin/{i}'):
-                if os.path.isfile(f'{settings.MEDIA_ROOT}/image_admin/{i}/{i2}'):
-                    if f'{settings.MEDIA_ROOT}/image_admin/{i}/{i2}'.endswith('.png'):
-                        os.remove(f'{settings.MEDIA_ROOT}/image_admin/{i}/{i2}')
+    os.makedirs(f'{settings.MEDIA_ROOT}/image_admin/{user}/{sec}', exist_ok=True)
+    for i in os.listdir(f'{settings.MEDIA_ROOT}/image_admin/{user}/'):
+        if not os.path.isfile(f'{settings.MEDIA_ROOT}/image_admin/{user}/{i}'):
+            for i2 in os.listdir(f'{settings.MEDIA_ROOT}/image_admin/{user}/{i}'):
+                if os.path.isfile(f'{settings.MEDIA_ROOT}/image_admin/{user}/{i}/{i2}'):
+                    if f'{settings.MEDIA_ROOT}/image_admin/{user}/{i}/{i2}'.endswith('.png'):
+                        os.remove(f'{settings.MEDIA_ROOT}/image_admin/{user}/{i}/{i2}')
                 
+    myresult.sort(key=lambda x: x[0])
+
+    # Initialize var to store unique IDs
+    var = []
+
     for i in range(len(myresult)):
         try:
             amount = int(myresult[i][15]) + int(myresult[i][10])
@@ -312,12 +302,15 @@ def download_zip(myresult):
             if not get_idsell(myresult[i][0]) in var:
                 var.append(get_idsell(myresult[i][0]))
                 if amount == 1:
-                    with open(f'{settings.MEDIA_ROOT}/image_admin/{sec}/{myresult[i][0]}.png', 'wb') as f:
-                        f.write(convert_url_to_bytes(myresult[i][3]))
-                        f.close()
-                        write_image(f'{settings.MEDIA_ROOT}/image_admin/{sec}/{myresult[i][0]}.png','ตัวสุดท้าย')
+                    try:
+                        with open(f'{settings.MEDIA_ROOT}/image_admin/{user}/{sec}/{myresult[i][0]}.png', 'wb') as f:
+                            f.write(convert_url_to_bytes(myresult[i][3]))
+                            f.close()
+                            write_image(f'{settings.MEDIA_ROOT}/image_admin/{user}/{sec}/{myresult[i][0]}.png','ตัวสุดท้าย')
+                    except:
+                        print(myresult[i][0],'error')
                 else:
-                    with open(f'{settings.MEDIA_ROOT}/image_admin/{sec}/{myresult[i][0]}.png', 'wb') as f:
+                    with open(f'{settings.MEDIA_ROOT}/image_admin/{user}/{sec}/{myresult[i][0]}.png', 'wb') as f:
                         try:
                             f.write(convert_url_to_bytes(myresult[i][3]))
                         except:
@@ -325,9 +318,9 @@ def download_zip(myresult):
                             pass
                         f.close()
                 
-    with ZipFile(f'{settings.MEDIA_ROOT}/image_admin/{sec}/{sec}.zip', 'w') as zipObj:
+    with ZipFile(f'{settings.MEDIA_ROOT}/image_admin/{user}/{sec}.zip', 'w') as zipObj:
         # Iterate over all the files in directory
-        for folderName, subfolders, filenames in os.walk(f'{settings.MEDIA_ROOT}/image_admin/{sec}'):
+        for folderName, subfolders, filenames in os.walk(f'{settings.MEDIA_ROOT}/image_admin/{user}/{sec}'):
             for filename in filenames:
                 if filename.endswith('.png'):
                     # create complete filepath of file in directory
@@ -335,9 +328,9 @@ def download_zip(myresult):
                     # Add file to zip
                     zipObj.write(filePath, basename(filePath))
 
-    for i in os.listdir(f'{settings.MEDIA_ROOT}/image_admin/{sec}'):
+    for i in os.listdir(f'{settings.MEDIA_ROOT}/image_admin/{user}/{sec}'):
         if i.endswith('.png'):
-            os.remove(f'{settings.MEDIA_ROOT}/image_admin/{sec}/{i}')
+            os.remove(f'{settings.MEDIA_ROOT}/image_admin/{user}/{sec}/{i}')
     return sec
 
 # main function
@@ -354,7 +347,7 @@ def main(path):
 
     # converting days to seconds
     # time.time() returns current time in seconds
-    seconds = time.time() - (120)
+    seconds = time.time() - (300)
 
     # checking whether the file is present in path or not
     if os.path.exists(path):
@@ -505,49 +498,31 @@ def get_product(req,sku):
         dataSize = req.POST.get("edited_dataSize")
         img_check = req.POST.get("img_check")
         dataSize_temp = f'➡️ Size {sku.split("-")[1]}'
+        stock_detailsize = []
         if breast:
             dataSize_temp += f'รอบอก {breast}”'
-        db.query_commit(f"update {dep}.stock_main set breast = 34 where breast = ''")
         if minwrest:
             dataSize_temp += f'เอว {minwrest}-{maxwrest}”'
-        db.query_commit(f"update {dep}.stock_main set minwrest = 24,maxwrest = 46 where minwrest = ''")
         if hip:
             dataSize_temp += f' สะโพก {hip}”'
         if edited_shirts:
             dataSize_temp += f' เสื้อยาว {edited_shirts}”'
-            db.query_commit(f"update {dep}.stock_detailsize set shirts = '{edited_shirts}'")
+            stock_detailsize.append(f"shirts = '{edited_shirts}'")
         if edited_pants:
             dataSize_temp += f' กางเกงยาว {edited_pants}”'
-            db.query_commit(f"update {dep}.stock_detailsize set pants = '{edited_pants}'")
+            stock_detailsize.append(f"pants = '{edited_pants}'")
         if edited_crotch:
             dataSize_temp += f' เป้ายาว {edited_crotch}”'
-            db.query_commit(f"update {dep}.stock_detailsize set crotch = '{edited_crotch}'")
+            stock_detailsize.append(f"crotch = '{edited_crotch}'")
         if edited_leg:
             dataSize_temp += f' รอบขา {edited_leg}”'
-            db.query_commit(f"update {dep}.stock_detailsize set leg = '{edited_leg}'")
+            stock_detailsize.append(f"leg = '{edited_leg}'")
+        stock_detailsize_str = ', '.join(stock_detailsize)
+        db.query_commit(f"update {dep}.stock_detailsize set {stock_detailsize_str} where sku = '{sku}'")
         dataSize_temp += dataSize
-        if img_check:
-            img_check_dict = {'no_img':0,"had_img":1}
-            db.query_commit(f'update {dep}.cost set check_image = {img_check_dict[img_check]} where sku = "{sku}"')
     data = name,breast,minwrest,maxwrest,hip,detail,dataSize_temp
     update_sql_by_sku(sku,data,get_role(req,"department"))
     messages.success(req,"อัพเดทสินค้าเรียบร้อย ... ")
-    return redirect('page:image_admin_with_slug',slug=sku.split('-')[0])
-
-@csrf_exempt
-def add_product(req):
-    if req.method == 'POST':
-        sku = req.POST.get("edited_sku")
-        name = req.POST.get("edited_name")
-        breast = req.POST.get("edited_breast")
-        maxwrest = req.POST.get("edited_maxwrest")
-        minwrest = req.POST.get("edited_minwrest")
-        hip = req.POST.get("edited_hip")
-        detail = req.POST.get("edited_detail")
-        dataSize = req.POST.get("edited_dataSize")
-        data = sku,name,breast,minwrest,maxwrest,hip,detail,dataSize
-        insert_sql_by_sku(data,get_role(req,"department"))
-        messages.success(req,"เพิ่ม สินค้าเรียบร้อย ... ")
     return redirect('page:image_admin_with_slug',slug=sku.split('-')[0])
 
 def export_stock(req):

@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% include 'messages.html' %} {% block content %}
+    <title>二维码生成工具</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer"
+    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="/media/style.css?{% now " U " %}">
+    <style>
+        .box {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            opacity: .9;
+        }
+        
+        .margin {
+            margin-top: 0px;
+            margin-bottom: 0px;
+            margin-right: 0px;
+        }
+        
+        .form-check {
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <div class="h1 fw-bold">生成二维码</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cancel-button-2"></button>
+                    </div>
+                    <div class="modal-body" data-bs-theme="blue">
+                        <div id="result"></div>
+                        <div id="s_pattern_result"></div>
+                        <div id="s_size_result"></div>
+                        <div id="b_pattern_result"></div>
+                        <div id="b_size_result"></div>
+                        <input type="hidden" id="s_ref_code_input" name="s_ref_code" value="">
+                        <input type="hidden" id="b_ref_code_input" name="b_ref_code" value="">
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <div class="row">
+                            <div class="col-auto">
+                                <button class="btn btn-danger" data-bs-dismiss="modal" type="button" id="cancel-button">取消</button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-primary" type="submit">确认</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="container">
+        <div class="row  text-center rounded-3 border border-3 border-dark p-2 " style="background-color: rgba(255,255,255,.8);">
+            <div class="col-4 d-flex align-items-center h4">
+                第一步：输入SKU编号(纯数字)，比如1，或者100, 或者330, 或者1005等
+            </div>
+            <div class="col-4">
+            </div>
+            <div class="col-4">
+                <div class="input-group">
+                    <input class="form-control form-control-lg mt-1" type="text" placeholder="输入SKU编号(纯数字)" id="s_id_input" name="satin_id_input" aria-label=".form-control-lg example" required>
+                    <span class="input-group-text mt-1" id="basic-addon1"><i class="fa fa-solid fa-magnifying-glass"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="row  text-center rounded-3 border border-3 border-dark mt-1 p-1" style="background-color: rgba(255,255,255,.8);">
+            <div class="col-4 d-flex align-items-center h4">
+                第二步：选择打印的码数，单选或者多选
+            </div>
+            <div class="col-4"></div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col y-2 m-2">
+                        <input name="s_size" value="S" type="checkbox" class="btn-check" id="S_S" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_S">S</label>
+                        <input name="s_size" value="M" type="checkbox" class="btn-check" id="S_M" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_M">M</label>
+                        <input name="s_size" value="L" type="checkbox" class="btn-check" id="S_L" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_L">L</label>
+                        <input name="s_size" value="XL" type="checkbox" class="btn-check" id="S_XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_XL">XL</label>
+                        <input name="s_size" value="2XL" type="checkbox" class="btn-check" id="S_2XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_2XL">2XL</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col y-2 m-2">
+                        <input name="s_size" value="3XL" type="checkbox" class="btn-check" id="S_3XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_3XL">3XL</label>
+                        <input name="s_size" value="4XL" type="checkbox" class="btn-check" id="S_4XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_4XL">4XL</label>
+                        <input name="s_size" value="5XL" type="checkbox" class="btn-check" id="S_5XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_5XL">5XL</label>
+                        <input name="s_size" value="6XL" type="checkbox" class="btn-check" id="S_6XL" autocomplete="off">
+                        <label class="btn btn-outline-danger" for="S_6XL">6XL</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row  text-center rounded-3 border border-3 border-dark mt-1 p-2" style="background-color: rgba(255,255,255,.8);">
+            <div class="row border-bottom border-3 border-black">
+                <div class="col-8 d-flex align-items-center h4">
+                    第三步：如果品牌名为
+                    <div style="color: red;">MUSLIN PAJAMAS</div>，选择下面款式，单选或者多选
+                </div>
+            </div>
+            <div class="row">
+                <div class="col my-2">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="N" value="N" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="N">短袖短裤 (N)</label><br>
+                </div>
+                <div class="col my-2">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="T" value="T" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="T">短袖长裤 (T)</label><br>
+                </div>
+                <div class="col my-2">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="L" value="L" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="L">短袖七分裤 (L)</label><br>
+                </div>
+                <div class="col my-2">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="P" value="P" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="P">长袖长裤/中袖长裤 (P)</label><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col my-2">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="W" value="W" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="W">宽松款短袖短裤 (W)</label><br>
+                </div>
+                <div class="col my-2">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="V" value="V" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="V">宽松款短袖长裤 (V)</label><br>
+                </div>
+                <div class="col my-2">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="U" value="U" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="U">长袖短裤 (U)</label><br>
+                </div>
+                <div class="col my-2">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="M" value="M" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="M">儿童 (M)</label><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col my-2">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="K" value="K" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="K">裙子 (K)</label><br>
+                </div>
+                <div class="col my-2">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="R" value="R" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="R">吊带 (R)</label><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col my-2">
+                    <input name="s_pattern" type="checkbox" class="btn-check" id="Y" value="Y" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="Y">男人 (Y)</label><br>
+                </div>
+            </div>
+        </div>
+        <div class="row  text-center rounded-3 border border-3 border-dark mt-1 p-2" style="background-color: rgba(255,255,255,.8);">
+            <div class="row border-bottom border-3 border-black">
+                <div class="col-8 d-flex align-items-center h4">
+                    第三步：如果品牌名为
+                    <div style="color: red;">MUSLIN PET</div>，选择下面款式，单选或者多选
+                </div>
+            </div>
+            <div class="row">
+                <div class="col my-2">
+                    <input name="p_pattern" type="checkbox" class="btn-check" id="PN" value="N" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="PN">短袖短裤 (N)</label><br>
+                </div>
+                <div class="col my-2">
+                    <input name="p_pattern" type="checkbox" class="btn-check" id="PT" value="T" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="PT">短袖长裤 (T)</label><br>
+                </div>
+                <div class="col my-2">
+                    <input name="p_pattern" type="checkbox" class="btn-check" id="PM" value="M" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="PM">儿童 (M)</label><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col my-2">
+                    <input name="p_pattern" type="checkbox" class="btn-check" id="PP" value="P" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="PP">长袖长裤 (P)</label><br>
+                </div>
+                <div class="col my-2">
+                    <input name="p_pattern" type="checkbox" class="btn-check" id="PK" value="K" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="PK">裙子 (K)</label><br>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn btn-primary btn-lg m-5" id="generate">下一步</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('generate').addEventListener('click', async function() {
+            // Selected values for specific checkboxes
+            const s_patternCheckboxes = document.querySelectorAll('input[name="s_pattern"]:checked');
+            const s_patternSelectedValues = Array.from(s_patternCheckboxes).map(checkbox => checkbox.value);
+            const p_patternCheckboxes = document.querySelectorAll('input[name="p_pattern"]:checked');
+            const p_patternSelectedValues = Array.from(p_patternCheckboxes).map(checkbox => checkbox.value);
+            const s_sizeCheckboxes = document.querySelectorAll('input[name="s_size"]:checked');
+            const s_sizeSelectedValues = Array.from(s_sizeCheckboxes).map(checkbox => checkbox.value);
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = ''; // Clear previous results
+
+            let s_data = document.getElementById('s_id_input').value;
+            if (s_data.trim() === '') {
+                alert('输入SKU编号(纯数字) is required. Please enter a value.');
+                return ''; // Stop execution if input is empty
+            }
+            s_data = document.getElementById('s_id_input').value.padStart(4, '0');
+            const myModal = new bootstrap.Modal(document.getElementById('exampleModalToggle'));
+            myModal.show();
+
+            for (const s_pattern of s_patternSelectedValues) {
+                for (const s_size of s_sizeSelectedValues) {
+                    let combination;
+                    if (s_pattern !== 'Y') {
+                        combination = `S${s_pattern}${s_data}-${s_size}`;
+                    } else {
+                        combination = `${s_pattern}${s_data}-${s_size}`;
+                    }
+                    const row = document.createElement('div');
+                    row.className = 'row mb-2 border-bottom align-items-center'; // Add custom class and Bootstrap align-items-center class
+                    const textCol = document.createElement('div');
+                    textCol.className = 'col';
+                    textCol.textContent = combination;
+                    const inputCol = document.createElement('div');
+                    inputCol.className = 'col input-stick-bottom'; // Add custom class
+                    const inputElement = document.createElement('input');
+                    inputElement.type = 'number';
+                    inputElement.required = true;
+                    inputElement.className = 'mb-2 form-control';
+                    inputElement.placeholder = '输入数量';
+                    inputElement.name = `${combination}_amount`;
+                    inputCol.appendChild(inputElement);
+                    row.appendChild(textCol);
+                    row.appendChild(inputCol);
+                    resultDiv.appendChild(row);
+                }
+            }
+
+            for (const s_pattern of p_patternSelectedValues) {
+                console.log(s_pattern);
+                for (const s_size of s_sizeSelectedValues) {
+                    let combination;
+                    if (s_pattern !== 'Y') {
+                        combination = `P${s_pattern}${s_data}-${s_size}`;
+                    } else {
+                        combination = `${s_pattern}${s_data}-${s_size}`;
+                    }
+                    const row = document.createElement('div');
+                    row.className = 'row mb-2 border-bottom align-items-center'; // Add custom class and Bootstrap align-items-center class
+                    const textCol = document.createElement('div');
+                    textCol.className = 'col';
+                    textCol.textContent = combination;
+                    const inputCol = document.createElement('div');
+                    inputCol.className = 'col input-stick-bottom'; // Add custom class
+                    const inputElement = document.createElement('input');
+                    inputElement.type = 'number';
+                    inputElement.required = true;
+                    inputElement.className = 'mb-2 form-control';
+                    inputElement.placeholder = '输入数量';
+                    inputElement.name = `${combination}_amount`;
+                    inputCol.appendChild(inputElement);
+                    row.appendChild(textCol);
+                    row.appendChild(inputCol);
+                    resultDiv.appendChild(row);
+                }
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js " integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 " crossorigin="anonymous "></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js " integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p " crossorigin="anonymous "></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js " integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB " crossorigin="anonymous "></script>
+
+    <script src="/media/sort.js"></script>
+    {% endblock content %}
+</body>

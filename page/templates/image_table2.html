@@ -3,7 +3,8 @@
 <html lang="en">
 
 <head>
-    {% include 'messages.html' %} {% block content %}
+    {% include 'messages.html' %}
+    {% block content %}
     <title>TABLE</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -28,146 +29,122 @@
             margin-bottom: 0px;
             margin-right: 0px;
         }
-        
-        .form-check {
-            display: inline-block;
+        .form-check{
+            display:inline-block; 
         }
         
-        .image-parent {
-            max-width: 40px;
-        }
-        
-        .hover:hover {
-            background-color: #ECF0E9;
-        }
-        
-        .link {
-            color: black;
-            font-size: 1.5vmax;
-        }
-        
-        .float {
-            position: fixed;
-            width: 60px;
-            height: 60px;
-            top: 40px;
-            right: 40px;
-            background-color: #0C9;
-            color: #FFF;
-            border-radius: 50px;
-            border: none;
-            text-align: center;
-        }
-        
-        .float2 {
-            position: fixed;
-            width: 60px;
-            height: 60px;
-            top: 40px;
-            right: 110px;
-            background-color: red;
-            color: #FFF;
-            border-radius: 50px;
-            border: none;
-            text-align: center;
-        }
-        
-        .my-float {
-            margin-top: .8vmax;
-            font-size: 3rem;
-        }
+      .image-parent {
+        max-width: 40px;
+      }
+      .hover:hover {
+        background-color:#ECF0E9;
+      }
+      .link{
+        color:black;
+        font-size:1.5vmax;
+      }
+      .float{
+        position:fixed;
+        width:60px;
+        height:60px;
+        top:40px;
+        right:40px;
+        background-color:#0C9;
+        color:#FFF;
+        border-radius:50px;
+        border: none;
+        text-align:center;
+      }
+
+      .my-float{
+        margin-top:.8vmax;
+        font-size:3rem;
+    }
+    [lang="th"] {
+        font-size: 20px;
+    }
     </style>
 </head>
 
 <body>
-
+                        
     <form method='post' action="/page/export/">
         {% csrf_token %}
         <button type="submit" class="float">
             <i class="fa fa-download my-float"></i>
         </button>
     </form>
+                <div id="modalAdd" class="w3-modal">
+                    <div class="w3-modal-content w3-animate-zoom w3-card-4">
+                    <header class="w3-container w3-teal"> 
+                        <span onclick="document.getElementById('modalAdd').style.display='none'" 
+                        class="w3-button w3-display-topright">&times;</span>
+                        <h2>แก้ไขรายการสินค้า</h2>
+                    </header>
 
-    {% if minus > 0 %}
-    <form method='post' action="/page/minus/">
-        {% csrf_token %}
-        <button type="submit" class="float2">
-            {% comment %} <i class="fa fa-download my-float"></i> {% endcomment %}
-            <h2>{{minus}}</h2>
-        </button>
-    </form>
-    {% endif %}
-
-    <div id="modalAdd" class="w3-modal">
-        <div class="w3-modal-content w3-animate-zoom w3-card-4">
-            <header class="w3-container w3-teal">
-                <span onclick="document.getElementById('modalAdd').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                <h2>แก้ไขรายการสินค้า</h2>
-            </header>
-
-            <form method='post' action="/page/add/">
-                {% csrf_token %}
-                <div class="w3-container" style="margin:2vmax;width:120%;">
-                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">รหัส SKU</span>
-                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_sku" name="edited_sku" value="">
+                <form method='post' action="/page/add/">
+                    {% csrf_token %}
+                    <div class="w3-container" style="margin:2vmax;width:120%;">
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">รหัส SKU</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_sku" name="edited_sku" value="">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">ชื่อสินค้า</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_name" name="edited_name" value="">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">อก</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_breast" name="edited_breast" value="{{breastmin}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">เอว(ต่ำสุด)</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_minwrest" name="edited_minwrest" value="{{wrestmin}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">เอว(สูงสุด)</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_maxwrest" name="edited_maxwrest" value="{{wrestmax}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">สะโพก</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_hip" name="edited_hip" value="{{hipmin}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">รายละเอียด</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_detail" name="edited_detail" value="">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">ข้อมูลSize</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_dataSize" name="edited_dataSize" value="">
+                        </div>
                     </div>
-                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">ชื่อสินค้า</span>
-                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_name" name="edited_name" value="">
+                    <footer class="w3-container w3-teal"style="height:5.5vmax;">
+                        <button id="confirm" name="confirm" type="button " class="btn btn-primary " style="margin-left:12vmax;width: 20vw;font-size: 2.5vmax;height: 8vh;margin-top:1vmax;">ยืนยัน</button>
+                    </footer>
                     </div>
-                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">อก</span>
-                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_breast" name="edited_breast" value="{{breastmin}}">
-                    </div>
-                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">เอว(ต่ำสุด)</span>
-                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_minwrest" name="edited_minwrest" value="{{wrestmin}}">
-                    </div>
-                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">เอว(สูงสุด)</span>
-                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_maxwrest" name="edited_maxwrest" value="{{wrestmax}}">
-                    </div>
-                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">สะโพก</span>
-                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_hip" name="edited_hip" value="{{hipmin}}">
-                    </div>
-                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">รายละเอียด</span>
-                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_detail" name="edited_detail" value="">
-                    </div>
-                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">ข้อมูลSize</span>
-                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_dataSize" name="edited_dataSize" value="">
-                    </div>
-                </div>
-                <footer class="w3-container w3-teal" style="height:5.5vmax;">
-                    <button id="confirm" name="confirm" type="button " class="btn btn-primary " style="margin-left:12vmax;width: 20vw;font-size: 2.5vmax;height: 8vh;margin-top:1vmax;">ยืนยัน</button>
-                </footer>
-        </div>
-        </form>
-    </div>
+                    </form>
+            </div>
 
     <form method="post" action="/page/" style="margin-left:3vmax;margin-top:3vmax;">
         {% csrf_token %}
-        <div class="input-group mb-3" style="width:90vmax;height:3vmax;">
-            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vw;text-align: center;">รหัส SKU</span>
-            <input style="font-size: 2vmax;" type="text" class="form-control" aria-label="Sizing example input" id="sku" name="sku">
-            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vw;">รายละเอียด</span>
-            <input style="font-size: 2vmax;" type="text" class="form-control" aria-label="Sizing example input" id="name" name="name">
-        </div>
+    <div class="input-group mb-3" style="width:90vmax;height:3vmax;">
+                <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vw;text-align: center;">รหัส SKU</span>
+                <input style="font-size: 2vmax;" type="text" class="form-control" aria-label="Sizing example input" id="sku" name="sku">
+                <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vw;">รายละเอียด</span>
+                <input style="font-size: 2vmax;" type="text" class="form-control" aria-label="Sizing example input" id="name" name="name">
+    </div>
 
         <div class="form-inline dropdown" style="margin-top: 2vh;">
             <div class="input-group mb-3" style="width:90vmax;margin-top:3vmax;">
                 <span class="input-group-text">อก</span>
-                <input type="text" class="form-control" placeholder="น้อยสุด" aria-label="Username" id="breastmin" name="breastmin" value={{breastmin}}>
-                <input type="text" class="form-control" placeholder="มากสุด" aria-label="Username" id="breastmax" name="breastmax" value={{breastmax}}>
+                <input type="text" class="form-control" placeholder="น้อยสุด" aria-label="Username" id="breastmin" name="breastmin" value = {{ breastmin }}>
+                <input type="text" class="form-control" placeholder="มากสุด" aria-label="Username" id="breastmax" name="breastmax" value = {{ breastmax }}>
                 <span class="input-group-text">เอว</span>
-                <input type="text" class="form-control" placeholder="น้อยสุด" aria-label="Server" id="wrestmin" name="wrestmin" value={{wrestmin}}>
-                <input type="text" class="form-control" placeholder="มากสุด" aria-label="Server" id="wrestmax" name="wrestmax" value={{wrestmax}}>
+                <input type="text" class="form-control" placeholder="น้อยสุด" aria-label="Server" id="wrestmin" name="wrestmin" value = {{ wrestmin }}>
+                <input type="text" class="form-control" placeholder="มากสุด" aria-label="Server" id="wrestmax" name="wrestmax" value = {{ wrestmax }}>
                 <span class="input-group-text">สะโพก</span>
-                <input type="text" class="form-control" placeholder="น้อยสุด" aria-label="Server" id="hipmin" name="hipmin" value={{hipmin}}>
-                <input type="text" class="form-control" placeholder="มากสุด" aria-label="Server" id="hipmax" name="hipmax" value={{hipmax}}>
+                <input type="text" class="form-control" placeholder="น้อยสุด" aria-label="Server" id="hipmin" name="hipmin" value= {{ hipmin }}>
+                <input type="text" class="form-control" placeholder="มากสุด" aria-label="Server" id="hipmax" name="hipmax" value = {{ hipmax }}>
             </div>
         </div>
         <div class="form-check">
@@ -181,14 +158,14 @@
             </select>
 
             <div class="form-check form-switch">
-                <input class="form-check-input" style="width:8vmax;height:4vmax;" type="checkbox" id="flexSwitchCheckChecked" name="checkSKU">
-                <label class="form-check-label" style="font-size:2.4vmax;margin-left:.4vmax;margin-top:1vmin;" value="checkSKU">ดาวน์โหลดรูป</label>
+                <input class="form-check-input" style="width:6vmax;height:3vmax;" type="checkbox" id="flexSwitchCheckChecked" name="checkSKU">
+                <label class="form-check-label" style="font-size:2vmax;margin-left:.4vmax;margin-top:1vmin;" value="checkSKU">ดาวน์โหลดรูป</label>
             </div>
-            <button id="downloads" name="downloads" type="button " class="btn btn-primary " style="width: 20vw;font-size: 2.5vmax;height: 8vh;margin-left:38vmax;">ยืนยัน</button>
+            <button  id="downloads" name="downloads" type="button " class="btn btn-primary " style="width: 20vw;font-size: 2.5vmax;height: 8vh;margin-left:38vmax;">ยืนยัน</button>
         </div>
     </form>
-    <table class="table table-striped box table-sortable" style="width: 90%;font-size: 1.5vmax;height:1vh;margin-left:5vmax;">
-        <thead>
+    <table class="table table-striped box table-sortable" style="font-size: 1.5vmax;height:1vh" >
+        <thead style="height:2.6vmax;line-height:2.6vmax;">
             <tr style="padding-left: 150%;letter-spacing: 0.3rem;text-align:center;">
                 <th scope="col ">#</th>
                 <th scope="col ">SKU</th>
@@ -202,245 +179,263 @@
             </tr>
         </thead>
         <tbody>
-            {% for d1,d2,d4,d5,breast,minwrest,maxwrest,hip,d7,d6,d3, shirts, pants, crotch, leg,vrich,index in data %}
-            <tr style="text-align:center;">
+            {% for d1,d2,d4,d5,breast,minwrest,maxwrest,hip,d7,d6,d3, shirts, pants, crotch, leg,vrich,index,live in data %}
+            <tr style="text-align:center;vertical-align:middle;">
                 <td scope="row ">{{ index }}</td>
                 <td>
                     {{d1}}
                 </td>
                 <td>
-                    <a href="#" onclick="document.getElementById('modal{{d1}}').style.display='block'">{{d2}}</a>
+                <a href="#" onclick="document.getElementById('modal{{d1}}').style.display='block'">{{d2}}</a>
 
-                    <div id="modal{{d1}}" class="w3-modal">
-                        <div class="w3-modal-content w3-animate-zoom w3-card-4">
-                            <header class="w3-container w3-teal">
-                                <span onclick="document.getElementById('modal{{d1}}').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                                <h2>แก้ไขรายการสินค้า</h2>
-                            </header>
+                <div id="modal{{d1}}" class="w3-modal">
+                    <div class="w3-modal-content w3-animate-zoom w3-card-4">
+                    <header class="w3-container w3-teal"> 
+                        <span onclick="document.getElementById('modal{{d1}}').style.display='none'" 
+                        class="w3-button w3-display-topright">&times;</span>
+                        <h2>แก้ไขรายการสินค้า</h2>
+                    </header>
 
-                            <form method="post" action="/page/products/{{d1}}">
-                                {% csrf_token %}
-                                <div class="w3-container" style="margin:2vmax;">
-                                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">รหัส SKU</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_sku" name="edited_sku" value="{{d1}}">
-                                    </div>
-                                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">ชื่อสินค้า</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_name" name="edited_name" value="{{d2}}">
-                                    </div>
-                                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">อก</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_breast" name="edited_breast" value="{{breast}}">
-                                    </div>
-                                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">เอว(ต่ำสุด)</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_minwrest" name="edited_minwrest" value="{{minwrest}}">
-                                    </div>
-                                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">เอว(สูงสุด)</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_maxwrest" name="edited_maxwrest" value="{{maxwrest}}">
-                                    </div>
-                                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">สะโพก</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_hip" name="edited_hip" value="{{hip}}">
-                                    </div>
-                                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">เสื้อยาว</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_shirts" name="edited_shirts" value="{{shirts}}">
-                                    </div>
-                                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">กางเกงยาว</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_pants" name="edited_pants" value="{{pants}}">
-                                    </div>
-                                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">เป้ายาว</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_crotch" name="edited_crotch" value="{{crotch}}">
-                                    </div>
-                                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">รอบขา</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_leg" name="edited_leg" value="{{leg}}">
-                                    </div>
-                                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">รายละเอียด</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_detail" name="edited_detail" value="{{d7}}">
-                                    </div>
-                                    <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">ข้อมูลSize</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_dataSize" name="edited_dataSize" value="">
-                                    </div>
-                                    <div>
-                                        <ul class="donate-now">
-                                            <li>
-                                                <input type="radio" value="no_img" name="img_check" id="no_img{{d1}}" style="width:25vmax;" />
-                                                <label for="no_img{{d1}}">ยังไม่มีรูป</label>
-                                            </li>
-                                            <li>
-                                                <input type="radio" value="had_img" name="img_check" id="had_img{{d1}}" style="width:25vmax;" />
-                                                <label for="had_img{{d1}}">มีรูปแล้ว</label>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <footer class="w3-container w3-teal" style="height:5.5vmax;">
-                                    <button id="confirm" name="confirm" type="button " class="btn btn-primary " style="width: 20vw;font-size: 2.5vmax;height: 8vh;margin-top:1vmax;">ยืนยัน</button>
-                                </footer>
+                <form method="post" action="/page/products/{{d1}}">
+                    {% csrf_token %}
+                    <div class="w3-container" style="margin:2vmax;">
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">รหัส SKU</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_sku" name="edited_sku" value="{{d1}}">
                         </div>
-                        </form>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">ชื่อสินค้า</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_name" name="edited_name" value="{{d2}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">อก</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_breast" name="edited_breast" value="{{breast}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">เอว(ต่ำสุด)</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_minwrest" name="edited_minwrest" value="{{minwrest}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">เอว(สูงสุด)</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_maxwrest" name="edited_maxwrest" value="{{maxwrest}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">สะโพก</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_hip" name="edited_hip" value="{{hip}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">เสื้อยาว</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_shirts" name="edited_shirts" value="{{shirts}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">กางเกงยาว</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_pants" name="edited_pants" value="{{pants}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">เป้ายาว</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_crotch" name="edited_crotch" value="{{crotch}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">รอบขา</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_leg" name="edited_leg" value="{{leg}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">รายละเอียด</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_detail" name="edited_detail" value="{{d7}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:40vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 7vmax;text-align: center;">ข้อมูลSize</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="edited_dataSize" name="edited_dataSize" value="">
+                        </div>
+                        <div>
+                            <ul class="donate-now">
+                                <li>
+                                    <input type="radio" value="no_img" name="img_check" id="no_img{{d1}}" style="width:25vmax;"/>
+                                    <label for="no_img{{d1}}">ยังไม่มีรูป</label>
+                                </li>
+                                <li>
+                                    <input type="radio" value="had_img" name="img_check" id="had_img{{d1}}" style="width:25vmax;"/>
+                                    <label for="had_img{{d1}}">มีรูปแล้ว</label>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
+                    <footer class="w3-container w3-teal"style="height:5.5vmax;">
+                        <button id="confirm" name="confirm" type="button " class="btn btn-primary " style="width: 20vw;font-size: 2.5vmax;height: 8vh;margin-top:1vmax;">ยืนยัน</button>
+                    </footer>
+                    </div>
+                    </form>
+                </div>
                 </td>
 
                 <td>
                     {% load mathfilters %}
-                    <a href="#" onclick="document.getElementById('modal_amount{{d1}}').style.display='block'">{{d3}}</a>
+                <a href="#" onclick="document.getElementById('modal_amount{{d1}}').style.display='block'">{{d3}}</a>
 
-                    <div id="modal_amount{{d1}}" class="w3-modal">
-                        <div class="w3-modal-content w3-animate-zoom w3-card-4" style="width:60vmax;">
-                            <header class="w3-container w3-teal">
-                                <span onclick="document.getElementById('modal_amount{{d1}}').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                                <h2>แก้ไขรายการสินค้า</h2>
-                            </header>
+                <div id="modal_amount{{d1}}" class="w3-modal">
+                    <div class="w3-modal-content w3-animate-zoom w3-card-4" style="width:60vmax;">
+                    <header class="w3-container w3-teal"> 
+                        <span onclick="document.getElementById('modal_amount{{d1}}').style.display='none'" 
+                        class="w3-button w3-display-topright">&times;</span>
+                        <h2>แก้ไขรายการสินค้า</h2>
+                    </header>
 
-                            <form method="post" action="/page/equity/{{d1}}">
-                                {% csrf_token %}
-                                <div class="w3-container" style="margin:2vmax;width:auto;">
-                                    <div class="input-group mb-3" style="width:50vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: auto;text-align: center;">รหัส SKU</span>
-                                        <input disabled style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="sku_amount" name="sku_amount" value="{{d2}}">
-                                    </div>
-                                    <div>
-                                        <ul class="donate-now">
-                                            <li>
-                                                <input type="radio" value="adjust" id="adjust_from_zort{{d1}}" name="zort_adjust" onclick="changeMax('zort_amount{{d1}}','{{vrich}}','{{d1}}')" checked/>
-                                                <label for="adjust_from_zort{{d1}}">โยกเข้า zort</label>
-                                            </li>
-                                            <li>
-                                                <input type="radio" value="delete" id="delete_from_zort{{d1}}" name="zort_adjust" onclick="changeMax('stock_amount{{d1}}','{{ d3|add:vrich }}','{{d1}}')" />
-                                                <label for="delete_from_zort{{d1}}">ลดสต็อค</label>
-                                            </li>
-                                            <li>
-                                                <input type="radio" value="plus" id="plust_to_zort{{d1}}" name="zort_adjust" onclick="changeMax('stock_amount{{d1}}','1000','{{d1}}')" />
-                                                <label for="plust_to_zort{{d1}}">เพิ่มสต็อค</label>
-                                            </li>
-                                            <li>
-                                                <input type="radio" value="QC" id="stock_QC{{d1}}" name="zort_adjust" onclick="changeMax('stock_amount{{d1}}','{{ d3|add:vrich }}','{{d1}}')" />
-                                                <label for="stock_QC{{d1}}">สต็อกหลุดQC</label>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="input-group mb-3" style="width:50vmax;height:3vmax;" hidden>
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 15vmax;text-align: center;">จำนวนใน zort</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="number" class="form-control" id="zort_amount{{d1}}" name="zort_amount" value="{{vrich}}">
-                                    </div>
-                                    <div class="input-group mb-3" style="width:50vmax;height:3vmax;" hidden>
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 15vmax;text-align: center;">จำนวนใน stock</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="number" class="form-control" id="stock_amount{{d1}}" name="stock_amount" value="{{d3}}">
-                                    </div>
-                                    <div class="input-group mb-3" style="width:50vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 15vmax;text-align: center;">จำนวนที่เพิ่มได้</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="number" class="form-control" id="show_amount{{d1}}" name="show_amount" value="{{vrich}}" disabled>
-                                    </div>
-                                    <div class="input-group mb-3" style="width:50vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 15vmax;text-align: center;">จำนวนที่เพิ่ม</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="number" class="form-control" id="adjust_amount{{d1}}" name="adjust_amount" value="0" min='0'>
-                                    </div>
-                                    <div class="input-group mb-3" style="width:50vmax;height:3vmax;">
-                                        <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 15vmax;text-align: center;">หมายเหตุ</span>
-                                        <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" name="ref">
-                                    </div>
-                                </div>
-                                <footer class="w3-container w3-teal" style="height:5.5vmax;">
-                                    <button id="confirm" name="confirm" type="button " class="btn btn-primary " style="width: 20vw;font-size: 2.5vmax;height: 8vh;margin-top:1vmax;">ยืนยัน</button>
-                                </footer>
+                <form method="post" action="/page/equity/{{d1}}">
+                    {% csrf_token %}
+                    <div class="w3-container-fluid" style="margin:2vmax;width:auto;">
+                        <div class="input-group mb-3" style="width:50vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: auto;text-align: center;">รหัส SKU</span>
+                            <input disabled style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" id="sku_amount" name="sku_amount" value="{{d2}}">
                         </div>
-                        </form>
+                            <div>
+                                <ul class="donate-now">
+                                    <li>
+                                        <input type="radio" value="adjust" id="adjust_from_zort{{d1}}" name="zort_adjust" onclick="changeMax('zort_amount{{d1}}','{{vrich}}','{{d1}}')" checked/>
+                                        <label for="adjust_from_zort{{d1}}">โยกเข้า zort</label>
+                                    </li>
+                                    <li>
+                                        <input type="radio" value="delete" id="delete_from_zort{{d1}}" name="zort_adjust" onclick="changeMax('stock_amount{{d1}}','{{ d3|add:vrich }}','{{d1}}')" />
+                                        <label for="delete_from_zort{{d1}}">ลดสต็อค</label>
+                                    </li>
+                                    <li>
+                                        <input type="radio" value="plus" id="plust_to_zort{{d1}}" name="zort_adjust" onclick="changeMax('stock_amount{{d1}}','1000','{{d1}}')" />
+                                        <label for="plust_to_zort{{d1}}">เพิ่มสต็อค</label>
+                                    </li>
+                                    <li>
+                                        <input type="radio" value="QC" id="stock_QC{{d1}}" name="zort_adjust" onclick="changeMax('stock_amount{{d1}}','{{ d3|add:vrich }}','{{d1}}')" />
+                                        <label for="stock_QC{{d1}}">สต็อกหลุดQC</label>
+                                    </li>
+                                </ul>
+                            </div>
+                        <div class="input-group mb-3" style="width:50vmax;height:3vmax;" hidden>
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 15vmax;text-align: center;">จำนวนใน zort</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="number" class="form-control" id="zort_amount{{d1}}" name="zort_amount" value="{{vrich}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:50vmax;height:3vmax;" hidden>
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 15vmax;text-align: center;">จำนวนใน stock</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="number" class="form-control" id="stock_amount{{d1}}" name="stock_amount" value="{{d3}}">
+                        </div>
+                        <div class="input-group mb-3" style="width:50vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 15vmax;text-align: center;">จำนวนที่เพิ่มได้</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="number" class="form-control" id="show_amount{{d1}}" name="show_amount" value="{{vrich}}" disabled>
+                        </div>
+                        <div class="input-group mb-3" style="width:50vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 15vmax;text-align: center;">จำนวนที่เพิ่ม</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="number" class="form-control" id="adjust_amount{{d1}}" name="adjust_amount" value="0" min='0'>
+                        </div>
+                        <div class="input-group mb-3" style="width:50vmax;height:3vmax;">
+                            <span class="input-group-text" id="inputGroup-sizing-sm" style="font-size: 1.5vmax;width: 15vmax;text-align: center;">หมายเหตุ</span>
+                            <input style="font-size: 1.4vmax;text-align: center;" type="text" class="form-control" name="ref">
+                        </div>
                     </div>
+                    <footer class="w3-container w3-teal"style="height:5.5vmax;">
+                        <button id="confirm" name="confirm" type="button " class="btn btn-primary " style="width: 20vw;font-size: 2.5vmax;height: 8vh;margin-top:1vmax;">ยืนยัน</button>
+                    </footer>
+                    </div>
+                    </form>
+                </div>
                 </td>
                 <td>
-
+                    
                     <a href="#" onclick="document.getElementById('modal_amount{{d1}}').style.display='block'">{{vrich}}</a>
-
+    
                 </td>
                 <td>
                     {{d4}}
                 </td>
-                <td>
-                    <div id='{{ d1 }}' style="display: none;height:10vmax;"><pre>{{d6}}</pre></div>
-                    {% if d6 != ''%}
-                    <div class="popup" onclick="show_popup('popup{{ d1 }}')">
-                        <input type="image" src="/media/info.png" style="height:4vmax;width:4vmax;" id="popoverData" data-trigger="hover" />
-                        <span class="popuptext" id="popup{{ d1 }}"><pre>{{d6}}</pre></span>
+                <td style="vertical-align:middle;">
+                    <div class="row">
+                        <div id='{{ d1 }}' style="display: none;height:1px;"><pre>{{d6}}</pre></div>
+                        <div id='live{{ d1 }}' style="display: none;height:1px;"><pre>{{live}}</pre></div>
+                            {% if d6 != ''%}
+                            <div class="col-4">
+                                <div class="popup" onclick="show_popup('popup{{ d1 }}')">
+                                    <input type="image" src="/media/info.png" style="height:3.4vmax;width:3.4vmax;" id="popoverData" data-trigger="hover"/>
+                                    <span class="popuptext" id="popup{{ d1 }}"><pre>{{d6}}</pre></span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="popup" onclick="CopyToClipboard('{{ d1 }}')">
+                                    <input id="i{{ d1 }}" type="image" src="/media/copy.png" style="height:3.4vmax;width:3.4vmax;"/>
+                                    <span class="popuptext" id="popup2{{ d1 }}">COPY</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="popup" onclick="CopyToClipboardLive('{{ d1 }}')">
+                                    <input id="l{{ d1 }}" type="image" src="/media/live.png" style="height:3.4vmax;width:3.4vmax;"/>
+                                    <span class="popuptext" id="popup3{{ d1 }}">COPY</span>
+                                </div>
+                            </div>
+                        {% comment %} <button onclick="CopyToClipboard('{{ d6 }}');return false;" id="{{ d6 }}" class="copy"></button> {% endcomment %}
+                            {% endif %}
                     </div>
-                    <div class="popup" onclick="CopyToClipboard('{{ d1 }}')">
-                        <input id="i{{ d1 }}" type="image" src="/media/copy.png" style="height:4vmax;width:4vmax;" />
-                        <span class="popuptext" id="popup2{{ d1 }}">COPY</span>
-                    </div>
-                    {% comment %} <button onclick="CopyToClipboard('{{ d6 }}');return false;" id="{{ d6 }}" class="copy"></button> {% endcomment %} {% endif %}
                 </td>
                 <td>
-                    {% if d5 != 'None' or d5 != '' or d5 != "NULL" %}
-                    <img id="img{{d1}}" src="{{d5}}" style="cursor:pointer;width:auto;height:5vmax;" onclick="document.getElementById('mod{{ d1 }}').style.display='block'">
+                {% if  d5 != 'None' or d5 != '' or d5 != "NULL" %}
+                    <img id="img{{d1}}" src="{{d5}}" style="cursor:pointer;width:auto;height:5vmax;"
+                onclick="document.getElementById('mod{{ d1 }}').style.display='block'" >
+            
+                <div id="mod{{ d1 }}" class="w3-modal modaltext" onclick="this.style.display='none'">
+                    <span class="w3-button w3-hover-red w3-xlarge w3-display-topright">&times;</span>
+                    <div class="w3-modal-content w3-animate-zoom modals-content">
+                    <img src="{{d5}}" style="width:60%">
+                    </div>
+                </div>
 
-                    <div id="mod{{ d1 }}" class="w3-modal modaltext" onclick="this.style.display='none'">
-                        <span class="w3-button w3-hover-red w3-xlarge w3-display-topright">&times;</span>
-                        <div class="w3-modal-content w3-animate-zoom modals-content">
-                            <img src="{{d5}}" style="width:60%">
+                {% endif %}
+                </td>
+                <td>
+                <div id='detail{{ d1 }}' style="display: none;height:10vmax;">{{ d7 }}</div>
+                {% if d7 != '' %}
+                        <div class="popup" onclick="show_popup('de{{ d1 }}')">
+                            <input type="image" src="/media/info.png" style="height:4vmax;width:4vmax;" id="popoverData" data-trigger="hover"/>
+                              <span class="popuptext" id="de{{ d1 }}">{{ d7 }}</span>
                         </div>
-                    </div>
-
-                    {% endif %}
-                </td>
-                <td>
-                    <div id='detail{{ d1 }}' style="display: none;height:10vmax;">{{ d7 }}</div>
-                    {% if d7 != '' %}
-                    <div class="popup" onclick="show_popup('de{{ d1 }}')">
-                        <input type="image" src="/media/info.png" style="height:4vmax;width:4vmax;" id="popoverData" data-trigger="hover" />
-                        <span class="popuptext" id="de{{ d1 }}">{{ d7 }}</span>
-                    </div>
-                    {% endif %}
+                {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <script>
-        // Get the modal
+    
+<script>
+// Get the modal
 
-        function changeMax(id, amount, adjustid) {
-            var input_data = document.getElementById(id);
-            var input_max = document.getElementById("adjust_amount" + adjustid);
-            var show_amount = document.getElementById("show_amount" + adjustid);
-            show_amount.value = amount;
-            input_max.value = "0";
-            input_max.max = amount;
-        }
+function changeMax(id,amount,adjustid){
+    var input_data = document.getElementById(id);
+    var input_max = document.getElementById("adjust_amount"+ adjustid);
+    var show_amount = document.getElementById("show_amount"+ adjustid);
+    show_amount.value = amount;
+    input_max.value = "0";
+    input_max.max = amount;
+}
 
-        function show_modal(id) {
-            var modal = document.getElementById(id);
-            modal.style.display = 'block';
-            var span = document.getElementsByClassName("close")[0];
+function show_modal(id){
+    var modal = document.getElementById(id);
+    modal.style.display = 'block';
+    var span = document.getElementsByClassName("close")[0];
 
-            // When the user clicks on <span> (x), close the modal
-            span.onclick = function() {
-                modal.style.display = "none";
-            }
-        }
-    </script>
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() { 
+  modal.style.display = "none";
+}   }
+
+</script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js " integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 " crossorigin="anonymous "></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js " integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p " crossorigin="anonymous "></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js " integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB " crossorigin="anonymous "></script>
 
     <script>
+    
         function show_popup(id) {
             var popup = document.getElementById(id);
             popup.classList.toggle("show");
-        }
-
+            }        
         function CopyToClipboard(id) {
             var r = document.createRange();
-            document.getElementById("i" + id).src = '/media/copy2.png';
+            document.getElementById("i"+id).src = '/media/copy2.png';
             document.getElementById(id).style.display = "block";
             r.selectNode(document.getElementById(id));
             window.getSelection().removeAllRanges();
@@ -448,12 +443,22 @@
             document.execCommand('copy');
             window.getSelection().removeAllRanges();
             document.getElementById(id).style.display = "none";
-            show_popup("popup2" + id);
-            setTimeout(function() {
-                document.getElementById("i" + id).src = '/media/copy.png';
-                document.getElementById("popup2" + id).classList.toggle("show");
-            }, 1000);
-
+            show_popup("popup2"+id);
+            setTimeout(function(){ document.getElementById("i"+id).src = '/media/copy.png';document.getElementById("popup2"+id).classList.toggle("show"); }, 1000);
+        }
+        function CopyToClipboardLive(id) {
+            var r = document.createRange();
+            document.getElementById("l"+id).src = '/media/live2.png';
+            document.getElementById("live" + id).style.display = "block";
+            r.selectNode(document.getElementById("live"+id));
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(r);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            document.getElementById("live" + id).style.display = "none";
+            show_popup("popup3"+id);
+            console.log(document.getElementById("live" + id));
+            setTimeout(function(){ document.getElementById("l"+id).src = '/media/live.png';document.getElementById("popup3"+id).classList.toggle("show"); }, 1000);
         }
     </script>
     <script src="/media/sort.js"></script>

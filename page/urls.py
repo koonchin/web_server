@@ -7,10 +7,8 @@ app_name = 'page'
 urlpatterns = [
     path('',views.image_admin,name='image_admin'),
     path('re/<slug>',views.image_admin_with_slug,name='image_admin_with_slug'),
-    path('add/',views.add_product),
     path('products/<sku>',views.get_product),
     path('equity/<sku>',views.stock_amount),
     path('test/',views.test),
     path('export/',views.export_stock),
-    path('minus/',views.minus_page),
 ]

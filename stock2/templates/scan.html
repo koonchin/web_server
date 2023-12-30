@@ -1,0 +1,181 @@
+<!-- template.html -->
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include 'messages.html' %}{% block content %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;600&family=Montserrat&display=swap" rel="stylesheet">
+
+    <style>
+        body{
+            font-family: 'Montserrat', "IBM Plex Sans Thai";
+        }
+        .text-stroke {
+            color: white;
+            /* Set the text color */
+            -webkit-text-stroke: 1px black;
+            /* Add a black stroke around the text */
+            padding: 10px;
+            /* Add some padding for better visibility */
+        }
+        
+        .btn-primary:hover {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <title>Barcode Scanner</title>
+</head>
+
+<body>
+    <div class="container text-center mt-4 mb-5 pb-2 border-5 border-bottom border-dark">
+        <h1 style="font-size: calc(3rem + 3vw);">Add Location to Zort</h1>
+    </div>
+    <div style="display: flex;justify-content: center;">
+        <div id="my-qr-reader" style="width:500px"></div>
+    </div>
+    <div class="container text-center">
+        <div class="row">
+            <button id="skubutton" name="skubutton" type="button" class="btn btn-primary btn-lg" style="font-size: 10vmin;">Camera Mode / โหมดกล้อง</button>
+        </div>
+        <div class="row">
+            <button id="locationButton" name="locationButton" type="button" class="btn btn-primary btn-lg" style="font-size: 10vmin;display:none;">locationButton</button>
+        </div>
+        <div class="row mt-5">
+            <button id="textModeButton" name="textModeButton" type="button" class="btn btn-primary btn-lg" style="font-size: 10vmin;">Text Mode / โหมดข้อความ</button>
+        </div>
+        <div class="row mt-5">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col">
+                        <input type="text" class="form-control form-control-lg" placeholder="Sku" name="skuInput" id="skuInput" style="text-transform: uppercase;display: none;">
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control form-control-lg" placeholder="Location" name="locationInput" id="locationInput" style="text-transform: uppercase;display: none;">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center mt-5">
+                        <!-- Centering contents within the column -->
+                        <button class="btn btn-success btn-lg" type="submit" name="submit-form" id="submitForm" style="width: 60%;display: none;">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div id="div-result-sku" class="row mt-5 p-3 bg-opacity-1 border border-info border-start-0 rounded-end" style="display: none;color: white;background-color:rgba(36, 232, 2,0.8);">
+            <div id="result-sku" class='text-stroke' style="font-size: 3rem;font-weight: bold;"></div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script>
+        document.getElementById('skuInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                document.getElementById('locationInput').focus();
+            }
+        });
+        const textModeButton = document.getElementById('textModeButton');
+        const skuInput = document.getElementById('skuInput');
+        const locationInput = document.getElementById('locationInput');
+        const myQrReader = document.getElementById('my-qr-reader');
+        const submitform = document.getElementById('submitForm');
+        const skubutton = document.getElementById('skubutton');
+        textModeButton.addEventListener('click', () => {
+            myQrReader.style.display = 'none';
+            skuInput.style.display = 'block';
+            locationInput.style.display = 'block';
+            textModeButton.style.display = 'none';
+            submitform.style.display = 'block';
+            skubutton.style.display = 'block';
+
+        });
+        skubutton.addEventListener('click', () => {
+            myQrReader.style.display = 'block';
+            skuInput.style.display = 'none';
+            locationInput.style.display = 'none';
+            textModeButton.style.display = 'block';
+            submitform.style.display = 'none';
+            skubutton.style.display = 'none'
+        });
+        var htmlscanner;
+        var scannedSku = false;
+
+        function domReady(fn) {
+            if (document.readyState === "complete" || document.readyState === 'interactive') {
+                setTimeout(fn, 1);
+            } else {
+                document.addEventListener("DOMContentLoaded", fn);
+            }
+        }
+
+        function startScanner(scannerId) {
+            initializeScanner(scannerId);
+        }
+
+        function initializeScanner(scannerId) {
+            htmlscanner = new Html5QrcodeScanner(
+                "my-qr-reader", {
+                    fps: 30,
+                    qrbox: 300,
+                    useBarCodeDetectorIfSupported: true,
+                    rememberLastUsedCamera: true,
+                    aspectRatio: 4 / 3,
+                    showTorchButtonIfSupported: true,
+                    showZoomSliderIfSupported: true,
+                    defaultZoomValueIfSupported: 2
+                        // ^ this means by default camera will load at 2x zoom.
+                });
+            htmlscanner.render(function(decodeText, decodeResult) {
+                onScansuccess(decodeText, decodeResult, scannerId);
+                htmlscanner.clear(); // Close the camera after a successful scan
+            });
+        }
+        var lastResult;
+
+        function onScansuccess(decodeText, decodeResult, scannerId) {
+            var Idinput = scannerId === 'skubutton' ? 'skuInput' : 'locationInput';
+            var myqr = document.getElementById(Idinput);
+            var countResults = 0;
+            if (decodeText !== lastResult) {
+                ++countResults;
+                lastResult = decodeText;
+                myqr.value = lastResult;
+                if (scannerId === 'skubutton') {
+                    console.log('in if now')
+                    scannedSku = true;
+                    document.getElementById('skubutton').style.display = 'none';
+                    document.getElementById('locationButton').style.display = 'block';
+                    document.getElementById("result-sku").innerHTML = lastResult;
+                    document.getElementById("div-result-sku").style.display = 'block';
+                    document.getElementById('textModeButton').style.display = 'none';
+                    var audio = new Audio('/media/success.mp3');
+                    audio.play();
+
+                } else if (scannerId === 'locationButton' && scannedSku) {
+                    document.getElementById('submitForm').click();
+                };
+            }
+            console.log('end if');
+        }
+
+        domReady(function() {
+            document.getElementById('skubutton').addEventListener('click', function() {
+                startScanner('skubutton');
+            });
+
+            document.getElementById('locationButton').addEventListener('click', function() {
+                startScanner('locationButton');
+            });
+        });
+    </script>
+
+
+    {% endblock content %}
+</body>
+
+</html>

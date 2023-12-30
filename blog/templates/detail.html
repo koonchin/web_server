@@ -29,8 +29,29 @@
     <form method="post" action="/blog/confirm/{{id}}/">
       {% csrf_token %}
       <textarea id="{{id}}answer" name="{{id}}answer" class="form-control" rows="3" style="width:40vmax;margin-left:25vmax;"></textarea>
-      <button id="confirm" name="confirm" type="submit " class="btn btn-primary " style="margin-left:40vmax;width: 20vw;font-size: 2.5vmax;height: 8vh;margin-top:1vmax;">ยืนยัน</button>
+      <button lang="th" id="confirm" name="confirm" type="submit " class="btn btn-primary " style="margin-left:40vmax;width: 20vw;font-size: 2.5vmax;height: 8vh;margin-top:1vmax;">ยืนยัน</button>
+      <button lang="en" id="confirm" name="confirm" type="submit " class="btn btn-primary " style="margin-left:40vmax;width: 20vw;font-size: 2.5vmax;height: 8vh;margin-top:1vmax;">confirm</button>
   </form>
+  <script>
+    $('[lang]').hide(); // hide all lang attributes on start.
+    $('[lang="en"]').show(); // show just Korean text (you can change it)
+    $('#lang-switch').change(function () { // put onchange event when user select option from select
+        var lang = $(this).val(); // decide which language to display using switch case. The rest is obvious (i think)
+        switch (lang) {
+            case 'en':
+                $('[lang]').hide();
+                $('[lang="en"]').show();
+            break;
+            case 'ko':
+                $('[lang]').hide();
+                $('[lang="ko"]').show();
+            break;
+            default:
+                $('[lang]').hide();
+                $('[lang="ko"]').show();
+            }
+    });
+    </script>
       </body>
     {% endblock content %}
     </html>

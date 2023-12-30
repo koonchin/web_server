@@ -55,7 +55,7 @@
         {% load tags %} {% role request as role %} {% if user.is_authenticated and role != 'key' %}
         <a href="/">หน้าหลัก</a>{% if role == 'stock' or role == 'super' %} {% comment %} <a href="/check/">แพ็คสินค้า</a> {% endcomment %}
         <a href="/barcode/">ปริ้นท์บาร์โค้ด</a>
-        <a href="/stock_check/">STOCK</a>
+        <a href="/stock_check/">เพิ่มเลขแทรคกิ้ง</a>
         <a href="/upstock/">ลงของ</a> {% endif %} {% comment %} <a href="/checkstock/">เช็คสต็อค</a> {% endcomment %}
         <a href="/page">แอดมินโหลดรูป</a>
         <a href="/live/main/">สต็อคห้องไลฟ์</a>

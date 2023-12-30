@@ -15,7 +15,12 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
     <link rel="stylesheet" href="/media/style.css?{% now " U " %}">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;600&family=Montserrat&display=swap" rel="stylesheet">
+
     <style>
+        body{
+            font-family: 'Montserrat', "IBM Plex Sans Thai";
+        }
         .box {
             width: 100%;
             height: 100%;
@@ -36,78 +41,78 @@
 
 <body>
     
-    {% if role == 'super' %}
-    <form method="get" action="/countprint/" style="float:right;margin-right:2vmax;">
+    <form method="post" action="/addtracking/" class="container">
+    {% csrf_token %}
 
-        {% csrf_token %}
-        <div class="mb-3 justify" style="margin-top:1vmax;">
-            <input type="date" id="date" name="date" style="height:3vmax;">
-            <button type="submit" class="btn btn-primary stock_check_btn" name="stock_check_print" id ="stock_check_print" value='print'>นับจำนวนที่ปริ้นท์</button>
-            <button type="submit" class="btn btn-primary stock_check_btn" style="margin-right:10vmax;" name="stock_check_miss" id ="stock_check_miss" value='miss'>นับจำนวนที่ค้างส่ง</button>
-            <div style="float:right;margin-top:-3.5vmax;">
-                <input type="image"  name='excel' id='excel' style="height:5vmax;width:5vmax;margin-top:4vmax;" src="/media/excel.png" />
-            </div>
+    <div class="input-group mb-3 mt-5">
+        <div class="input-group-prepend">
+            <span class="input-group-text">เลขออเดอร์</span>
         </div>
-        
-    </form>
-    {% endif %}
-    {% if role == 'super' %}
+        <input type="text" class="form-control" placeholder="Order number" id="ordernumber" name="ordernumber" value="{{ordernumber}}"{% if not tracking_old %}autofocus{% endif %}>
+    </div>
+
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">เลขแทร็คกิ้ง</span>
+        </div>
+        <input type="text" class="form-control" placeholder="Tracking No" id="trackingno" name="trackingno" {% if tracking_old %}value="{{tracking_old}}"{% endif %}>
+    </div>
+    <input type="submit" style="visibility: hidden;" />
+
+    {% if tracking_old %}
+    <input type="hidden" name="confirm_replace" id="confirm_replace" value="True">
+    {% else %}
+    <input type="hidden" name="confirm_replace" id="confirm_replace" value="False">
     {% endif %}
 
-    <table class="table table-striped box table-sortable" style="width: 90%;font-size: 1.5vmax;height:1vh;margin-left:5vmax;" >
-        <thead>
-            <tr style="padding-left: 150%;letter-spacing: 0.3rem;text-align:center;">
-                <th scope="col ">#</th>
-                <th scope="col ">idorder</th>
-                <th scope="col ">number</th>
-                <th scope="col ">status</th>
-                <th scope="col ">customername</th>
-                <th scope="col ">orderdate</th>
-                <th scope="col ">trackingno</th>
-                <th scope="col ">printed</th>
-                <th scope="col ">printedtime</th>
-                <th scope="col ">shippingtime</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,_,__ in data %}
-            <tr style="text-align:center;">
-                <td scope="row ">{{ forloop.counter }}</td>
-                <td>
-                    <a href="https://secure.zortout.com/Sell/Details?&tid={{d1}}">{{d1}}</a></p>
-                </td>
-                <td>
-                    {{d2}}
-                </td>
+</form>
+<script>
+    // Check for a condition to play the sound (you can adjust this condition)
+    var playSuccessSound = "{{ play_success_sound }}";
 
-                <td>
-                    {{d3}}
-                </td>
-                <td>
-                    {{d4}}
-                </td>
-                <td>
-                    {{d5}}
-                </td>
-                <td>
-                    {{d6}}
-                </td>
-                <td>
-                    {{d7}}
-                </td>
-                <td>
-                    {{d8}}
-                </td>
-                <td>
-                    {{d9}}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    // Play the sound if the condition is met
+    if (playSuccessSound) {
+        var successAudio = new Audio('/media/' + playSuccessSound);
+        successAudio.play();
+    }
+</script>
+<script>
+    // Check if tracking information already exists
+    var hasTracking = "{{ tracking_old }}";
+
+    // If tracking information exists, call replaceText function
+    if (hasTracking) {
+        replaceText();
+    }
+
+    function replaceText() {
+        console.log('replaceText is running...')
+        var trackingInput = document.getElementById("trackingno");
+        trackingInput.select();
+        trackingInput.setSelectionRange(0, trackingInput.value.length);
+        trackingInput.focus();
+        var audio = new Audio('/media/already.mp3');
+        audio.play();
+    }
+</script>
     <script>
-        document.getElementById('date').value = new Date().toISOString().substring(0, 10);
-    </script>
+        document.getElementById('ordernumber').addEventListener('keydown', function (event) {
+            console.log(event.key);
+          if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent form submission if inside a form
+            document.getElementById('trackingno').focus();
+          }
+        });
+      
+        function submitForm() {
+          // Your code to handle the form submission goes here
+          // For example, you can get the Order Number value and process it
+          var orderNumber = document.getElementById('ordernumber').value;
+          console.log('Order Number:', orderNumber);
+          // ... rest of the form submission logic ...
+        }
+      </script>
+      
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js " integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13 " crossorigin="anonymous "></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js " integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p " crossorigin="anonymous "></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js " integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB " crossorigin="anonymous "></script>
