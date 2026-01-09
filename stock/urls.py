@@ -38,6 +38,6 @@ urlpatterns = [
     path('counted/',views.counted_print),
     path('uploadimage/',views.upload_image),
     path('uploadimage/file/',views.upload_image),
-    path('uploadimage/zort/',views.AddimageZort),
+    #path('uploadimage/zort/',views.AddimageZort),
     path('barcode-scanner/', views.barcode_scanner_view, name='barcode_scanner'),
 ]

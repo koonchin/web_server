@@ -35,7 +35,6 @@ def addtracking(req):
 
 
 def hello(req):
-    print('here')
     remove_file()
     if req.method == 'POST':
         dbname = req.POST.get('dbname')
@@ -51,7 +50,7 @@ def hello(req):
     if get_role(req,'role') == 'key':
         return redirect('/keyorder/')
     if not req.user.is_anonymous:
-        return render(req, 'index.html')
+        return render(req, 'index.html',context={'play_success_sound':'pray.mp3'})
     else:
         return redirect('/login/')
 
@@ -88,10 +87,10 @@ def upload_checkdiff(request):
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
         filename = fs.save(myfile.name, myfile)
-        get_diff_stock(f"{settings.MEDIA_ROOT}/{myfile.name}", dep)
+        jst_live_templates(f"{settings.MEDIA_ROOT}/{myfile.name}")
 
         # Add a script to play the sound before redirecting
-        return render(request, 'upstock.html', context = {'redirect_url': '/media/stock/diff.xlsx','diff_sound':'diff.mp3'})
+        return redirect("/media/stock/live.xlsx")
 
     return render(request, 'upstock.html')
 
@@ -127,6 +126,17 @@ def bring_order_vrich_to_zort(request):
         messages.success(request,"update เรียบร้อย ... ")
     return render(request, 'index.html')
 
+def batch_update_size(request):
+    dep = get_role(request,'department')
+    if request.method == 'POST' and request.FILES['myfile']:
+        myfile = request.FILES['myfile']
+        fs = FileSystemStorage()
+        filename = fs.save(myfile.name, myfile)
+        update_size_with_excel(f"{settings.MEDIA_ROOT}/{myfile.name}",dep)
+        # pull_order_vrich_to_zort(dep,f"{settings.MEDIA_ROOT}/{myfile.name}",False)
+        messages.success(request,"update เรียบร้อย ... ")
+    return render(request, 'index.html')
+
 def UpdateOrderVrich(request):
     dep = get_role(request,'department')
     if request.method == 'POST' and request.FILES['myfile']:
@@ -143,19 +153,17 @@ def KorkaiUpload(request):
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
         filename = fs.save(myfile.name, myfile)
-        path = Korkai(f"{settings.MEDIA_ROOT}/{myfile.name}")
-        return redirect(f'/{path}')
+        path = update_amount_jst(f"{settings.MEDIA_ROOT}/{myfile.name}")
+    messages.success(request,'อัพเดทสำเร็จค้าบ ...')
     return render(request, 'index.html')
 
 def Vlookup(request):
     dep = get_role(request,'department')
-    if request.method == 'POST' and request.FILES['platformfile'] and request.FILES['zortfile']:
+    if request.method == 'POST' and request.FILES['platformfile']:
         platformfile = request.FILES['platformfile']
-        zortfile = request.FILES['zortfile']
         fs = FileSystemStorage()
         platformfilename = fs.save(platformfile.name, platformfile)
-        zortfilefilename = fs.save(zortfile.name, zortfile)
-        path = update_qty_from_first_file(f"{settings.MEDIA_ROOT}/{zortfile.name}",f"{settings.MEDIA_ROOT}/{platformfile.name}")
+        path = update_qty_from_first_file(dep,f"{settings.MEDIA_ROOT}/{platformfile.name}")
         return redirect(f'/{path}')
     return render(request, 'index.html')
 
@@ -167,19 +175,21 @@ def transferVrich(req):
     sec = str(sec).split('.')[0]
     if req.method == 'POST':
         if req.POST.get('ZortToVrich'):
-            web.transfer_all_amount_with_condition(4,'W0001','W0003','โยกสต็อกไปไลฟ์')
+            web.transfer_all_amount_with_condition(4,'W0001','W0003','โยกสต็อกไปไลฟ์ร้านใหญ่')
+        elif req.POST.get('ZortKidToVrich'):
+            web.transfer_all_amount_with_condition_kid(4,'W0001','W0003','โยกสต็อกไปไลฟ์ร้านเด็ก')
             # db.query_commit(f"update {dep}.stock set amount = 0")
-            messages.success(req,'update เรียบร้อย ...')
-            return redirect('/secretUpstock/')
-        elif req.POST.get('VrichToZort'):
-            export_to_vrich(dep,f'{MEDIA_ROOT}/stock/{sec}')
-            time.sleep(3)
-            return redirect(f'/media/stock/{sec}.xlsx')
+        messages.success(req,'update เรียบร้อย ...')
+        return redirect('/secretUpstock/')
 
 def postZeroFunction(req):
     dep = get_role(req,'department')
     if req.method == 'POST':
-        post_zero_zort(dep)
+        if req.POST.get('kid_button'):
+            post_zero_zort_kid(dep)
+        else:
+            post_zero_zort(dep)
+
         if dep == 'muslin':
             setZeroReturnWarehouse(dep)
         time.sleep(3)
@@ -399,7 +409,7 @@ def confirm(req,track):
     return render(req,'main.html')
 
 def remove_file():
-    for i in os.listdir(f"{settings.MEDIA_ROOT}/"):
+    for i in os.listdir(f"{settings.MEDIA_ROOT}"):
         if i.endswith("xlsx") or i.endswith("xlsm"):
             os.remove(f"{settings.MEDIA_ROOT}/{i}")
 
@@ -460,85 +470,93 @@ def upstock_page(request):
             return redirect(f'/{path}')
     return render(request,"upstock.html")
 
-def download_zip(sec):
-    main(f'{settings.MEDIA_ROOT}/write_image')
-    # for i in os.listdir(f'{settings.MEDIA_ROOT}/write_image/'):
-    #     if not os.path.isfile(f'{settings.MEDIA_ROOT}/write_image/{i}'):
-    #         for i2 in os.listdir(f'{settings.MEDIA_ROOT}/write_image/{i}'):
-    #             if os.path.isfile(f'{settings.MEDIA_ROOT}/write_image/{i}/{i2}'):
-    #                 if f'{settings.MEDIA_ROOT}/write_image/{i}/{i2}'.endswith('.png') or f'{settings.MEDIA_ROOT}/write_image/{i}/{i2}'.endswith('.jpg'):
-    #                     os.remove(f'{settings.MEDIA_ROOT}/write_image/{i}/{i2}')
-                
-    with ZipFile(f'{settings.MEDIA_ROOT}/write_image/{sec}/{sec}.zip', 'w') as zipObj:
-        # Iterate over all the files in directory
-        for folderName, subfolders, filenames in os.walk(f'{settings.MEDIA_ROOT}/write_image/{sec}'):
-            for filename in filenames:
-                if filename.lower().endswith('.png') or filename.lower().endswith('.jpg'):
-                    # create complete filepath of file in directory
-                    filePath = os.path.join(folderName, filename)
-                    # Add file to zip
-                    zipObj.write(filePath, basename(filePath))
 
-    for i in os.listdir(f'{settings.MEDIA_ROOT}/write_image/{sec}'):
-        if i.endswith('.png') or i.endswith('.jpg'):
-            os.remove(f'{settings.MEDIA_ROOT}/write_image/{sec}/{i}')
-    return sec
+def     upload_image(request):
+    dep = get_role(request, 'department')  # Assuming this returns the correct department name
+    sec = str(int(datetime.datetime.now().timestamp()))
+    file_name_list = []  # For collecting image file paths
+    link_list = []  # For storing the dict of SKU, name, and URL
+    case_statements = []
+    sku_list = []
+    idsell_list = {}  # To cache idsell -> sku mapping
 
-def upload_image(request):
-    main('media/write_image')
-    if request.method == 'POST' and request.FILES['myfile']:
-        sec = datetime.datetime.now().timestamp()
-        sec = str(sec).split('.')[0]
-        os.makedirs(f'{settings.MEDIA_ROOT}/write_image/{sec}', exist_ok=True)
-        myfile = request.FILES.getlist('myfile')
+    if request.method == 'POST' and request.FILES.getlist('myfile'):
+        myfiles = request.FILES.getlist('myfile')  # Allow multiple files
         custom = request.POST.get('custom')
-        if custom:
-            name = custom
-        else:
-            name = None
-        for i in myfile:
-            fs = FileSystemStorage()
-            
-            filename = fs.save(f"write_image/{sec}/{i.name}", i)
+        name = custom if custom else None
 
-            if name:
-                write_image_top_right(f"{settings.MEDIA_ROOT}/write_image/{sec}/{i.name}",name)
-            else:
-                write_image_top_right(f"{settings.MEDIA_ROOT}/write_image/{sec}/{i.name}",i.name.split('.')[0].strip())
-        if not len(myfile) == 1:
-            sec = download_zip(sec)
+        try:
+            # Collect all image names (idsell) for a single batch query
+            image_names = [os.path.splitext(myfile.name)[0] for myfile in myfiles]
 
-            return redirect(f'/media/write_image/{sec}/{sec}.zip')
-        
-        else:
-            return redirect(f"/media/write_image/{sec}/{i.name}")
-        # path = upstock(f"{settings.MEDIA_ROOT}/{myfile.name}",request)
-        # return redirect(f'/{path}')
+            # Fetch all SKUs for the image names (idsell) in one query
+            skus_by_idsell = get_skus_batch(dep, image_names)  # Batch function to fetch SKUs
+
+            # Process each file
+            for myfile in myfiles:
+                file_path = f"{settings.MEDIA_ROOT}/test/{myfile.name}"
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                    
+                fs = FileSystemStorage()
+                filename = fs.save(f"test/{myfile.name}", myfile)
+                file_name_list.append(file_path)
+
+
+                # Check if file already exists and delete it if it does
+                    
+                # Add text to the image
+                if name:
+                    write_image_top_right(file_path, name)
+                else:
+                    write_image_top_right(file_path, myfile.name.split('.')[0].strip())
+
+                # Update database for each image
+                db.query_commit(f"UPDATE {dep}.stock_main SET image = '/media/test/{myfile.name}' WHERE sku IN (SELECT sku FROM {dep}.data_size WHERE idsell = '{myfile.name.split('.')[0].strip()}')")
+
+                # Generate share link and collect SKUs for Excel generation
+                image_name = os.path.splitext(myfile.name)[0]
+                if image_name not in idsell_list:
+                    url = f'https://muslinpajamas.com/media/test/{myfile.name}'
+                    idsell_list[image_name] = url
+                else:
+                    url = idsell_list[image_name]
+
+                skus = skus_by_idsell.get(image_name, [])
+                for sku in skus:
+                    case_statements.append(f"WHEN '{sku}' THEN '{url}'")
+                    link_list.append({
+                        'sku': sku,
+                        'name': image_name,
+                        'url': url
+                    })
+                    sku_list.append(f"'{sku}'")
+
+            # Ensure the 'stock' directory exists before saving the Excel file
+            stock_dir = os.path.join(settings.MEDIA_ROOT, 'stock')
+            os.makedirs(stock_dir, exist_ok=True)
+
+            # Write the results to an Excel file
+            df = pd.DataFrame(link_list)
+            excel_path = os.path.join(stock_dir, f'{sec}.xlsx')
+            df.to_excel(excel_path, index=False)
+
+            # Add Excel and images to ZIP
+            zip_path = f"{settings.MEDIA_ROOT}/test/{sec}.zip"
+            with ZipFile(zip_path, 'w') as zipObj:
+                for filePath in file_name_list:
+                    zipObj.write(filePath, basename(filePath))  # Add image to ZIP
+                zipObj.write(excel_path, basename(excel_path))  # Add Excel to ZIP
+
+            # Return ZIP file
+            return redirect(f"/media/test/{sec}.zip")
+
+        except Exception as e:
+            messages.error(request, f"Error processing file: {str(e)}")
+            return redirect('uploadimage')
 
     return render(request, 'uploadimage.html')
 
-def AddimageZort(request):
-    dep = get_role(request,'department')
-    web = Web(get_api_register(dep,'apikey'),get_api_register(dep,'apisecret'),get_api_register(dep,'storename'))
-    main(f'{settings.MEDIA_ROOT}/zort')
-    if request.method == 'POST' and request.FILES['myfilezort']:
-        sec = datetime.datetime.now().timestamp()
-        sec = str(sec).split('.')[0]
-        os.makedirs(f'{settings.MEDIA_ROOT}/zort/{sec}', exist_ok=True)
-        myfile = request.FILES.getlist('myfilezort')
-        for i in myfile:
-            fs = FileSystemStorage()
-            filename = fs.save(f"zort/{sec}/{i.name}", i)
-            task = f'select sku from data_size where idsell = "{str(i.name).split(".")[0]}"'
-            result = db.query_custom(task,dep)
-            result = list(result.fetchall())
-            for row in result:
-                print(row[0])
-                try:
-                    web.addImage(row[0],f"{settings.MEDIA_ROOT}/zort/{sec}/{i.name}")
-                except:
-                    pass
-    return render(request, 'uploadimage.html')
 
 # main function
 def main(path):
@@ -661,18 +679,18 @@ def share_barcode(req):
         data,SKU = [],[]
         s_ref_code = req.POST.get('s_ref_code')
         b_ref_code = req.POST.get('b_ref_code')
+        paper_size = req.POST.get("paper_size")
         for key, value in req.POST.items():
             if key.endswith('_amount'):  # Identify input fields by '_amount' suffix
                 # Parse the key to extract pattern, dataMessage, size, and amount
                 sku = key.split('_amount')[0]
-                print(sku,req.POST[f"{sku}_amount"])
                 SKU.append(sku)
 
         for i in SKU:
             for row in range(int(req.POST[f"{i}_amount"])):
                 data.append(i)
                 
-        return render(req, 'barcode.html', {'print': data, 'host': host,'backpage':'share-barcode'})
+        return render(req, 'barcode.html', {'print': data, 'paper_size':paper_size,'host': host,'backpage':'share-barcode'})
     return render(req,'share_barcode.html')
 
 def print_barcode(request):
@@ -756,3 +774,6 @@ def cancel_reserve(req):
     ref_code = req.GET.get('ref_code')
     db.query_commit(f'update muslin.reserve_sku set ref_code = NULL,date = NULL,user = NULL , status = 2 where ref_code = "{ref_code}"')
     return JsonResponse({})
+
+
+

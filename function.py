@@ -598,12 +598,12 @@ class Web():
                                 payload_list.append({'sku':sku,'name':sku,'number':amount})
                                 count += 1
                 if count > 450:
-                    self.post_transfer(fromwarehousecode,towarehousecode,f'ดึง2 {today} {page}/{count_post} 2',payload_list)
+                    self.post_transfer(fromwarehousecode,towarehousecode,f'ดึง3 {today} {page}/{count_post} 2',payload_list)
                     count_post += 1
                     payload_list = []
                     count = 0
             if len(payload_list) > 0:
-                self.post_transfer(fromwarehousecode,towarehousecode,f'ดึง2 {today} {page}/{count_post} last 2',payload_list)
+                self.post_transfer(fromwarehousecode,towarehousecode,f'ดึง3 {today} {page}/{count_post} last 2',payload_list)
 
     def set_zero_live_warehouse(self,warehousecode):
         today = datetime.date.today()
@@ -790,9 +790,12 @@ class Web():
         if dep == 'muslin':
             sum_all = int(sum(sales_channels_dict['tiktok'])) +int(sum(sales_channels_dict['shopee muslinpajamas'])) + int(sum(sales_channels_dict['lazada'])) + int(sum(sales_channels_dict['war'])) + int(sum(sales_channels_dict['pare'])) + int(sum(sales_channels_dict['vrich']))
             TIKTOK_SUMALL,SHOPEE_SUMALL,LAZADA_SUMALL,ZORT_SUMALL,VRICH_SUMALL = format(int(sum(sales_channels_dict['tiktok'])),','),format(int(sum(sales_channels_dict['shopee muslinpajamas'])),','),format(int(sum(sales_channels_dict['lazada'])),','),format(sum(sales_channels_dict['war']) + sum(sales_channels_dict['pare']),','),format(int(sum(sales_channels_dict['vrich'])),',')
-        else:
+        elif dep == 'maruay':
             sum_all = int(sum(sales_channels_dict['tiktok'])) +int(sum(sales_channels_dict['shopee'])) + int(sum(sales_channels_dict['lazada'])) + int(sum(sales_channels_dict['minny'])) +int(sum(sales_channels_dict['facebook'])) +int(sum(sales_channels_dict['line'])) + int(sum(sales_channels_dict['ig'])) +int(sum(sales_channels_dict['vrich']))
             TIKTOK_SUMALL,SHOPEE_SUMALL,LAZADA_SUMALL,ZORT_SUMALL,VRICH_SUMALL = format(int(sum(sales_channels_dict['tiktok'])),','),format(int(sum(sales_channels_dict['shopee'])),','),format(int(sum(sales_channels_dict['lazada'])),','),format(sum(sales_channels_dict['minny']) + sum(sales_channels_dict['facebook']) + sum(sales_channels_dict['ig']) + sum(sales_channels_dict['line']) ,','),format(int(sum(sales_channels_dict['vrich'])),',')
+        else:
+            sum_all = int(sum(sales_channels_dict['tiktok'])) +int(sum(sales_channels_dict['shopee'])) + int(sum(sales_channels_dict['lazada'])) + int(sum(sales_channels_dict['war']))
+            TIKTOK_SUMALL,SHOPEE_SUMALL,LAZADA_SUMALL,ZORT_SUMALL,VRICH_SUMALL = format(int(sum(sales_channels_dict['tiktok'])),','),format(int(sum(sales_channels_dict['shopee'])),','),format(int(sum(sales_channels_dict['lazada'])),','),format(sum(sales_channels_dict['war']),','),format(int(sum(sales_channels_dict['vrich'])),',')
         
         result =  f"""คีย์มือ : {ZORT_SUMALL}
 Shopee : {SHOPEE_SUMALL}
@@ -812,7 +815,7 @@ Vrich : {VRICH_SUMALL}
         url = 'https://open-api.zortout.com/v4/Order/GetOrders'
         # datetime.datetime.now().strftime('%Y-%m-%d')
         date = datetime.datetime.today().replace(day=1).strftime('%Y-%m-%d')
-        sales_channels_list = ['tiktok','lazada','vrich','shopee muslinpajamas','war','pare','shopee','facebook','line','ig']
+        sales_channels_list = ['tiktok','lazada','vrich','shopee muslinpajamas','war','pare','shopee','facebook','line','ig','minny']
         sales_channels_dict = {}
         for i in sales_channels_list:
             sales_channels_dict[i] = []
@@ -828,10 +831,13 @@ Vrich : {VRICH_SUMALL}
         if dep == 'muslin':
             sum_all = int(sum(sales_channels_dict['tiktok'])) +int(sum(sales_channels_dict['shopee muslinpajamas'])) + int(sum(sales_channels_dict['lazada'])) + int(sum(sales_channels_dict['war'])) + int(sum(sales_channels_dict['pare'])) + int(sum(sales_channels_dict['vrich']))
             TIKTOK_SUMALL,SHOPEE_SUMALL,LAZADA_SUMALL,ZORT_SUMALL,VRICH_SUMALL = format(int(sum(sales_channels_dict['tiktok'])),','),format(int(sum(sales_channels_dict['shopee muslinpajamas'])),','),format(int(sum(sales_channels_dict['lazada'])),','),format(sum(sales_channels_dict['war']) + sum(sales_channels_dict['pare']),','),format(int(sum(sales_channels_dict['vrich'])),',')
+        elif dep == 'maruay':
+            sum_all = int(sum(sales_channels_dict['tiktok'])) +int(sum(sales_channels_dict['shopee'])) + int(sum(sales_channels_dict['lazada'])) + int(sum(sales_channels_dict['facebook'])) + int(sum(sales_channels_dict['minny'])) + int(sum(sales_channels_dict['line'])) + int(sum(sales_channels_dict['ig']))  + int(sum(sales_channels_dict['vrich']))
+            TIKTOK_SUMALL,SHOPEE_SUMALL,LAZADA_SUMALL,ZORT_SUMALL,VRICH_SUMALL = format(int(sum(sales_channels_dict['tiktok'])),','),format(int(sum(sales_channels_dict['shopee'])),','),format(int(sum(sales_channels_dict['lazada'])),','),format(sum(sales_channels_dict['facebook']) + sum(sales_channels_dict['minny']) + sum(sales_channels_dict['ig']) + sum(sales_channels_dict['line']),','),format(int(sum(sales_channels_dict['vrich'])),',')
         else:
-            sum_all = int(sum(sales_channels_dict['tiktok'])) +int(sum(sales_channels_dict['shopee'])) + int(sum(sales_channels_dict['lazada'])) + int(sum(sales_channels_dict['facebook'])) + int(sum(sales_channels_dict['line'])) + int(sum(sales_channels_dict['ig']))  + int(sum(sales_channels_dict['vrich']))
-            TIKTOK_SUMALL,SHOPEE_SUMALL,LAZADA_SUMALL,ZORT_SUMALL,VRICH_SUMALL = format(int(sum(sales_channels_dict['tiktok'])),','),format(int(sum(sales_channels_dict['shopee'])),','),format(int(sum(sales_channels_dict['lazada'])),','),format(sum(sales_channels_dict['facebook']) + sum(sales_channels_dict['ig']) + sum(sales_channels_dict['line']),','),format(int(sum(sales_channels_dict['vrich'])),',')
-        
+            sum_all = int(sum(sales_channels_dict['tiktok'])) +int(sum(sales_channels_dict['shopee'])) + int(sum(sales_channels_dict['lazada'])) + int(sum(sales_channels_dict['war'])) + int(sum(sales_channels_dict['vrich']))
+            TIKTOK_SUMALL,SHOPEE_SUMALL,LAZADA_SUMALL,ZORT_SUMALL,VRICH_SUMALL = format(int(sum(sales_channels_dict['tiktok'])),','),format(int(sum(sales_channels_dict['shopee'])),','),format(int(sum(sales_channels_dict['lazada'])),','),format(sum(sales_channels_dict['war']),','),format(int(sum(sales_channels_dict['vrich'])),',')
+
         result =  f"""คีย์มือ : {ZORT_SUMALL}
 Shopee : {SHOPEE_SUMALL}
 TikTok : {TIKTOK_SUMALL}
@@ -1945,7 +1951,7 @@ def write_image_top_right(imgpath,title_text):
 
     shadowcolor = "black"
     fillcolor = 'white'
-    title_font = ImageFont.truetype(f'{settings.MEDIA_ROOT}/luxury2.ttf',int(width/7.6))
+    title_font = ImageFont.truetype(f'{settings.MEDIA_ROOT}/thai.ttf',int(width/7.6))
     image_editable = ImageDraw.Draw(pil)
     # image_editable.text((1000,15), title_text, (0, 0, 0),font=title_font)
     image_editable.text((x-int(width/7.6/40.66), y-int(width/7.6/40.66)), title_text, font=title_font, fill=shadowcolor)
@@ -2063,12 +2069,36 @@ def update_sql_by_sku(sku,data,dep):
     if not minwrest:
         minwrest = 10
     if not maxwrest:
-        maxwrest = 10
+        maxwrest = 50
     if not hip:
         hip = 10
     task = f"""
         update {dep}.stock_main
         set descript = '{name}', breast = '{breast}', minwrest = '{minwrest}', maxwrest = '{maxwrest}', hip = '{hip}', detail = '{detail}', data_size = '{data_size}'
+        where sku = '{sku}'
+    """
+    db.query_commit(task)
+    task = f"""
+        update {dep}.data_size
+        set data_size = '{data_size}'
+        where sku = '{sku}'
+    """
+    db.query_commit(task)
+def update_sql_by_sku_excel(sku,data,dep):
+    breast,minwrest,maxwrest,hip,detail,data_size = data
+    if not breast:
+        breast = 10
+    if not minwrest:
+        minwrest = 10
+    if not maxwrest:
+        maxwrest = 50
+    if not maxwrest and minwrest:
+        maxwrest = minwrest
+    if not hip:
+        hip = 10
+    task = f"""
+        update {dep}.stock_main
+        set breast = '{breast}', minwrest = '{minwrest}', maxwrest = '{maxwrest}', hip = '{hip}', detail = '{detail}', data_size = '{data_size}'
         where sku = '{sku}'
     """
     db.query_commit(task)
@@ -2318,7 +2348,7 @@ def cleaned_data_for_zort(data,checked_stock,dep,path=''):
             except:
                 vrich.append(sku)
                 db.query_commit(f'insert into {dep}.stock values ("{sku}",0);\n')
-                db.query_commit(f'insert into {dep}.stock_detailsize values ("{sku}","","","","");\n')
+                db.query_commit(f'insert into {dep}.stock_detailsize values ("{sku}","","","","","","");\n')
                 db.query_commit(f"insert into {dep}.cost values('{sku}',{cost},0,{tranprice(dep,sku)})")
                 task = f'''
                 insert into {dep}.data_size
@@ -2346,7 +2376,7 @@ def cleaned_data_for_zort(data,checked_stock,dep,path=''):
                 # db.query_commit(f'insert into {dep}.stock values ("{sku}",0);\n')
                 # db.query_commit(f'insert into {dep}.stock_detailsize values ("{sku}","","","","");\n')
                 vrich.append(sku)
-                db.query_commit(f'insert into {dep}.stock_detailsize values ("{sku}","","","","");\n')
+                db.query_commit(f'insert into {dep}.stock_detailsize values ("{sku}","","","","","","");\n')
                 db.query_commit(f'insert into {dep}.stock values ("{sku}",0);\n')
                 task = f"insert into {dep}.cost values('{sku}',{cost},0,{tranprice(dep,sku)})"
                 print(task)
@@ -3168,9 +3198,9 @@ def QC(dep,path):
         with open ("multi.txt","a",encoding="utf-8") as f:
             f.write(f"""insert into muslin.data_size values ("{old_SKU[i]}","{old_SKU[i].split("-")[1]}","M{get_idsell(old_SKU[i])}",'{data_dict[old_SKU[i]]}');\n""")
             f.write(f"""insert into muslin.cost values ("{old_SKU[i]}",0,0,390);\n""")
-# path = 'stock.xlsx'
+# path = 'qc maruay.xlsx'
 # QC('maruay',path)
-
+# 
 def sql(empdata, table, databasedb):
     start_time = time.time()
     engine = create_engine("mysql+pymysql://" + userdb + ":" + passworddb + "@" + hostdb + "/" + databasedb)
@@ -3375,10 +3405,11 @@ def cancel_COD_monthly(excelpath):
 
 # cancel_COD_monthly('monthly sales report Feb  17.3.2023.xlsx')
 # graph = facebook.GraphAPI(access_token)
-access_tok = 'EAADs69tGsMEBO5GenCnyYZCQTLZAFpnmfow9KZAihhtmQxqZAb0tNmM2BgJ91UYYK2IckvrJrZAnsxLFqT7eo3hA9I6lLhZCXcLCYhaZAL6wozru5ULYgDxOUlIZA6slofrZAzVqTZBtMslZAnYRZC6vjserTKgOWLATo9ZBtuDgF2GTvZCzNZBB8qW9BhPvAZDZD'
+access_tok = 'EAADs69tGsMEBOy8G92hZABUQvpc7AOUirSp5fSXZCfByBJb9rnTzCoVEJvIrd0HQGEklDtFZB11nwyIL833tjAZB8hz9VIThKRzq2FUmOJwqbvcm5sMOdp26TH1ErCxREMRSQGfxgjSmjTNDKv4SP0zZARYYr5oUaZB5oVulCiXzSC0coRsODahgZDZD'
 
 # muslin ads account list
 ad_acc_list = [
+# MUSLIN NEW
 "1233977980713272",
 "3126688860975489",
 "736282584293594",
@@ -3387,14 +3418,70 @@ ad_acc_list = [
 "1056201798412529",
 "803785237485233",
 "2703565199777489",
-]
 
+#MUSLIN OLD
+'903013531414495', #Muslin40
+'1495052311131594', #Muslin39
+'589679946673630', #Muslin38
+'708644788071908', #Muslin37
+'7146997258671643', #Muslin36
+'1421886952014116', #Muslin35
+'1852473991852165', #Muslin34
+'400246175741163', #Muslin33
+'741702687886560', #Muslin32
+'1483071435602959', #Muslin31
+'1583552439058491', #Muslin30
+'7245177185540487', #Muslin26
+'385243357214644', #Muslin29
+'1093260422031466', #Muslin28
+'1532555620873567', #Muslin27
+'940147314444968', #Muslin26
+'908002500899538', #Muslin25
+'928173325065446', #SHOPEE CODE
+'3751766635042262',#MUSLIN21
+'702518018290835',#MUSLIN20
+'5466315020125309',#MUSLIN02
+'515045243778416',#MUSLIN03
+'791153252152167',#MUSLIN01
+# '749237213517035',#MUSLIN19 now its use for jidapa
+'641361367320549',#Pajamas18
+'460244959362232',#Pajamas18
+'743171353437909',#Pajamas17
+'2157079784500778',#Pajamas16
+'1644746652560324',#Pajamas Shopee Code
+'552175399725678',#Pajamas
+'725974588642368',#PajamasNew 15
+'740740183638826',#PajamasNew 14
+'1096916824369633',#PajamasNew 12
+'757536505388739',#Pajamas11
+'767252187497329',#Pajamas10
+'933567974126548',#Pajamas09
+'4087649247958399',#Pajasmas new08
+'3896640997058096',#Pajamas07
+'159668109384097',#Pajamas
+'458609138577698',#Pajamas05
+'276735954148059',#Pajamas04
+'1080677365775002',#Pajamas03
+'2530867583823809',#Pajamas01
+'339566539919304',#PajamasNew02
+
+]
 # maruay ads account list
 ad_acc_list_maruay = [
 "521471879981229",
 "1025682725525082",
 "2943245342634568",
 ]
+
+# jidapa ads account list
+ad_acc_list_jidapa = [
+'749237213517035',#Muslin19
+'741198027929931',#Jidapa01
+'761479519161218',#Jidapa02
+'689889209936160',#Jidapa03
+'3024481744353517',#Jidapa93
+]
+
 # get spend from add id
 def get_ads_spend(access_token, ad_acc_id, date_preset='yesterday'):
     url = f'https://graph.facebook.com/v16.0/act_{ad_acc_id}/insights'
@@ -3416,32 +3503,6 @@ def get_ads_spend(access_token, ad_acc_id, date_preset='yesterday'):
 
 from linebot import LineBotApi
 from linebot.models import TextSendMessage
-def auto_send_8am():
-    channel_access_token_daily_report = 'w6F1ffyyanDJ+PMtmekbkLiKyNqQID1cWIM1u9oKwdRymskGI9BMCEplfSDsueuv/zOwv401JLWIAYNXucK6E3CuGnZWwTJxMgi91cIaY9L0tVYMPcdW3VuYDr3eEgJ+p6/bzcIeNf+21naBySayUwdB04t89/1O/w1cDnyilFU='
-
-    spend_list = [get_ads_spend(access_tok, acc_id,'yesterday') for acc_id in ad_acc_list]
-    ads_amount = round(sum(spend_list),2)
-    spend_list = [get_ads_spend(access_tok, acc_id,'yesterday') for acc_id in ad_acc_list_maruay]
-    ads_amount_jj = round(sum(spend_list),2)
-    
-    dep = 'muslin'
-    web = Web(get_api_register(dep,'apikey'),get_api_register(dep,'apisecret'),get_api_register(dep,'storename'))
-    sales_amount = web.send_sales_report(dep)
-    dep = 'maruay'
-    web = Web(get_api_register(dep,'apikey'),get_api_register(dep,'apisecret'),get_api_register(dep,'storename'))
-    sales_amount_jj = web.send_sales_report(dep)
-    print(f"ads_amount = {ads_amount} type : {type(ads_amount)}")
-    print(f"sales_amount = {sales_amount} type : {type(sales_amount)}")
-    percentage = round((ads_amount / sales_amount) * 100,2)
-    percentage_jj = round((ads_amount_jj / sales_amount_jj) * 100,2)
-
-    date = (datetime.datetime.now() - datetime.timedelta(days = 1)).strftime('%Y-%m-%d')
-    text = f"""Sales Report {date}\nmuslin Ads : {format(ads_amount,',')}\nmuslin sales : {format(sales_amount,',')}\njj Ads : {format(ads_amount_jj,',')}\njj sales : {format(sales_amount_jj,',')}\nmuslin percent Ads : {percentage}%\njj percent Ads : {percentage_jj}%"""
-    line_bot_api_daily_report = LineBotApi(channel_access_token_daily_report)
-    message = TextSendMessage(text=text)
-
-    # line_bot_api_daily_report.push_message('C7f9c7403440cef77ffb4561a74b58013',message)
-    print(text)
     
 def get_text_after_alphabet(text):
     match = re.search(r'[a-zA-Z]+(.*)', text)
@@ -3549,21 +3610,28 @@ def send_databasename():
     res = list(db.query("select department from store_api").fetchall())
     return [i[0] for i in res]
 
-def replace_and_split(text):
-    # Define regular expression pattern to match the required format
-    pattern = r'Size\s+(\S+)\s*รอบอก\s+(\d+["”])\s*เอว\s+(\d+-\d+["”])\s*สะโพก\s+(\d+["”])\s*เสื้อยาว\s+(\d+\.?\d*["”]?)\s*กางเกงยาว\s+(\d+\.?\d*["”]?)\s*เป้ายาว\s+(\d+\.?\d*["”]?)\s*รอบขา\s+(\d+\.?\d*["”]?)'
+def process_input_text(input_text):
+    # Split the input into lines
+    lines = input_text.split('\n')
 
-    # Find all matches in the text using regular expression
-    matches = re.findall(pattern, text)
+    # Process each line with the replace_words function
+    processed_lines = [replace_words(line) for line in lines]
 
-    # Create a new list with modified strings
-    result = []
-    for match in matches:
-        size, chest, waist, hip, shirt_length, pants_length, inseam, leg_circumference = match
-        new_text = f"{size}อก {chest}เอว {waist}สพ {hip}เกงยาว {pants_length}"
-        result.append(new_text)
+    # Join the processed lines back into a single string
+    result = '\n'.join(processed_lines)
 
-    return '\n'.join(result)
+    return result
+
+def replace_words(text):
+    # Remove "➡️ Size " and replace other words in the text
+    text = text.replace('➡️ Size ', '').replace('รอบอก', 'อก').replace('สะโพก', 'สพ').replace('กางเกงยาว', 'เกงยาว')
+
+    # Remove the part after "รอบปลายแขน" if it exists
+    index = text.find('รอบปลายแขน')
+    if index != -1:
+        text = text[:index]
+
+    return text
 
 def tran_price(dep,sku):
     if dep == 'muslin':
@@ -4188,12 +4256,25 @@ def pull_order_vrich_to_zort(dep,file_path,korkai_check):
         web.post_order(zort_form)
 
 def transfer_all_fromwarehouse_by_path(path):
-    df = pd.read_excel(path)
-    idsell = [get_idsell(df.loc[i,'sku']) for i in df.index]
+    # df = pd.read_excel(path)
+    idsell = [
+    'BA0388-M',
+    'BG0444-S',
+    'BA0013-L',
+    'BG0341-S',
+    'BG0328-L',
+    'BA0428-M',
+    'BA0335-M',
+    'BA0427-M',
+    'BA0429-M',
+    'BA0426-M',
+    ]
+    idsell = [get_idsell(i) for i in idsell]
     web.transfer_all_amount_with_condition_by_idsell(idsell,'W0001','W0003')
 
 def transfer_all_fromwarehouse_by_idsell(data):
     web.transfer_all_amount_with_condition_by_idsell(data,'W0001','W0003')
+# transfer_all_fromwarehouse_by_path('')
 
 def filter_telephone_numbers(dep):
     file_path = os.path.join(settings.MEDIA_ROOT, 'stock', f'tel {datetime.datetime.today().strftime("%Y-%m-%d")} {dep}.txt')
@@ -4249,7 +4330,7 @@ def insert_live_room(path):
     df = pd.read_excel(path)
 
     # Use iloc to get values from the first and second columns
-    sku_values = ','.join([f'("{sku}", {value})' if not pd.isnull(value) else f'("{sku}", null)' for sku, value in zip(df.iloc[:, 0], df.iloc[:, 1])])
+    sku_values = ','.join([f'("{sku}", "{value}")' if not pd.isnull(value) else f'("{sku}", null)' for sku, value in zip(df.iloc[:, 0], df.iloc[:, 1])])
 
     task = f'insert into muslin.live_room values {sku_values}'
     db.query_commit(task)
@@ -4302,6 +4383,7 @@ def update_qty_from_first_file(firstpath,secondpath):
 
 # update_qty_from_first_file('first.xlsx','second.xlsx')
 def update_name_by_replace(dep,sku_code,replace_word,replace_by):
+    
     web = Web(get_api_register(dep,'apikey'),get_api_register(dep,'apisecret'),get_api_register(dep,'storename'))
     task = f'select sku from stock where sku like "%{sku_code}%"'
     result = db.query_custom(task,dep)
@@ -4309,3 +4391,135 @@ def update_name_by_replace(dep,sku_code,replace_word,replace_by):
     result = result.fetchall()
     for i in result:
         web.update_name(dep,i[0],replace_word,replace_by)
+
+def update_size_with_excel(path,dep):  
+    df = pd.read_excel(path)
+    for i in df.index:
+        for column in df.columns:
+            if str(df.loc[i,column]) == 'nan':
+                df.loc[i,column] = False
+        sku = df.loc[i, "sku"]
+        breast = df.loc[i, "รอบอก"]
+        minwrest = df.loc[i, "เอว(เล็ก)"]
+        maxwrest = df.loc[i, "เอว(ใหญ่)"]
+        edited_shirts = df.loc[i, "เสื้อยาว"]
+        edited_pants = df.loc[i, "เกงยาว"]
+        edited_crotch = df.loc[i, "เป้ายาว"]
+        edited_leg = df.loc[i, "รอบขา"]
+        edited_arm = df.loc[i, "รอบแขน"]
+        edited_wrist = df.loc[i, "รอบปลายแขน"]
+        hip = df.loc[i, "สะโพก"]
+        detail = ''
+        dataSize = ''
+        dataSize_temp = f'➡️ Size {sku.split("-")[1]}'
+        stock_detailsize = []
+        if breast:
+            dataSize_temp += f'รอบอก {breast}”'
+        if minwrest and not maxwrest:
+            dataSize_temp += f'เอว {minwrest}”'
+        elif minwrest and maxwrest:
+            dataSize_temp += f'เอว {minwrest} - {maxwrest}”'
+        if hip:
+            dataSize_temp += f' สะโพก {hip}”'
+        if edited_shirts:
+            dataSize_temp += f' เสื้อยาว {edited_shirts}”'
+            stock_detailsize.append(f"shirts = '{edited_shirts}'")
+        if edited_pants:
+            dataSize_temp += f' กางเกงยาว {edited_pants}”'
+            stock_detailsize.append(f"pants = '{edited_pants}'")
+        if edited_crotch:
+            dataSize_temp += f' เป้ายาว {edited_crotch}”'
+            stock_detailsize.append(f"crotch = '{edited_crotch}'")
+        if edited_leg:
+            dataSize_temp += f' รอบขา {edited_leg}”'
+            stock_detailsize.append(f"leg = '{edited_leg}'")
+        if edited_arm:
+            dataSize_temp += f' รอบแขน {edited_arm}”'
+            stock_detailsize.append(f"arm = '{edited_arm}'")
+        if edited_wrist:
+            dataSize_temp += f' รอบปลายแขน {edited_wrist}”'
+            stock_detailsize.append(f"wrist = '{edited_wrist}'")
+        stock_detailsize_str = ', '.join(stock_detailsize)
+        db.query_commit(f"update {dep}.stock_detailsize set {stock_detailsize_str} where sku = '{sku}'")
+        dataSize_temp += dataSize
+        data = breast,minwrest,maxwrest,hip,detail,dataSize_temp
+        update_sql_by_sku_excel(sku,data,dep)
+
+# update_size_with_excel('size.xlsx','Nilyn145')
+def turn_excel_to_dict():
+    data_text = """
+4000	D
+80	D
+81	D
+82	D
+83	D
+1249	D
+1250	D
+1251	D
+1252	D
+347	M
+360	M
+526	M
+527	M
+792	M
+797	M
+798	M
+938	M
+941	M
+989	M
+1017	M
+1025	M
+1081	M
+1083	M
+1084	M
+1092	M
+1093	M
+1095	M
+1098	M
+1111	M
+1126	M
+1127	M
+1133	M
+1137	M
+1138	M
+1148	M
+1149	M
+1201	M
+1202	M
+1203	M
+1206	M
+1215	M
+1253	M
+1254	M
+1255	M
+1256	M
+3000	M
+330	O
+482	O
+1099	O
+1158	O
+1175	O
+1179	O
+1183	O
+1186	O
+1188	O
+1198	O
+1200	O
+1207	O
+1208	O
+1209	O
+1213	O
+2000	O
+    """
+
+    data_dict = {}
+
+    lines = data_text.strip().split('\n')
+
+    for line in lines:
+        parts = line.split()
+        key = int(parts[0])
+        value = parts[1]
+        data_dict[key] = value
+
+    print(data_dict)

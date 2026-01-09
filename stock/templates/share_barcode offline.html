@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-    {% include 'messages.html' %} {% block content %}
     <title>二维码生成工具</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -10,11 +9,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="/media/bootstrap/css/bootstrap.min.css">
-    <script src="/media/bootstrap/js/bootstrap.bundle.min.js"></script>
-  
-    {% comment %} <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous"> {% endcomment %}
-    {% comment %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script> {% endcomment %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="/media/style.css?{% now " U " %}">
     <style>
@@ -38,8 +34,7 @@
 </head>
 
 <body>
-    <form action="" method="post">
-        {% csrf_token %}
+    <form action="barcode_offline.html" method="get">
         <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -49,11 +44,10 @@
                     </div>
                     <div class="modal-body" data-bs-theme="blue">
                         <div id="result"></div>
-                        <input type="hidden" name="paper_size" id="paper_size" value = "20*50">
-                        {% comment %} <div id="s_pattern_result"></div>
+                        <div id="s_pattern_result"></div>
                         <div id="s_size_result"></div>
                         <div id="b_pattern_result"></div>
-                        <div id="b_size_result"></div> {% endcomment %}
+                        <div id="b_size_result"></div>
                         <input type="hidden" id="s_ref_code_input" name="s_ref_code" value="">
                         <input type="hidden" id="b_ref_code_input" name="b_ref_code" value="">
                     </div>
@@ -73,23 +67,6 @@
     </form>
     <div class="container">
         <div class="row  text-center rounded-3 border border-3 border-dark p-2 " style="background-color: rgba(255,255,255,.8);">
-            <div class="col-4 d-flex align-items-center h4">
-                第0步，选择打印纸尺寸：
-            </div>
-            <div class="col-4">
-            </div>
-            <div class="col-4">
-                <div class="d-flex flex-column align-items-center">
-                    <input type="range" class="form-range w-50" id="sizeRange" min="0" max="1" step="1" value="0" onchange="updateSize()">
-                    <div class="d-flex justify-content-between w-50 mt-2">
-                        <span id="option1" class="fw-bold">双排 50*20mm</span>
-                        <span id="option2">单排 70*20mm</span>
-                    </div>
-                    <div class="mt-3 text-primary fw-medium">当前选择: <span id="selectedSize">双排 50*20mm</span></div>
-                </div>
-            </div>
-        </div>
-        <div class="row  text-center rounded-3 border border-3 border-dark p-2 mt-1" style="background-color: rgba(255,255,255,.8);">
             <div class="col-4 d-flex align-items-center h4">
                 第一步：输入SKU编号(纯数字)，比如1，或者100, 或者330, 或者1005等
             </div>
@@ -132,30 +109,6 @@
                         <label class="btn btn-outline-danger" for="S_5XL">5XL</label>
                         <input name="s_size" value="6XL" type="checkbox" class="btn-check" id="S_6XL" autocomplete="off">
                         <label class="btn btn-outline-danger" for="S_6XL">6XL</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col y-2 m-2">
-                        <input name="s_size" value="90" type="checkbox" class="btn-check" id="S_90" autocomplete="off">
-                        <label class="btn btn-outline-danger" for="S_90">90</label>
-                        <input name="s_size" value="100" type="checkbox" class="btn-check" id="S_100" autocomplete="off">
-                        <label class="btn btn-outline-danger" for="S_100">100</label>
-                        <input name="s_size" value="110" type="checkbox" class="btn-check" id="S_110" autocomplete="off">
-                        <label class="btn btn-outline-danger" for="S_110">110</label>
-                        <input name="s_size" value="120" type="checkbox" class="btn-check" id="S_120" autocomplete="off">
-                        <label class="btn btn-outline-danger" for="S_120">120</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col y-2 m-2">
-                        <input name="s_size" value="130" type="checkbox" class="btn-check" id="S_130" autocomplete="off">
-                        <label class="btn btn-outline-danger" for="S_130">130</label>
-                        <input name="s_size" value="140" type="checkbox" class="btn-check" id="S_140" autocomplete="off">
-                        <label class="btn btn-outline-danger" for="S_140">140</label>
-                        <input name="s_size" value="150" type="checkbox" class="btn-check" id="S_150" autocomplete="off">
-                        <label class="btn btn-outline-danger" for="S_150">150</label>
-                        <input name="s_size" value="160" type="checkbox" class="btn-check" id="S_160" autocomplete="off">
-                        <label class="btn btn-outline-danger" for="S_160">160</label>
                     </div>
                 </div>
             </div>
@@ -241,36 +194,18 @@
                     <label class="btn btn-outline-primary" for="PL">短袖七分裤 (L)</label><br>
                 </div>
                 <div class="col my-2">
-                    <input name="p_pattern" type="checkbox" class="btn-check" id="PP" value="P" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="PP">长袖长裤/中袖长裤 (P)</label><br>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col my-2">
-                    <input name="p_pattern" type="checkbox" class="btn-check" id="PW" value="W" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="PW">宽松款短袖短裤 (W)</label><br>
-                </div>
-                <div class="col my-2">
-                    <input name="p_pattern" type="checkbox" class="btn-check" id="PV" value="V" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="PV">宽松款短袖长裤 (V)</label><br>
-                </div>
-                <div class="col my-2">
-                    <input name="p_pattern" type="checkbox" class="btn-check" id="PU" value="U" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="PU">长袖短裤 (U)</label><br>
-                </div>
-                <div class="col my-2">
                     <input name="p_pattern" type="checkbox" class="btn-check" id="PM" value="M" autocomplete="off">
                     <label class="btn btn-outline-primary" for="PM">儿童 (M)</label><br>
                 </div>
             </div>
             <div class="row">
                 <div class="col my-2">
-                    <input name="p_pattern" type="checkbox" class="btn-check" id="PK" value="K" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="PK">裙子 (K)</label><br>
+                    <input name="p_pattern" type="checkbox" class="btn-check" id="PP" value="P" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="PP">长袖长裤 (P)</label><br>
                 </div>
                 <div class="col my-2">
-                    <input name="p_pattern" type="checkbox" class="btn-check" id="PR" value="R" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="PR">吊带 (R)</label><br>
+                    <input name="p_pattern" type="checkbox" class="btn-check" id="PK" value="K" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="PK">裙子 (K)</label><br>
                 </div>
             </div>
         </div>
@@ -280,26 +215,6 @@
             </div>
         </div>
     </div>
-    <script>
-    function updateSize() {
-        var range = document.getElementById("sizeRange").value;
-        var selectedSize = document.getElementById("selectedSize");
-        var option1 = document.getElementById("option1");
-        var option2 = document.getElementById("option2");
-        var selectedSizeInput = document.getElementById("paper_size");
-        if (range === "0") {
-            selectedSize.textContent = "双排 50*20mm";
-            option1.classList.add("fw-bold");
-            option2.classList.remove("fw-bold");
-            selectedSizeInput.value = "20*50"
-            } else {
-            selectedSize.textContent = "单排 70*20mm";
-            option1.classList.remove("fw-bold");
-            option2.classList.add("fw-bold");
-            selectedSizeInput.value = "20*70"
-            }
-        }
-    </script>
     <script>
         document.getElementById('generate').addEventListener('click', async function() {
             // Selected values for specific checkboxes
@@ -386,5 +301,4 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js " integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB " crossorigin="anonymous "></script>
 
     <script src="/media/sort.js"></script>
-    {% endblock content %}
 </body>

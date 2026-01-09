@@ -3,7 +3,7 @@ import time,paramiko,re
 def cancelLoadpath():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect('139.162.28.194', username='root',password="Chino002")
+    ssh.connect('139.144.119.186', username='root',password="Koonchino002")
     stdin, stdout, stderr = ssh.exec_command('pkill -9 -f loadpath.py')
     print(stdout.read())
     ssh.close()
@@ -11,7 +11,7 @@ def cancelLoadpath():
 def runLoadpath():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect('139.162.28.194', username='root',password="Chino002")
+    ssh.connect('139.144.119.186', username='root',password="Koonchino002")
     stdin, stdout, stderr = ssh.exec_command(f'screen -r loadpath -X stuff "\n"')
     stdin, stdout, stderr = ssh.exec_command(f'screen -r loadpath -X stuff "cd /update\n"')
     stdin, stdout, stderr = ssh.exec_command(f'screen -r loadpath -X stuff "python3 loadpath.py\n"')
@@ -21,7 +21,7 @@ def runLoadpath():
 def getPidFromScreen():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect('139.162.28.194', username='root',password="Chino002")
+    ssh.connect('139.144.119.186', username='root',password="Koonchino002")
     stdin, stdout, stderr = ssh.exec_command('screen -d')
     screen = str(stdout.read())
     screen = (re.findall('\d{4}\.pts',screen))
@@ -37,7 +37,7 @@ def startServer():
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     # Connect to the server
-    ssh.connect('139.162.28.194', username='root',password="Chino002")
+    ssh.connect('139.144.119.186', username='root',password="Koonchino002")
 
     # Open a new SSH session
     channel = ssh.invoke_shell()
@@ -56,7 +56,7 @@ def startServer():
     time.sleep(.5)
 
     # Re connect to server and access to screen web for deploy website
-    ssh.connect('139.162.28.194', username='root',password="Chino002")
+    ssh.connect('139.144.119.186', username='root',password="Koonchino002")
     stdin, stdout, stderr = ssh.exec_command(f'screen -r web -X stuff "cd /var/app/\n"')
     stdin, stdout, stderr = ssh.exec_command(f'screen -r web -X stuff "python3 manage.py runserver 0.0.0.0:8000\n"')
 
@@ -67,7 +67,7 @@ def startServer():
     ssh.close()
 
     # Connect to the server
-    ssh.connect('139.162.28.194', username='root',password="Chino002")
+    ssh.connect('139.144.119.186', username='root',password="Koonchino002")
 
     # Open a new SSH session
     channel = ssh.invoke_shell()
@@ -97,7 +97,7 @@ def shutDownserver():
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     # Connect to the server
-    ssh.connect('139.162.28.194', username='root',password="Chino002")
+    ssh.connect('139.144.119.186', username='root',password="Koonchino002")
 
     # Reboot server
     stdin, stdout, stderr = ssh.exec_command('sudo reboot')
@@ -114,10 +114,27 @@ def resetSQL():
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     # Connect to the server
-    ssh.connect('139.162.28.194', username='root',password="Chino002")
+    ssh.connect('139.144.119.186', username='root',password="Koonchino002")
 
     # Reboot server
     stdin, stdout, stderr = ssh.exec_command('sudo service mysql restart')
+
+    # Close SSH session
+    ssh.close()
+
+def resetWeb():
+        
+    # Create an SSH client
+    ssh = paramiko.SSHClient()
+    
+    # Allow server host to be known by local
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    # Connect to the server
+    ssh.connect('139.144.119.186', username='root',password="Koonchino002")
+
+    # Reboot server
+    stdin, stdout, stderr = ssh.exec_command('sudo service apache2 restart')
 
     # Close SSH session
     ssh.close()
@@ -129,7 +146,7 @@ def startWeb():
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     # Connect to the server
-    ssh.connect('139.162.28.194', username='root',password="Chino002")
+    ssh.connect('139.144.119.186', username='root',password="Koonchino002")
 
     stdin, stdout, stderr = ssh.exec_command(f'screen -r web -X stuff "cd /var/app/\n"')
     stdin, stdout, stderr = ssh.exec_command(f'screen -r web -X stuff "python3 manage.py runserver 0.0.0.0:8000\n"')

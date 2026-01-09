@@ -31,11 +31,12 @@
 
     <body>
         <div id="printed">
+        {% if paper_size == "20*50" %}
         <div class="row">
             {% for i in print %}
                 <div class="col-6">
-                    <div style="margin-top: 1mm; {% if forloop.counter|divisibleby:2 %}margin-left: 14mm;{% else %}margin-left: 3mm;{% endif %}" id="{{ forloop.counter0 }}{{ i }}"></div>
-                    <div style="{% if forloop.counter|divisibleby:2 %}margin-left: 11mm;{% else %}margin-left: 1mm;{% endif %}">{{ i }}</div>
+                    <div style="margin-top: 1mm; {% if forloop.counter|divisibleby:2 %}margin-left: 14mm;{% else %}margin-left: 14mm;{% endif %}" id="{{ forloop.counter0 }}{{ i }}"></div>
+                    <div style="{% if forloop.counter|divisibleby:2 %}margin-left: 11mm;{% else %}margin-left: 11mm;{% endif %}">{{ i }}</div>
                     <script type="text/javascript">
                         new QRCode(document.getElementById("{{ forloop.counter0 }}{{ i }}"), {
                             text: "{{ i }}",
@@ -48,7 +49,26 @@
                 </div>
             {% endfor %}
         </div>
-    </div>
+        {% else %}
+            <div class="row">
+            {% for i in print %}
+                <div class="col-12">
+                    <div style="margin-top: 1mm; margin-left: 20mm;" id="{{ forloop.counter0 }}{{ i }}"></div>
+                    <div style="margin-left: 17mm;">{{ i }}</div>
+                    <script type="text/javascript">
+                        new QRCode(document.getElementById("{{ forloop.counter0 }}{{ i }}"), {
+                            text: "{{ i }}",
+                            width: 50,
+                            height: 50,
+                            correctLevel: QRCode.CorrectLevel.H,
+                            useSVG: true // เพิ่มการใช้งานแบบ vector 
+                        });
+                    </script>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        </div>
             
             
         
